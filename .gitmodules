@@ -1,0 +1,3 @@
+[submodule "node-scrypt-js"]
+	path = node-scrypt-js
+	url = https://github.com/cheongwy/node-scrypt-js.git
