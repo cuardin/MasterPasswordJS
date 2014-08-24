@@ -4,8 +4,7 @@ QUnit.test( "testMainSalt", function( assert ) {
 	var userName = "user01åäö";
 	var masterKeySalt = mpw_core_calculate_master_key_salt(mpNameSpace, userName)
   	var stringSalt = convertBufferToHex(masterKeySalt);
-  	assert.equal( "636f6d2e6c796e6469722e6d617374657270617373776f7264000c757365723031c3a5c3a4c3b6",
-		 stringSalt );
+  	assert.equal( stringSalt, "636f6d2e6c796e6469722e6d617374657270617373776f72640000000c757365723031c3a5c3a4c3b6" );
 });
 
 QUnit.test( "testConvertToHex", function( assert ) {

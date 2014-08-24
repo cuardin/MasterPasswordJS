@@ -7,9 +7,19 @@ function convertBufferToHex(buffer) {
 }
 
 function mpw_core_calculate_master_key_salt( mpNameSpace, userName )
-{
-	//Read about conversion here.
-	var mpNameSpaceRaw = TextEncoder("utf-8").encode(mpNameSpace);
+{	
+	//Convert strings to byte buffers
+    var mpNameSpaceRaw = TextEncoder("utf-8").encode(mpNameSpace);
 	var userNameRaw = TextEncoder("utf-8").encode(userName);
-	return mpNameSpaceRaw;
+    	
+    //Allocate memory
+    var salt     = new Uint8Array(mpNameSpaceRaw.length + 4/*sizeof(uint32)*/ + userNameRaw.length);
+    var saltView = new DataView(salt.buffer);
+    
+    //Fill the buffer with the data.
+    var i = 0;
+    salt.set(mpNameSpaceRaw, i); i += mpNameSpaceRaw.length;
+    saltView.setUint32(i, userNameRaw.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+    salt.set(userNameRaw, i); i += name.length;
+    return salt;
 }
