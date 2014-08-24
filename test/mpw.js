@@ -1,3 +1,60 @@
+var templates = {
+    maximum: [
+    "anoxxxxxxxxxxxxxxxxx",
+    "axxxxxxxxxxxxxxxxxno"
+    ],
+    long: [
+    "CvcvnoCvcvCvcv",
+    "CvcvCvcvnoCvcv",
+    "CvcvCvcvCvcvno",
+    "CvccnoCvcvCvcv",
+    "CvccCvcvnoCvcv",
+    "CvccCvcvCvcvno",
+    "CvcvnoCvccCvcv",
+    "CvcvCvccnoCvcv",
+    "CvcvCvccCvcvno",
+    "CvcvnoCvcvCvcc",
+    "CvcvCvcvnoCvcc",
+    "CvcvCvcvCvccno",
+    "CvccnoCvccCvcv",
+    "CvccCvccnoCvcv",
+    "CvccCvccCvcvno",
+    "CvcvnoCvccCvcc",
+    "CvcvCvccnoCvcc",
+    "CvcvCvccCvccno",
+    "CvccnoCvcvCvcc",
+    "CvccCvcvnoCvcc",
+    "CvccCvcvCvccno"
+    ],
+    medium: [
+    "CvcnoCvc",
+    "CvcCvcno"
+    ],
+    short: [
+    "Cvcn"
+    ],
+    basic: [
+    "aaanaaan",
+    "aannaaan",
+    "aaannaaa"
+    ],
+    pin: [
+    "nnnn"
+    ]
+};
+
+var passchars = {
+    V: "AEIOU",
+    C: "BCDFGHJKLMNPQRSTVWXYZ",
+    v: "aeiou",
+    c: "bcdfghjklmnpqrstvwxyz",
+    A: "AEIOUBCDFGHJKLMNPQRSTVWXYZ",
+    a: "AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz",
+    n: "0123456789",
+    o: "@&%?,=[]_:-+*$#!'^~;()/.",
+    x: "AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz0123456789@&%?,=[]_:-+*$#!'^~;()/."
+};
+
 function convertBufferToHex(buffer) {
     var h = '';
     for (var i = 0; i < buffer.length; i++) {
@@ -41,3 +98,16 @@ function mpw_core_calculate_site_seed( mpNameSpace, siteName, siteCounter )
 
     return data;
 }
+
+function mpw_core_convert_to_password(siteTypeString, sitePasswordSeed )
+{    
+    template = templates[siteTypeString];
+    template = template[sitePasswordSeed[0] % template.length];
+
+    return template.split("").map(function (c, i) {
+        var chars = passchars[c];
+        return chars[sitePasswordSeed[i + 1] % chars.length];
+    }).join("");
+
+}
+

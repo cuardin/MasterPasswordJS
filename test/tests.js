@@ -29,3 +29,12 @@ QUnit.test( "testSiteSalt", function( assert ) {
   	assert.equal( 46, siteSeed.length );
   	assert.equal( stringSalt, "636f6d2e6c796e6469722e6d617374657270617373776f72640000000d7369746530312ec3a5c3a4c3b600000003" );
 });
+
+QUnit.test( "testPasswordGeneration", function( assert ) {
+	var sitePasswordSeed = TextEncoder("utf-8").encode("C4157B94088A1A54DEE0516F7505A3A");
+    var siteTypeString = "long";
+
+	password = mpw_core_convert_to_password(siteTypeString, sitePasswordSeed );  	
+  	  	
+  	assert.equal( password, "NuprFino6_Dudo" );
+});
