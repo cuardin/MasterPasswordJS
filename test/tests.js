@@ -29,6 +29,21 @@ QUnit.test( "testMainSalt", function( assert ) {
 
 });
 
+QUnit.test( "testSecretKey", function( assert ) {
+	//Arrange
+	var mpNameSpace = new TextEncoder("utf-8").encode("com.lyndir.masterpassword"); //TODO: Add real salt here.
+    var mpw = new MPW();
+	
+	//Act
+	var secretKey = mpw.mpw_core_calculate_secret_key(mpNameSpace)
+  	
+  	//Assert
+  	var stringKey = mpw.convertBufferToHex(secretKey);
+  	assert.equal( stringKey, "" );  	
+    assert.equal( 32, secretKey.length );
+
+});
+
 QUnit.test( "testSiteSalt", function( assert ) {
 	//Arrange
 	var siteName = "site01.åäö";
@@ -44,6 +59,22 @@ QUnit.test( "testSiteSalt", function( assert ) {
   	assert.equal( 13, new TextEncoder("utf-8").encode(siteName).length ); //Ensure utf8 encoding(So last 3 are 2-byte);
   	assert.equal( 46, siteSeed.length );
   	assert.equal( stringSalt, "636f6d2e6c796e6469722e6d617374657270617373776f72640000000d7369746530312ec3a5c3a4c3b600000003" );
+});
+
+QUnit.test( "testHashSiteInfo", function( assert ) {
+	//Arrange
+	var secretKey = new TextEncoder("utf-8").encode("12345678123456781234567812345678"); //TODO: Add real secret key here.
+    var siteSeed = new TextEncoder("utf-8").encode("12345678123456781234567812345678"); //TODO: Add real secret key here.
+    var mpw = new MPW();
+	
+	//Act
+	var siteKey = mpw.mpw_core_hash_site_info(secretKey,siteSeed)
+  	
+  	//Assert
+  	var stringKey = mpw.convertBufferToHex(siteKey);
+  	assert.equal( stringKey, "" );  	
+    assert.equal( 0, siteKey.length );
+
 });
 
 QUnit.test( "testPasswordGeneration", function( assert ) {

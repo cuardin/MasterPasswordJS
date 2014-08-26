@@ -40,9 +40,9 @@ function pbkdf2(passwd, S, c, DK, dkLen) {
         block1[S.length + 2] = (i >> 8  & 0xff);
         block1[S.length + 3] = (i >> 0  & 0xff);
 
-        sha256.init(passwd);
-        sha256.update(block1);
-        U = sha256.finalize();
+        HMAC_SHA256_init(passwd);
+        HMAC_SHA256_write(block1);
+        U = HMAC_SHA256_finalize();
         
         arraycopy(U, 0, T, 0, hLen);
 

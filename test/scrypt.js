@@ -26,7 +26,7 @@ function scrypt(passwd, salt, N, r, p, dkLen) {
     var V  = []; //new Array(128 * r * N);
     var i;
 
-    pbkdf2(passwd, new Buffer(salt, encoding='utf8'), 1, B, p * 128 * r);
+    pbkdf2(passwd, new Uint8Array(salt), 1, B, p * 128 * r);
     //console.log(new Buffer(B, 'base64').toString('base64'));
 
     for(i = 0; i < p; i++) {
@@ -34,7 +34,7 @@ function scrypt(passwd, salt, N, r, p, dkLen) {
     }
 
     pbkdf2(passwd, B, 1, DK, dkLen);
-    return new Buffer(DK).toString('base64');
+    return new Uint8Array(DK);
 }
 
 function smix(B, Bi, r, N, V, XY) {

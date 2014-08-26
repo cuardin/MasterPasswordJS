@@ -1,15 +1,17 @@
 
 function MPW()
 {
-    this.convertBufferToHex = function (buffer) {
+    this.convertBufferToHex = function (buffer) 
+    {
         var h = '';
         for (var i = 0; i < buffer.length; i++) {
             h += ("00" + buffer[i].toString(16)).substr(-2);
         }
         return h;
-    }
+    }       
 
-    this.mpw_core_calculate_master_key_salt = function ( mpNameSpace, userName ) {	
+    this.mpw_core_calculate_master_key_salt = function ( mpNameSpace, userName ) 
+    {	
         //Convert strings to byte buffers
         var encoder = new TextEncoder("utf-8");
         var mpNameSpaceRaw = encoder.encode(mpNameSpace);
@@ -25,6 +27,19 @@ function MPW()
         saltView.setUint32(i, userNameRaw.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
         salt.set(userNameRaw, i); i += name.length;
         return salt;
+    }
+    
+    this.mpw_core_calculate_secret_key = function( mpNameSpace ) 
+    {
+        //TODO: Add the real numbers here.
+        var N = 16;
+        var r = 3;
+        var p = 3;
+        var dkLen = 32;
+        
+        var secretKey = scrypt(mpNameSpace, mpNameSpace, N, r, p, dkLen) 
+        
+        return secretKey;        
     }
 
     this.mpw_core_calculate_site_seed = function ( mpNameSpace, siteName, siteCounter )
@@ -46,6 +61,11 @@ function MPW()
         return data;
     }
 
+    this.mpw_core_hash_site_info = function (secretKey,siteSeed) 
+    {
+        return HMAC_SHA256_MAC(secretKey, siteSeed);        
+    }
+    
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )
     {    
         var template = this.templates[siteTypeString];

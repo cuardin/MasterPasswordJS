@@ -319,8 +319,11 @@ function SHA256_Hash_Byte_Block(H, w) {
 }
 
 
+//Deleteme
+/*
 module.exports = {
 	init: HMAC_SHA256_init,
 	update: HMAC_SHA256_write,
 	finalize: HMAC_SHA256_finalize
 };
+*/
