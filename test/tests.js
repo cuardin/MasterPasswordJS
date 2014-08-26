@@ -40,7 +40,7 @@ QUnit.test( "testSecretKey", function( assert ) {
   	//Assert
   	var stringKey = mpw.convertBufferToHex(secretKey);
   	assert.equal( stringKey, "" );  	
-    assert.equal( 32, secretKey.length );
+    assert.equal( 64, secretKey.length );
 
 });
 

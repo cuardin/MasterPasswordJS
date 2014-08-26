@@ -30,14 +30,13 @@ function MPW()
     }
     
     this.mpw_core_calculate_secret_key = function( mpNameSpace ) 
-    {
-        //TODO: Add the real numbers here.
-        var N = 16;
-        var r = 3;
-        var p = 3;
-        var dkLen = 32;
+    {                
+        var MP_N = 32768;
+        var MP_r = 8;
+        var MP_p = 2;
+        var MP_dkLen = 64;
         
-        var secretKey = scrypt(mpNameSpace, mpNameSpace, N, r, p, dkLen) 
+        var secretKey = scrypt(mpNameSpace, mpNameSpace, MP_N, MP_r, MP_p, MP_dkLen) 
         
         return secretKey;        
     }
