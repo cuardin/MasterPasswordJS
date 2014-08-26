@@ -240,15 +240,3 @@ function arraycopy32(src, srcPos, dest, destPos, length) {
 }
 
 
-exports.scrypt = scrypt;
-
-/*
- * Test
- */
-if(process.argv[1] == __filename) {
-	var t1=new Date();
-    console.log('hashing...');
-	var spass = scrypt('hello', "C/EaaeFElPd6f2o93GlrVA==", 32, 8, 8 ,32);
-	console.log('Scrypt: '+(new Date()-t1)+' ms');
-	console.log('Password encrypted '+spass);
-}
