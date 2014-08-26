@@ -10,9 +10,10 @@ function MPW()
     }
 
     this.mpw_core_calculate_master_key_salt = function ( mpNameSpace, userName ) {	
-	   //Convert strings to byte buffers
-    var mpNameSpaceRaw = TextEncoder("utf-8").encode(mpNameSpace);
-    var userNameRaw = TextEncoder("utf-8").encode(userName);
+        //Convert strings to byte buffers
+        var encoder = new TextEncoder("utf-8");
+        var mpNameSpaceRaw = encoder.encode(mpNameSpace);
+        var userNameRaw = encoder.encode(userName);
 
         //Allocate memory
         var salt     = new Uint8Array(mpNameSpaceRaw.length + 4/*sizeof(uint32)*/ + userNameRaw.length);
@@ -29,8 +30,9 @@ function MPW()
     this.mpw_core_calculate_site_seed = function ( mpNameSpace, siteName, siteCounter )
     {
         //Convert strings to byte buffers
-        var mpNameSpaceRaw = TextEncoder("utf-8").encode(mpNameSpace);
-        var siteNameRaw = TextEncoder("utf-8").encode(siteName);
+        var encoder = new TextEncoder("utf-8");
+        var mpNameSpaceRaw = encoder.encode(mpNameSpace);
+        var siteNameRaw = encoder.encode(siteName);
 
         var data     = new Uint8Array(mpNameSpaceRaw.length + 4/*sizeof(uint32)*/ + siteNameRaw.length + 4/*sizeof(uint32)*/);
         var dataView = new DataView(data.buffer);
@@ -46,7 +48,7 @@ function MPW()
 
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )
     {    
-        template = this.templates[siteTypeString];
+        var template = this.templates[siteTypeString];
         template = template[sitePasswordSeed[0] % template.length];
         var passchars = this.passchars;
 
