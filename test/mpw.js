@@ -1,4 +1,4 @@
-
+//TODO: Adjust all functions to handle both string and buffer input.
 function MPW()
 {
     this.convertBufferToHex = function (buffer) 
@@ -10,6 +10,12 @@ function MPW()
         return h;
     }       
 
+    this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter )
+    {
+        var mpNameSpace = "com.lyndir.masterpassword";
+        return ""
+    }
+    
     this.mpw_core_calculate_master_key_salt = function ( mpNameSpace, userName ) 
     {	
         //Convert strings to byte buffers
@@ -25,19 +31,18 @@ function MPW()
         var i = 0;
         salt.set(mpNameSpaceRaw, i); i += mpNameSpaceRaw.length;
         saltView.setUint32(i, userNameRaw.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
-        salt.set(userNameRaw, i); i += name.length;
+        salt.set(userNameRaw, i); i += userNameRaw.length;
         return salt;
     }
     
-    this.mpw_core_calculate_secret_key = function( mpNameSpace ) 
+    this.mpw_core_calculate_secret_key = function( masterPassword, masterKeySalt ) 
     {
-        //TODO: Add the real numbers here.
-        var N = 16;
-        var r = 3;
-        var p = 3;
-        var dkLen = 32;
+        var N = 32768;
+        var r = 8;
+        var p = 2;
+        var dkLen = 64;
         
-        var secretKey = scrypt(mpNameSpace, mpNameSpace, N, r, p, dkLen) 
+        var secretKey = scrypt( masterPassword, masterKeySalt, N, r,     p, dkLen) 
         
         return secretKey;        
     }
@@ -61,9 +66,12 @@ function MPW()
         return data;
     }
 
-    this.mpw_core_hash_site_info = function (secretKey,siteSeed) 
+    this.mpw_core_hash_site_info = function (secretKey, siteSeed ) 
     {
-        return HMAC_SHA256_MAC(secretKey, siteSeed);        
+        if ( secretKey.length != 64 ) {
+            return "Error"; //TODO: Change to proper error.
+        }
+        return HMAC_SHA256_MAC(secretKey, siteSeed);  //THis HMAC assumes MP_dkLen is 64.    
     }
     
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )

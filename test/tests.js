@@ -31,16 +31,34 @@ QUnit.test( "testMainSalt", function( assert ) {
 
 QUnit.test( "testSecretKey", function( assert ) {
 	//Arrange
-	var mpNameSpace = new TextEncoder("utf-8").encode("com.lyndir.masterpassword"); //TODO: Add real salt here.
+	var masterPasswordRaw = new TextEncoder("utf-8").encode("12345678123456781234567812345678"); //TODO: Add real password here
+    var secretKeyRaw = new TextEncoder("utf-8").encode("12345678123456781234567812345678"); //TODO: Add real secret key here.
+
     var mpw = new MPW();
 	
 	//Act
-	var secretKey = mpw.mpw_core_calculate_secret_key(mpNameSpace)
+	var secretKey = ""; //mpw.mpw_core_calculate_secret_key(masterPasswordRaw, secretKeyRaw);
   	
   	//Assert
   	var stringKey = mpw.convertBufferToHex(secretKey);
   	assert.equal( stringKey, "" );  	
-    assert.equal( 32, secretKey.length );
+    assert.equal( 64, secretKey.length );
+
+});
+
+QUnit.test( "testSecretKeyStringInput", function( assert ) {
+	//Arrange
+	var masterPassword = "12345678123456781234567812345678"; //TODO: Add real password here
+    var secretKeyRaw = "12345678123456781234567812345678"; //TODO: Add real secret key here.
+    var mpw = new MPW();
+	
+	//Act
+	var secretKey = ""; //mpw.mpw_core_calculate_secret_key(masterPasswordRaw, secretKeyRaw);
+  	
+  	//Assert
+  	var stringKey = mpw.convertBufferToHex(secretKey);
+  	assert.equal( stringKey, "" );  	
+    assert.equal( 64, secretKey.length );
 
 });
 
@@ -63,7 +81,7 @@ QUnit.test( "testSiteSalt", function( assert ) {
 
 QUnit.test( "testHashSiteInfo", function( assert ) {
 	//Arrange
-	var secretKey = new TextEncoder("utf-8").encode("12345678123456781234567812345678"); //TODO: Add real secret key here.
+	var secretKey = new TextEncoder("utf-8").encode("1234567812345678123456781234567812345678123456781234567812345678"); //TODO: Add real secret key here.
     var siteSeed = new TextEncoder("utf-8").encode("12345678123456781234567812345678"); //TODO: Add real secret key here.
     var mpw = new MPW();
 	
@@ -88,4 +106,20 @@ QUnit.test( "testPasswordGeneration", function( assert ) {
   	  	
   	//Assert
   	assert.equal( password, "NuprFino6_Dudo" );
+});
+
+QUnit.test( "testCompleteLhunath", function( assert ) {
+	//Arrange
+	var userName = "Robert Lee Mitchel";
+    var masterPassword = "banana colored duckling";
+    var siteTypeString = "long";
+    var siteName = "masterpasswordapp.com";    
+    var siteCounter = 1;
+	var mpw = new MPW();
+
+	//Act
+	var password = mpw.mpw_core ( userName, masterPassword, siteTypeString, siteName, siteCounter );  	
+  	  	
+  	//Assert
+  	assert.equal( password, "Dora6.NudiDuhj" );
 });
