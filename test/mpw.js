@@ -1,14 +1,6 @@
 //TODO: Adjust all functions to handle both string and buffer input.
 function MPW()
 {
-    this.convertBufferToHex = function (buffer) 
-    {
-        var h = '';
-        for (var i = 0; i < buffer.length; i++) {
-            h += ("00" + buffer[i].toString(16)).substr(-2);
-        }
-        return h;
-    }       
 
     this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter )
     {
@@ -35,7 +27,7 @@ function MPW()
         return salt;
     }
     
-    this.mpw_core_calculate_secret_key = function( masterPassword, masterKeySalt ) 
+    this.mpw_core_calculate_master_key = function( masterPassword, masterKeySalt ) 
     {
         var N = 32768;
         var r = 8;
@@ -66,7 +58,7 @@ function MPW()
         return data;
     }
 
-    this.mpw_core_hash_site_info = function (secretKey, siteSeed ) 
+    this.mpw_core_compute_hmac = function (secretKey, siteSeed ) 
     {
         if ( secretKey.length != 64 ) {
             return "Error"; //TODO: Change to proper error.
