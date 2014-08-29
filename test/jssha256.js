@@ -85,10 +85,6 @@ function array_to_hex_string(ary) {
 
 /* The following are the SHA256 routines */
 
-var SHA256_buf;
-var SHA256_H;
-var SHA256_len;
-
 /* 
    SHA256_init: initialize the internal state of the hash function. Call this
    function before calling the SHA256_write function.
@@ -174,8 +170,6 @@ function SHA256_hash(msg) {
 
 /******************************************************************************/
 
-var HMAC_SHA256_key;
-
 /* The following are the HMAC-SHA256 routines */
 
 /*
@@ -242,7 +236,7 @@ function HMAC_SHA256_MAC(key, msg) {
   var res;
   HMAC_SHA256_init(key);
   HMAC_SHA256_write(msg);
-  res = HMAC_SHA256_finalize()
+  res = HMAC_SHA256_finalize();
   return array_to_hex_string(res);
 }
 
@@ -317,13 +311,3 @@ function SHA256_Hash_Byte_Block(H, w) {
       w[4 * i + 2] << 8 | w[4 * i + 3];
   SHA256_Hash_Word_Block(H, W);
 }
-
-
-//Deleteme
-/*
-module.exports = {
-	init: HMAC_SHA256_init,
-	update: HMAC_SHA256_write,
-	finalize: HMAC_SHA256_finalize
-};
-*/

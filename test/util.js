@@ -49,7 +49,7 @@ function Util()
     
     this.convertBufferFromHex = function (string) 
     {
-        var h = Uint8Array(string.length/2);
+        var h = new Uint8Array(string.length/2);
         for (var i = 0; i < h.length; i++) {
             var v1 = this.charToInt(string[2*i]);
             var v2 = this.charToInt(string[2*i+1]);

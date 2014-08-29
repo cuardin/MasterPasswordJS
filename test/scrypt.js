@@ -26,8 +26,7 @@ function scrypt(passwd, salt, N, r, p, dkLen) {
     var V  = []; //new Array(128 * r * N);
     var i;
 
-    pbkdf2(passwd, new Uint8Array(salt), 1, B, p * 128 * r);
-    //console.log(new Buffer(B, 'base64').toString('base64'));
+    pbkdf2(passwd, new Uint8Array(salt), 1, B, p * 128 * r);    
 
     for(i = 0; i < p; i++) {
         smix(B, i * 128 * r, r, N, V, XY);
