@@ -1,7 +1,22 @@
-QUnit.test( "testConvertToHex", function( assert ) {
+QUnit.test( "testConvertToHexFromUint8Array", function( assert ) {
 	//Arrange
 	var rawBytes = [3, 156, 54];	
 	var bytes = new Uint8Array(rawBytes);		
+	var util = new Util();
+
+	//Act
+	var hexString = util.convertBufferToHex( bytes );
+
+	//Assert
+	assert.equal( "039c36", hexString );
+});
+
+QUnit.test( "testConvertToHexFromArray", function( assert ) {
+	//Arrange	
+	var bytes = new Array(3);
+	bytes[0] = 3;
+	bytes[1] = 156;
+	bytes[2] = 54;		
 	var util = new Util();
 
 	//Act
