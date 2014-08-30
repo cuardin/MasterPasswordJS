@@ -49,6 +49,7 @@ function Util()
     
     this.convertBufferFromHex = function (string) 
     {
+        //TODO: Figure out and make a test on why this does not work with Uint8Array.
         var h = new Array(string.length/2);
         for (var i = 0; i < h.length; i++) {
             var v1 = this.charToInt(string[2*i]);

@@ -1,5 +1,7 @@
 QUnit.test( "testHMACSHA256", function( assert ) {
-	//Arrange
+	//This is an official one from the RFC.
+    
+    //Arrange
 	var util = new Util();    
     var key = util.convertBufferFromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b");
     var data = util.convertBufferFromHex("4869205468657265");    
