@@ -13,8 +13,14 @@ function MPW()
     
     this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter )
     {
+        var util = new Util();
         var mpNameSpace = "com.lyndir.masterpassword";
-        return ""
+        var masterKeySalt = this.mpw_core_calculate_master_key_salt( mpNameSpace, userName )
+        var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );        
+        var siteSeed = this.mpw_core_calculate_site_seed( mpNameSpace, siteName, siteCounter );        
+        var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );        
+        var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );
+        return password;
     }
     
     this.mpw_core_calculate_master_key_salt = function ( mpNameSpace, userName ) 
@@ -45,7 +51,7 @@ function MPW()
         
         var secretKey = scrypt( masterPassword, masterKeySalt, N, r,     p, dkLen) 
         
-        return secretKey;        
+        return this.do_convert_uint8_to_array( secretKey );        
     }
 
     this.mpw_core_calculate_site_seed = function ( mpNameSpace, siteName, siteCounter )
@@ -64,7 +70,7 @@ function MPW()
         data.set(siteNameRaw, i); i += siteNameRaw.length;
         dataView.setUint32(i, siteCounter, false/*big-endian*/); i += 4/*sizeof(uint32)*/;  
 
-        return data;
+        return this.do_convert_uint8_to_array(data);
     }
 
     this.mpw_core_compute_hmac = function (secretKey, siteSeed ) 
@@ -72,7 +78,11 @@ function MPW()
         if ( secretKey.length != 64 ) {
             return "Error"; //TODO: Change to proper error.
         }
-        return HMAC_SHA256_MAC(secretKey, siteSeed);  //THis HMAC assumes MP_dkLen is 64.    
+        
+        HMAC_SHA256_init(secretKey);
+        HMAC_SHA256_write(siteSeed);
+        var siteKey = HMAC_SHA256_finalize();         
+        return this.do_convert_uint8_to_array( siteKey );
     }
     
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )
