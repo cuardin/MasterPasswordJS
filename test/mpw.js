@@ -4,11 +4,14 @@ function MPW()
 
     this.do_convert_uint8_to_array = function ( uint8_arr ) 
     {
+        /*
         var rValue = new Array(uint8_arr.length);
         for ( var i = 0; i < uint8_arr.length; i++ ) {
             rValue[i] = uint8_arr[i];
         }
         return rValue;
+        */
+        return Array.apply([], uint8_arr);
     }
     
     this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter )
