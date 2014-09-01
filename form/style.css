@@ -32,10 +32,10 @@ input:focus, textarea:focus {
 .compute { 
     width: 150px; 
     padding: 9px 15px; 
-    background: #617798; 
+    background: #444; /*#617798*/
     border: 0; 
     font-size: 14px; 
-    color: #FFFFFF; 
+    color: #EEE; 
     -moz-border-radius: 5px; 
     -webkit-border-radius: 5px; 
 }
@@ -50,9 +50,13 @@ img {
     float: right;
 }
 
+h1 {
+    color: #444; /*#999999;     */
+}
+
 body {
     width: 100%;
-    /*background: #000000;*/
+    background: #EEE;
     margin: 5% 0;
 
 }
@@ -68,7 +72,7 @@ body {
     text-align: left;    
  
     /* So you can see it in action */
-    background: #ffffff;
+    /*background: #EEE;*/
     /*height: 100%;*/
 }
 
