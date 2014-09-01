@@ -1,46 +1,46 @@
 <html>
 <head>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">    
 </head>
-<body>
-    <div class="header">
-    </div>
+<body>    
     <div class="mainDiv">
         <h1>MasterPassword</h1>
         <form class="form"> 
 
-            <p class="userName"> 
+            <div class="userName"> 
                 <label for="userName">Username</label> 
-                <input type="text" name="userName" id="userName" />             
-            </p> 
+                <input type="text" name="userName" id="userName" class="input"/>             
+            </div> 
 
-            <p class="masterPassword"> 
+            <div class="masterPassword"> 
                 <label for="masterPassword">Master Password</label> 
-                <input type="password" name="masterPassword" id="masterPassword" />             
-            </p> 
+                <input type="password" name="masterPassword" id="masterPassword" class="input" />             
+            </div> 
 
-            <p class="siteId"> 
+            <div class="siteId"> 
                 <label for="siteId">Site</label> 
-                <input type="text" name="siteId" id="siteId" />             
-            </p> 
+                <input type="text" name="siteId" id="siteId" class="input"/>             
+            </div> 
 
-            <p class="siteCounter"> 
+            <div class="siteCounter"> 
                 <label for="siteCounter">Site Counter</label> 
-                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1"/>             
-            </p> 
+                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1" class="input"/>             
+            </div> 
 
-            <p class="submit"> 
-                <button class="compute">
+            <div class="submit"> 
+                <button class="compute" type="button" id="compute">
                     Compute 
                 </button>
-            </p> 
+                <img src="" id="progress">
+            </div> 
 
-            <p class="sitePassword"> 
+            <div class="sitePassword"> 
                 <label for="sitePassword">Site Password</label> 
-                <input type="text" name="ssitePassword" id="sitePassword" readonly/>             
-            </p> 
+                <input type="text" name="sitePassword" id="sitePassword" class="output" value="--"/>             
+            </div> 
 
         </form>
     </div>
 </body>
+<script src="integration.js"></script>
 </html>
