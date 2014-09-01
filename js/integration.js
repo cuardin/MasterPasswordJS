@@ -35,10 +35,11 @@ function startWorker() {
     	computeBtn.disabled = true;
 
         if(typeof(w) == "undefined") {
-            w = new Worker("mpw_worker.js");
+            w = new Worker("../js/mpw_worker.js");
         }
         w.onmessage = function(event) {
-            document.getElementById("output").value = event.data;
+            console.log( event );
+            document.getElementById("sitePassword").value = event.data;
         };
 
         //Change the event handler of the button to stop.
