@@ -34,9 +34,10 @@ function startWorker() {
     	var computeBtn = document.getElementById("compute");
     	computeBtn.disabled = true;
 
-        if(typeof(w) == "undefined") {
-            w = new Worker("../js/mpw_worker.js");
+        if(typeof(w) != "undefined") {
+            w.terminate();                      
         }
+        w = new Worker("../js/mpw_worker.js");
         w.onmessage = function(event) {
             console.log( event );
             document.getElementById("sitePassword").value = event.data;
