@@ -11,12 +11,6 @@ for ( var i = 0; i < inputList.length; i++ ) {
 var computeBtn = document.getElementById("compute");
 computeBtn.addEventListener("click", startWorker );
 
-function doTheThing()
-{
-	var output = document.getElementById("sitePassword");
-	output.value="The thing!!!";
-}
-
 function clearAllOutput()
 {
 	var outputList = document.getElementsByClassName("output");
@@ -31,9 +25,11 @@ var w;
 
 function startWorker() {
     if(typeof(Worker) !== "undefined") {    	
-    	var computeBtn = document.getElementById("compute");
-    	computeBtn.disabled = true;
+    	var computeBtn = document.getElementById("compute");    
+        computeBtn.disabled = true;      
 
+        lockUI();
+        
         if(typeof(w) != "undefined") {
             w.terminate();                      
         }
@@ -41,6 +37,7 @@ function startWorker() {
         w.onmessage = function(event) {
             console.log( event );
             document.getElementById("sitePassword").value = event.data;
+            stopWorker();            
         };
 
         //Change the event handler of the button to stop.
@@ -50,9 +47,10 @@ function startWorker() {
         computeBtn.addEventListener("click", stopWorker);        
 
         var img = document.getElementById("progress");
-        img.src = "ajax-loader.gif";
+        img.src = "ajax-loader.gif";               
+        
+        var computeBtn = document.getElementById("compute");
         computeBtn.disabled = false;
-
     } else {
         document.getElementById("result").value = "Sorry, your browser does not support Web Workers...";
     }
@@ -68,5 +66,23 @@ function stopWorker() {
     computeBtn.removeEventListener("click",stopWorker);
     computeBtn.addEventListener("click",startWorker);    
     computeBtn.innerHTML = "Compute";
+    
     computeBtn.disabled = false;
+    unlockUI();
+}
+
+function lockUI()
+{   
+    var inputList = document.getElementsByClassName("input");
+    for ( var i = 0; i < inputList.length; i++ ) {
+        inputList[i].disabled = true;
+    }
+}
+
+function unlockUI()
+{    
+    var inputList = document.getElementsByClassName("input");
+    for ( var i = 0; i < inputList.length; i++ ) {
+        inputList.disabled = false;
+    }
 }
