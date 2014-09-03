@@ -1,3 +1,5 @@
+//TODO: Add validator to check that inputs are reasonable
+
 //Get a list of all elements tagged with class "input".
 inputList = document.getElementsByClassName("input");
 //console.log( inputList );
@@ -8,8 +10,6 @@ for ( var i = 0; i < inputList.length; i++ ) {
 }
 
 //Add an event handler to the button.
-var computeBtn = document.getElementById("compute");
-computeBtn.addEventListener("click", startWorker );
 
 function clearAllOutput()
 {
@@ -21,58 +21,50 @@ function clearAllOutput()
 	}
 }
 
-var w;
+var computeBtn = document.getElementById("compute");
+computeBtn.addEventListener("click", startWorker );
+
+var w = new Worker("../js/mpw_worker.js");
+w.addEventListener( "message", function(event) {
+    console.log( event );
+    document.getElementById("sitePassword").value = event.data;
+    
+    var img = document.getElementById("progress");
+    img.src = "blank.gif";
+    
+    unlockUI();
+    
+}, false);
 
 function startWorker() {
-    if(typeof(Worker) !== "undefined") {    	
-    	var computeBtn = document.getElementById("compute");    
-        computeBtn.disabled = true;      
-
+    if(typeof(Worker) !== "undefined") {    	    	
         lockUI();
         
-        if(typeof(w) != "undefined") {
-            w.terminate();                      
-        }
-        w = new Worker("../js/mpw_worker.js");
-        w.onmessage = function(event) {
-            console.log( event );
-            document.getElementById("sitePassword").value = event.data;
-            stopWorker();            
-        };
-
-        //Change the event handler of the button to stop.
+        //Build a message from the form to send
+        var data = {};
+        data.userName = document.getElementById('userName').value;
+        data.masterPassword = document.getElementById('masterPassword').value;
+        data.siteId = document.getElementById('siteId').value;
+        data.siteCounter = document.getElementById('siteCounter').value;
         
-        computeBtn.innerHTML = "Stop";
-        computeBtn.removeEventListener("click", startWorker);        
-        computeBtn.addEventListener("click", stopWorker);        
+        var jsonString = JSON.stringify(data);
+        
+        //Send a message to start the process.
+        w.postMessage(jsonString);                      
 
         var img = document.getElementById("progress");
         img.src = "ajax-loader.gif";               
-        
-        var computeBtn = document.getElementById("compute");
-        computeBtn.disabled = false;
+                
     } else {
         document.getElementById("result").value = "Sorry, your browser does not support Web Workers...";
     }
 }
 
-function stopWorker() { 
-	var computeBtn = document.getElementById("compute");
-	computeBtn.disabled = true;
-    w.terminate();    
-	var img = document.getElementById("progress");
-    img.src = "blank.gif";
-
-    computeBtn.removeEventListener("click",stopWorker);
-    computeBtn.addEventListener("click",startWorker);    
-    computeBtn.innerHTML = "Compute";
-    
-    computeBtn.disabled = false;
-    unlockUI();
-}
-
 function lockUI()
 {   
+    var computeBtn = document.getElementById("compute");    
+    computeBtn.disabled = true;      
+    
     var inputList = document.getElementsByClassName("input");
     for ( var i = 0; i < inputList.length; i++ ) {
         inputList[i].disabled = true;
@@ -81,8 +73,11 @@ function lockUI()
 
 function unlockUI()
 {    
+    var computeBtn = document.getElementById("compute");    
+    computeBtn.disabled = false;      
+    
     var inputList = document.getElementsByClassName("input");
     for ( var i = 0; i < inputList.length; i++ ) {
-        inputList.disabled = false;
+        inputList[i].disabled = false;
     }
 }
