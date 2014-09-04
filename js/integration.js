@@ -38,8 +38,7 @@ w.addEventListener( "message", function(event) {
 
 function startWorker() {
     if(typeof(Worker) !== "undefined") {    	    	
-        lockUI();
-        var util = new Util();
+        lockUI();        
         
         //Build a message from the form to send
         var data = {};
@@ -47,6 +46,7 @@ function startWorker() {
         data.masterPassword = document.getElementById('masterPassword').value;
         data.siteName = document.getElementById('siteName').value;
         data.siteCounter = document.getElementById('siteCounter').value;
+        data.siteType = document.getElementById('siteType').value;
         
         var jsonString = JSON.stringify(data);
         
