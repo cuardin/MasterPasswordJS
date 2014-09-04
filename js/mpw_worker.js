@@ -8,18 +8,19 @@ importScripts('core/scrypt.js');
 importScripts('core/util.js');
 importScripts('core/mpw.js');
 
-
-
 self.addEventListener('message', handleMessage);
-var userName = null;
-var masterPassword = null;
 
 function handleMessage(event) {    
     var data = JSON.parse(event.data);                
     var mpw = new MPW();
-
-    var password = mpw.mpw_core( data.userName, data.masterPassword, data.siteType, data.siteName, data.siteCounter );
-    postMessage( password );
+    
+    try {        
+        var password = mpw.mpw_core( data.userName, data.masterPassword, data.siteType, data.siteName, data.siteCounter );
+        postMessage( password );
+    } catch ( error ) {
+        postMessage(error.message);
+    }
+    
 }
 
 

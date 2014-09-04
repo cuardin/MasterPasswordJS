@@ -16,6 +16,24 @@ QUnit.test( "testGenerateMainSalt", function( assert ) {
 
 });
 
+QUnit.test( "testGenerateMainSaltInvalidUser", function( assert ) {
+	//Arrange
+	var mpNameSpace = "com.lyndir.masterpassword";
+	var userName = 3; //An invalid username
+	var mpw = new MPW();
+    var util = new Util();
+
+	//Act
+    try {
+        var masterKeySalt = mpw.mpw_core_calculate_master_key_salt(mpNameSpace, userName)
+        
+        //Assert
+        assert.ok( false, "An exception should have been thrown" );
+    } catch ( error ) {    
+        assert.ok(true);
+    }  	
+});
+
 QUnit.test( "testGenerateSecretKey", function( assert ) {
 	//Arrange
     var mpw = new MPW();
@@ -30,6 +48,22 @@ QUnit.test( "testGenerateSecretKey", function( assert ) {
   	var stringKey = util.convertBufferToHex(masterKey);
   	assert.equal( stringKey, "9124510a3ff74e95b5447686f717c52bd5f6b39676054472bf8ba83a72cd6972b790629de544d94d1e5f105d8c74a24910d944099cf4204dab16ac0feabb17b0" );
     assert.equal( masterKey.length, 64 );
+});
+
+QUnit.test( "testGenerateSecretKeyInvalidPassword", function( assert ) {
+	//Arrange
+    var mpw = new MPW();
+    var util = new Util();
+    var masterPassword = 2; //An invalid password   
+	var masterKeySalt =  util.convertBufferFromHex("636f6d2e6c796e6469722e6d617374657270617373776f72640000000c757365723031c3a5c3a4c3b6");
+    	
+	//Act
+    try {
+        var masterKey = mpw.mpw_core_calculate_master_key(masterPassword, masterKeySalt);
+        assert.ok(false, "An error should have been thrown");
+    } catch ( error ) {
+        assert.ok(true);
+    }  	
 });
 
 QUnit.test( "testPassGenerateSiteSeed", function( assert ) {
@@ -50,6 +84,23 @@ QUnit.test( "testPassGenerateSiteSeed", function( assert ) {
   	assert.equal( stringSalt, "636f6d2e6c796e6469722e6d617374657270617373776f72640000000d7369746530312ec3a5c3a4c3b600000001" );
 });
 
+QUnit.test( "testPassGenerateSiteSeedInvalidData", function( assert ) {
+	//Arrange
+	var siteName = 1;
+    var siteCounter = "site01.åäö";
+    var mpNameSpace = "com.lyndir.masterpassword";
+	var mpw = new MPW();
+    var util = new Util();
+
+	//Act
+    try {
+        var siteSeed = mpw.mpw_core_calculate_site_seed( mpNameSpace, siteName, siteCounter );
+        assert.ok(false,"An exception should have been thrown");
+    } catch ( error ) {
+        assert.ok(true);
+    }  	
+});
+
 QUnit.test( "testPassHashSecretKey", function( assert ) {
 	//Arrange
   var util = new Util();
@@ -66,6 +117,22 @@ QUnit.test( "testPassHashSecretKey", function( assert ) {
 
 });
 
+QUnit.test( "testPassHashSecretKeyInvalidData", function( assert ) {
+	//Arrange
+    var util = new Util();
+    var mpw = new MPW();
+    var masterKey = "asd";
+    var siteSeed = "dfsaf";
+    	
+	//Act
+    try {
+        var siteKey = mpw.mpw_core_compute_hmac(masterKey,siteSeed)
+        assert.ok( false, "An exception should have been thrown" );
+    } catch ( error ) {
+        assert.ok(true);
+  	}      
+});
+
 QUnit.test( "testPassConvertToPassword", function( assert ) {
 	//Arrange
 	var util = new Util();
@@ -78,6 +145,38 @@ QUnit.test( "testPassConvertToPassword", function( assert ) {
   	  	
   	//Assert
   	assert.equal( password, "Gink2^LalqZuza" );
+});
+
+QUnit.test( "testPassConvertToPasswordBadSeed", function( assert ) {
+	//Arrange
+	var util = new Util();
+    var mpw = new MPW();
+    var sitePasswordSeed = "sadsa";
+    var siteTypeString = "long";	
+	
+	//Act
+    try {
+        var password = mpw.mpw_core_convert_to_password(siteTypeString, sitePasswordSeed );  	
+        assert.ok( false, "An exception should have been thrown" );
+    } catch ( error ) {
+        assert.ok( true );
+    }  	  	
+});
+
+QUnit.test( "testPassConvertToPasswordBadType", function( assert ) {
+	//Arrange
+	var util = new Util();
+    var mpw = new MPW();
+    var sitePasswordSeed = util.convertBufferFromHex("21d6d4b2466641c519c5f3e6903e0557ef6d7efd46a5dddbbe9d0e7d13be9c2a");
+    var siteTypeString = "stupid";	 //A bad alternative
+	
+	//Act
+    try {
+        var password = mpw.mpw_core_convert_to_password(siteTypeString, sitePasswordSeed );  	
+        assert.ok( false, "An exception should have been thrown" );
+    } catch ( error ) {
+        assert.ok( true );
+    }  	  	
 });
 
 QUnit.test( "testComplete01", function( assert ) {

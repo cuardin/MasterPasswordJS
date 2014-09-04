@@ -28,6 +28,9 @@ function MPW()
     
     this.mpw_core_calculate_master_key_salt = function ( mpNameSpace, userName ) 
     {	
+        if ( typeof(mpNameSpace) != "string" || typeof(userName) != "string" ) {
+            throw new Error("Bad input data");
+        }
         //Convert strings to byte buffers
         var encoder = new TextEncoder("utf-8");
         var mpNameSpaceRaw = encoder.encode(mpNameSpace);
@@ -46,7 +49,11 @@ function MPW()
     }
     
     this.mpw_core_calculate_master_key = function( masterPassword, masterKeySalt ) 
-    {
+    {        
+        if ( !(masterKeySalt instanceof Array) || typeof(masterPassword) != "string" ) {
+            throw new Error("Bad input data" );
+        }
+        
         var N = 32768; /*32768;*/
         var r = 8;
         var p = 2;
@@ -59,6 +66,9 @@ function MPW()
 
     this.mpw_core_calculate_site_seed = function ( mpNameSpace, siteName, siteCounter )
     {
+        if ( typeof(mpNameSpace) != "string" || typeof(siteName) != "string" || typeof(siteCounter) != "number" ) {
+            throw new Error("Bad input data" );
+        }
         //Convert strings to byte buffers
         var encoder = new TextEncoder("utf-8");
         var mpNameSpaceRaw = encoder.encode(mpNameSpace);
@@ -78,6 +88,10 @@ function MPW()
 
     this.mpw_core_compute_hmac = function (secretKey, siteSeed ) 
     {
+        if ( !(secretKey instanceof Array) || !(siteSeed instanceof Array) ) {
+            throw new Error("Bad input data" );
+        }
+
         if ( secretKey.length != 64 ) {
             return "Error"; //TODO: Change to proper error.
         }
@@ -90,6 +104,10 @@ function MPW()
     
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )
     {    
+        if ( typeof(siteTypeString) != "string" || !(sitePasswordSeed instanceof Array) ) {
+            throw new Error("Bad input data" );
+        }
+
         var template = this.templates[siteTypeString];
         template = template[sitePasswordSeed[0] % template.length];
         var passchars = this.passchars;

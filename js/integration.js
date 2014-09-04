@@ -25,16 +25,18 @@ var computeBtn = document.getElementById("compute");
 computeBtn.addEventListener("click", startWorker );
 
 var w = new Worker("../js/mpw_worker.js");
-w.addEventListener( "message", function(event) {
+w.addEventListener( "message", workerEventHandler, false);
+w.addEventListener("error", workerEventHandler, false);
+
+function workerEventHandler(event) {
     console.log( event );
     document.getElementById("sitePassword").value = event.data;
     
     var img = document.getElementById("progress");
     img.src = "blank.gif";
     
-    unlockUI();
-    
-}, false);
+    unlockUI();    
+};
 
 function startWorker() {
     if(typeof(Worker) !== "undefined") {    	    	
@@ -45,7 +47,7 @@ function startWorker() {
         data.userName = document.getElementById('userName').value;
         data.masterPassword = document.getElementById('masterPassword').value;
         data.siteName = document.getElementById('siteName').value;
-        data.siteCounter = document.getElementById('siteCounter').value;
+        data.siteCounter = parseInt(document.getElementById('siteCounter').value);
         data.siteType = document.getElementById('siteType').value;
         
         var jsonString = JSON.stringify(data);
