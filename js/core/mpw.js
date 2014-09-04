@@ -47,7 +47,7 @@ function MPW()
     
     this.mpw_core_calculate_master_key = function( masterPassword, masterKeySalt ) 
     {
-        var N = 32768;
+        var N = 32768; /*32768;*/
         var r = 8;
         var p = 2;
         var dkLen = 64;

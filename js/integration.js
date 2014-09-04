@@ -39,6 +39,7 @@ w.addEventListener( "message", function(event) {
 function startWorker() {
     if(typeof(Worker) !== "undefined") {    	    	
         lockUI();
+        var util = new Util();
         
         //Build a message from the form to send
         var data = {};
