@@ -18,11 +18,11 @@ function MPW()
     {
         var util = new Util();
         var mpNameSpace = "com.lyndir.masterpassword";
-        var masterKeySalt = this.mpw_core_calculate_master_key_salt( mpNameSpace, userName )
-        var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );        
-        var siteSeed = this.mpw_core_calculate_site_seed( mpNameSpace, siteName, siteCounter );        
-        var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );        
-        var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );
+        var masterKeySalt = this.mpw_core_calculate_master_key_salt( mpNameSpace, userName )        
+        var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                
+        var siteSeed = this.mpw_core_calculate_site_seed( mpNameSpace, siteName, siteCounter );                
+        var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );                
+        var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
         return password;
     }
     
