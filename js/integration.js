@@ -45,7 +45,7 @@ function startWorker() {
         var data = {};
         data.userName = document.getElementById('userName').value;
         data.masterPassword = document.getElementById('masterPassword').value;
-        data.siteId = document.getElementById('siteId').value;
+        data.siteName = document.getElementById('siteName').value;
         data.siteCounter = document.getElementById('siteCounter').value;
         
         var jsonString = JSON.stringify(data);
