@@ -1,7 +1,12 @@
+<!--
+TODO: Update to use jQuery
+TODO: Add validation of input arguments.
+-->
 <html>
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">    
+    <meta name="apple-itunes-app" content="app-id=510296984">
 </head>
 <body>    
     <div class="mainDiv">
@@ -10,27 +15,34 @@
 
             <div class="userName"> 
                 <label for="userName">Username</label> 
-                <input type="text" name="userName" id="userName" class="input" value="user01åäö"/>             
+                <input type="text" name="userName" id="userName" class="input box" value="user01åäö"/>             
             </div> 
 
             <div class="masterPassword"> 
                 <label for="masterPassword">Master Password</label> 
-                <input type="text" name="masterPassword" id="masterPassword" class="input" value="MasterPass01"/>             
+                <input type="text" name="masterPassword" id="masterPassword" class="input box" value="MasterPass01"/>             
             </div> 
 
             <div class="siteName"> 
                 <label for="siteName">Site</label> 
-                <input type="text" name="siteName" id="siteName" class="input" value="site01.åäö"/>             
+                <input type="text" name="siteName" id="siteName" class="input box" value="site01.åäö"/>             
             </div> 
 
             <div class="siteCounter"> 
                 <label for="siteCounter">Site Counter</label> 
-                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1" class="input"/>             
+                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1" class="input box"/>             
             </div> 
             
             <div class="siteType"> 
                 <label for="siteType">Site Type</label> 
-                <input type="text" name="siteType" id="siteType" class="input" value="long"/>             
+                <select id="siteType" class="input box" name="siteType">
+                    <option value="maximum">Maximum</option>
+                    <option value="long" selected>Long</option>
+                    <option value="medium">Medium</option>
+                    <option value="short">Short</option>
+                    <option value="basic">Basic</option>
+                    <option value="pin">Pin</option>
+                </select> 
             </div> 
 
             <div class="submit"> 
@@ -42,7 +54,7 @@
 
             <div class="sitePassword"> 
                 <label for="sitePassword">Site Password</label> 
-                <input type="text" name="sitePassword" id="sitePassword" class="output" readonly value="Expect: Gink2^LalqZuza"/>             
+                <input type="text" name="sitePassword" id="sitePassword" class="output box" readonly value="Expect: Gink2^LalqZuza"/>             
             </div> 
 
         </form>
