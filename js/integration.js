@@ -25,8 +25,13 @@ var computeBtn = document.getElementById("compute");
 computeBtn.addEventListener("click", startWorker );
 
 var w = new Worker("../js/mpw_worker.js");
-w.addEventListener( "message", workerEventHandler, false);
-w.addEventListener("error", workerEventHandler, false);
+if(typeof(w) == "undefined") {    	    	
+    document.getElementById("sitePassword").value = "Sorry, your browser does not support Web Workers...";
+    lockUI();
+} else {
+    w.addEventListener( "message", workerEventHandler, false);
+    w.addEventListener("error", workerEventHandler, false);
+}
 
 function workerEventHandler(event) {
     console.log( event );    
@@ -39,8 +44,6 @@ function workerEventHandler(event) {
         img.src = "blank.gif";
         unlockUI();    
     }, 100);
-    
-    
     
 };
 
