@@ -1,39 +1,56 @@
 //TODO: Adjust all functions to handle both string and buffer input.
 function MPW()
 {
+    //Statefull computations
+    this.mpNameSpace = "com.lyndir.masterpassword";        
+    this.userName = null;
+    this.masterPassword = null;
+    this.secretKey = null;
+    
+    this.mpw_compute_secret_key = function( userName, masterPassword )
+    {
+        
+        var masterKeySalt = this.mpw_core_calculate_master_key_salt( this.mpNameSpace, userName );
+        this.masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                
+    }
+    
+    this.mpw_compute_site_password = function( siteTypeString, siteName, siteCounter )
+    {
+        var siteSeed = this.mpw_core_calculate_site_seed( this.mpNameSpace, siteName, siteCounter );                
+        var passwordSeed = this.mpw_core_compute_hmac( this.masterKey, siteSeed );                
+        var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
+        return password;
+    }
+    
+    this.mpw_clear = function() {
+        this.userName = null;
+        this.masterPassword = null;
+        this.secretKey = null;
+    }
 
     this.do_convert_uint8_to_array = function ( uint8_arr ) 
     {
-        /*
-        var rValue = new Array(uint8_arr.length);
-        for ( var i = 0; i < uint8_arr.length; i++ ) {
-            rValue[i] = uint8_arr[i];
-        }
-        return rValue;
-        */
         return Array.apply([], uint8_arr);
     }
     
     this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter )
-    {
-        var util = new Util();
-        var mpNameSpace = "com.lyndir.masterpassword";
-        var masterKeySalt = this.mpw_core_calculate_master_key_salt( mpNameSpace, userName )        
+    {        
+        var masterKeySalt = this.mpw_core_calculate_master_key_salt(  userName )        
         var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                
-        var siteSeed = this.mpw_core_calculate_site_seed( mpNameSpace, siteName, siteCounter );                
+        var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                
         var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );                
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
         return password;
     }
     
-    this.mpw_core_calculate_master_key_salt = function ( mpNameSpace, userName ) 
+    this.mpw_core_calculate_master_key_salt = function ( userName ) 
     {	
-        if ( typeof(mpNameSpace) != "string" || typeof(userName) != "string" ) {
+        if ( typeof(userName) != "string" ) {
             throw new Error("Bad input data");
         }
         //Convert strings to byte buffers
         var encoder = new TextEncoder("utf-8");
-        var mpNameSpaceRaw = encoder.encode(mpNameSpace);
+        var mpNameSpaceRaw = encoder.encode(this.mpNameSpace);
         var userNameRaw = encoder.encode(userName);
 
         //Allocate memory
@@ -64,14 +81,14 @@ function MPW()
         return this.do_convert_uint8_to_array( secretKey );        
     }
 
-    this.mpw_core_calculate_site_seed = function ( mpNameSpace, siteName, siteCounter )
+    this.mpw_core_calculate_site_seed = function ( siteName, siteCounter )
     {
-        if ( typeof(mpNameSpace) != "string" || typeof(siteName) != "string" || typeof(siteCounter) != "number" ) {
+        if ( typeof(siteName) != "string" || typeof(siteCounter) != "number" ) {
             throw new Error("Bad input data" );
         }
         //Convert strings to byte buffers
         var encoder = new TextEncoder("utf-8");
-        var mpNameSpaceRaw = encoder.encode(mpNameSpace);
+        var mpNameSpaceRaw = encoder.encode(this.mpNameSpace);
         var siteNameRaw = encoder.encode(siteName);
 
         var data     = new Uint8Array(mpNameSpaceRaw.length + 4/*sizeof(uint32)*/ + siteNameRaw.length + 4/*sizeof(uint32)*/);

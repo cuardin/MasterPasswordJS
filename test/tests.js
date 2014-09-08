@@ -1,12 +1,11 @@
 QUnit.test( "testGenerateMainSalt", function( assert ) {
-	//Arrange
-	var mpNameSpace = "com.lyndir.masterpassword";
+	//Arrange	
 	var userName = "user01åäö";
 	var mpw = new MPW();
     var util = new Util();
 
 	//Act
-	var masterKeySalt = mpw.mpw_core_calculate_master_key_salt(mpNameSpace, userName)
+	var masterKeySalt = mpw.mpw_core_calculate_master_key_salt(userName)
   	
   	//Assert
   	var stringSalt = util.convertBufferToHex(masterKeySalt);
@@ -17,15 +16,14 @@ QUnit.test( "testGenerateMainSalt", function( assert ) {
 });
 
 QUnit.test( "testGenerateMainSaltInvalidUser", function( assert ) {
-	//Arrange
-	var mpNameSpace = "com.lyndir.masterpassword";
+	//Arrange	
 	var userName = 3; //An invalid username
 	var mpw = new MPW();
     var util = new Util();
 
 	//Act
     try {
-        var masterKeySalt = mpw.mpw_core_calculate_master_key_salt(mpNameSpace, userName)
+        var masterKeySalt = mpw.mpw_core_calculate_master_key_salt(userName)
         
         //Assert
         assert.ok( false, "An exception should have been thrown" );
@@ -69,13 +67,12 @@ QUnit.test( "testGenerateSecretKeyInvalidPassword", function( assert ) {
 QUnit.test( "testPassGenerateSiteSeed", function( assert ) {
 	//Arrange
 	var siteName = "site01.åäö";
-    var siteCounter = 1;
-    var mpNameSpace = "com.lyndir.masterpassword";
+    var siteCounter = 1;    
 	var mpw = new MPW();
     var util = new Util();
 
 	//Act
-	var siteSeed = mpw.mpw_core_calculate_site_seed( mpNameSpace, siteName, siteCounter );
+	var siteSeed = mpw.mpw_core_calculate_site_seed( siteName, siteCounter );
   	
   	//Assert
   	var stringSalt = util.convertBufferToHex(siteSeed);  	
@@ -87,14 +84,13 @@ QUnit.test( "testPassGenerateSiteSeed", function( assert ) {
 QUnit.test( "testPassGenerateSiteSeedInvalidData", function( assert ) {
 	//Arrange
 	var siteName = 1;
-    var siteCounter = "site01.åäö";
-    var mpNameSpace = "com.lyndir.masterpassword";
+    var siteCounter = "site01.åäö";    
 	var mpw = new MPW();
     var util = new Util();
 
 	//Act
     try {
-        var siteSeed = mpw.mpw_core_calculate_site_seed( mpNameSpace, siteName, siteCounter );
+        var siteSeed = mpw.mpw_core_calculate_site_seed( siteName, siteCounter );
         assert.ok(false,"An exception should have been thrown");
     } catch ( error ) {
         assert.ok(true);
@@ -213,3 +209,23 @@ QUnit.test( "testCompleteLhunath", function( assert ) {
   	//Assert
   	assert.equal( password, "Dora6.NudiDuhj" );
 });
+/*
+QUnit.test( "testComplete01Stateful", function( assert ) {
+  //Arrange
+  var util = new Util();
+  var mpw = new MPW();  
+  var userName = "user01åäö";  
+  var masterPassword = "MasterPass01"   
+  var siteName = "site01.åäö";
+  var siteTypeString = "long";  
+  var siteCounter = 1;  
+
+  //Act
+  mpw.mpw_compute_secret_key( 
+  var password = mpw.mpw_core ( userName, masterPassword, siteTypeString, siteName, siteCounter );    
+        
+  //Assert
+  assert.equal( password, "Gink2^LalqZuza" );
+
+});
+*/
