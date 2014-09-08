@@ -8,11 +8,14 @@ function MPW()
     this.mpw_compute_secret_key = function( userName, masterPassword )
     {       
         var masterKeySalt = this.mpw_core_calculate_master_key_salt( userName );
-        this.masterKey     = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                        
+        this.masterKey    = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                        
     }
     
     this.mpw_compute_site_password = function( siteTypeString, siteName, siteCounter )
     {
+        if ( this.masterKey == null ) {
+            throw new Error("Master Key is null. Recompute it first." );
+        }
         var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                
         var passwordSeed = this.mpw_core_compute_hmac( this.masterKey, siteSeed );                
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
@@ -41,8 +44,9 @@ function MPW()
     this.mpw_core_calculate_master_key_salt = function ( userName ) 
     {	
         if ( typeof(userName) != "string" ) {
-            throw new Error("Bad input data");
+            throw new Error("Bad input data (mpw_core_calculate_master_key_salt): userName: " + typeof(userName) );
         }
+        
         //Convert strings to byte buffers
         var encoder = new TextEncoder("utf-8");
         var mpNameSpaceRaw = encoder.encode(this.mpNameSpace);
@@ -63,15 +67,15 @@ function MPW()
     this.mpw_core_calculate_master_key = function( masterPassword, masterKeySalt ) 
     {        
         if ( !(masterKeySalt instanceof Array) || typeof(masterPassword) != "string" ) {
-            throw new Error("Bad input data" );
+            throw new Error("Bad input data (mpw_core_calculate_master_key): " + masterKeySalt instanceof Array + " masterPassword: " + typeof(masterPassword) );
         }
         
-        var N = 32768; /*32768;*/
+        var N = 32768;
         var r = 8;
         var p = 2;
         var dkLen = 64;
         
-        var secretKey = scrypt( masterPassword, masterKeySalt, N, r,     p, dkLen) 
+        var secretKey = scrypt( masterPassword, masterKeySalt, N, r, p, dkLen) 
         
         return this.do_convert_uint8_to_array( secretKey );        
     }
@@ -79,8 +83,9 @@ function MPW()
     this.mpw_core_calculate_site_seed = function ( siteName, siteCounter )
     {
         if ( typeof(siteName) != "string" || typeof(siteCounter) != "number" ) {
-            throw new Error("Bad input data" );
+            throw new Error("Bad input data (mpw_core_calculate_site_seed): " + typeof(siteName) + " " + typeof(siteCounter) );
         }
+        
         //Convert strings to byte buffers
         var encoder = new TextEncoder("utf-8");
         var mpNameSpaceRaw = encoder.encode(this.mpNameSpace);
@@ -100,8 +105,8 @@ function MPW()
 
     this.mpw_core_compute_hmac = function (secretKey, siteSeed ) 
     {
-        if ( !(secretKey instanceof Array) || !(siteSeed instanceof Array) ) {
-            throw new Error("Bad input data" );
+        if ( !(secretKey instanceof Array) || !(siteSeed instanceof Array) ) {            
+            throw new Error("Bad input data (mpw_core_compute_hmac): "  + typeof(secretKey) + "/" + (secretKey instanceof Array) + " " + (siteSeed instanceof Array)  );
         }
 
         if ( secretKey.length != 64 ) {
@@ -117,7 +122,7 @@ function MPW()
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )
     {    
         if ( typeof(siteTypeString) != "string" || !(sitePasswordSeed instanceof Array) ) {
-            throw new Error("Bad input data" );
+            throw new Error("Bad input data (mpw_core_convert_to_password): " + typeof(siteTypeString) + " " + (sitePasswordSeed instanceof Array) );
         }
 
         var template = this.templates[siteTypeString];

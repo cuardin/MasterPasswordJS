@@ -29,18 +29,25 @@ w.addEventListener( "message", workerEventHandler, false);
 w.addEventListener("error", workerEventHandler, false);
 
 function workerEventHandler(event) {
-    console.log( event );
-    document.getElementById("sitePassword").value = event.data;
+    console.log( event );    
+    var data = event.data;
+        
+    //Add a delay to make sure we allways see an effect.
+    setTimeout(function(event) {
+        document.getElementById("sitePassword").value = data;
+        var img = document.getElementById("progress");
+        img.src = "blank.gif";
+        unlockUI();    
+    }, 100);
     
-    var img = document.getElementById("progress");
-    img.src = "blank.gif";
     
-    unlockUI();    
+    
 };
 
 function startWorker() {
     if(typeof(Worker) !== "undefined") {    	    	
         lockUI();        
+        clearAllOutput(); //Clear the output while we are computing.
         
         //Build a message from the form to send
         var data = {};
@@ -49,6 +56,7 @@ function startWorker() {
         data.siteName = document.getElementById('siteName').value;
         data.siteCounter = parseInt(document.getElementById('siteCounter').value);
         data.siteType = document.getElementById('siteType').value;
+        data.command = "compute";
         
         var jsonString = JSON.stringify(data);
         

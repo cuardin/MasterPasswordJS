@@ -242,6 +242,23 @@ QUnit.test( "testStatefulGeneratePassword", function( assert ) {
   
 });
 
+QUnit.test( "testStatefulGeneratePasswordNullKey", function( assert ) {
+  //Arrange
+  var util = new Util();
+  var mpw = new MPW();  
+  var siteName = "site01.åäö";
+  var siteTypeString = "long";  
+  var siteCounter = 1;       
+  
+  //Act
+  try {
+    var password = mpw.mpw_compute_site_password( siteTypeString, siteName, siteCounter );    
+    assert.ok(false, "An error should have been thrown" );
+  } catch ( e ) {
+    assert.ok(true);
+  }    
+});
+
 QUnit.test( "testStatefulClear", function( assert ) {
   //Arrange
   var util = new Util();
