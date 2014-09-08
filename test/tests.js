@@ -209,23 +209,45 @@ QUnit.test( "testCompleteLhunath", function( assert ) {
   	//Assert
   	assert.equal( password, "Dora6.NudiDuhj" );
 });
-/*
+
 QUnit.test( "testComplete01Stateful", function( assert ) {
   //Arrange
   var util = new Util();
   var mpw = new MPW();  
   var userName = "user01åäö";  
   var masterPassword = "MasterPass01"   
-  var siteName = "site01.åäö";
+  var siteName01 = "site02.åäö";
+  var siteName02 = "site01.åäö";
   var siteTypeString = "long";  
   var siteCounter = 1;  
 
   //Act
-  mpw.mpw_compute_secret_key( 
-  var password = mpw.mpw_core ( userName, masterPassword, siteTypeString, siteName, siteCounter );    
+  mpw.mpw_compute_secret_key( userName, masterPassword );  
+  
+  //Assert
+  var stringSalt = util.convertBufferToHex(mpw.masterKeySalt);  
+  assert.equal( stringSalt, "636f6d2e6c796e6469722e6d617374657270617373776f72640000000c757365723031c3a5c3a4c3b6" );
+  var stringKey = util.convertBufferToHex(mpw.masterKey);
+  assert.equal( stringKey, "9124510a3ff74e95b5447686f717c52bd5f6b39676054472bf8ba83a72cd6972b790629de544d94d1e5f105d8c74a24910d944099cf4204dab16ac0feabb17b0" );  
+  
+  //Act 01
+  var password = mpw.mpw_compute_site_password( siteTypeString, siteName01, siteCounter );    
         
   //Assert
-  assert.equal( password, "Gink2^LalqZuza" );
+  assert.equal( password, "GeblZiwx9'Sike" );    
+  
+  //Act 02
+  var password = mpw.mpw_compute_site_password( siteTypeString, siteName02, siteCounter );    
+        
+  //Assert
+  assert.equal( password, "Gink2^LalqZuza" );  
+
+  //Act 03
+  mpw.mpw_clear();
+  
+  //Assert
+  assert.equal( mpw.masterKey, null );
+  assert.equal( mpw.userName, null );
+  assert.equal( mpw.masterPassword, null );
 
 });
-*/

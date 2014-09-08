@@ -5,18 +5,18 @@ function MPW()
     this.mpNameSpace = "com.lyndir.masterpassword";        
     this.userName = null;
     this.masterPassword = null;
-    this.secretKey = null;
+    this.masterKey = null;
+    this.masterKeySalt = null;
     
     this.mpw_compute_secret_key = function( userName, masterPassword )
-    {
-        
-        var masterKeySalt = this.mpw_core_calculate_master_key_salt( this.mpNameSpace, userName );
-        this.masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                
+    {       
+        this.masterKeySalt = this.mpw_core_calculate_master_key_salt( userName );
+        this.masterKey     = this.mpw_core_calculate_master_key( masterPassword, this.masterKeySalt );                        
     }
     
     this.mpw_compute_site_password = function( siteTypeString, siteName, siteCounter )
     {
-        var siteSeed = this.mpw_core_calculate_site_seed( this.mpNameSpace, siteName, siteCounter );                
+        var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                
         var passwordSeed = this.mpw_core_compute_hmac( this.masterKey, siteSeed );                
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
         return password;
@@ -25,7 +25,7 @@ function MPW()
     this.mpw_clear = function() {
         this.userName = null;
         this.masterPassword = null;
-        this.secretKey = null;
+        this.masterKey = null;
     }
 
     this.do_convert_uint8_to_array = function ( uint8_arr ) 
