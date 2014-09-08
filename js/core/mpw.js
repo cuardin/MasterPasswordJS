@@ -5,13 +5,12 @@ function MPW()
     this.mpNameSpace = "com.lyndir.masterpassword";        
     this.userName = null;
     this.masterPassword = null;
-    this.masterKey = null;
-    this.masterKeySalt = null;
+    this.masterKey = null;    
     
     this.mpw_compute_secret_key = function( userName, masterPassword )
     {       
-        this.masterKeySalt = this.mpw_core_calculate_master_key_salt( userName );
-        this.masterKey     = this.mpw_core_calculate_master_key( masterPassword, this.masterKeySalt );                        
+        var masterKeySalt = this.mpw_core_calculate_master_key_salt( userName );
+        this.masterKey     = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                        
     }
     
     this.mpw_compute_site_password = function( siteTypeString, siteName, siteCounter )
