@@ -6,16 +6,26 @@ inputList = document.getElementsByClassName("input");
 
 //Add an eventhandler to all of these elements.
 for ( var i = 0; i < inputList.length; i++ ) {
-	inputList[i].addEventListener("input", clearAllOutput);
+	inputList[i].addEventListener("input", onInputChange);
 }
 
-//Add an event handler to the button.
+var userName = null;
+var masterPassword = null;
 
-function clearAllOutput()
+//Add an event handler to the button.
+function onInputChange()
 {
 	var outputList = document.getElementsByClassName("output");
-	//console.log( "Outputs: ");
-	//console.log( outputList );
+    if ( document.getElementById('userName').value == userName &&
+        document.getElementById('masterPassword').value == masterPassword ) {
+        
+        //We only made a small change.        
+        document.getElementById('compute').innerHTML = "Compute (<1s)";
+    } else {
+        //We made a big change.        
+        document.getElementById('compute').innerHTML = "Compute (~10s)";
+    }
+    
 	for ( var i = 0; i < outputList.length; i++ ) {
 		outputList[i].value = "";
 	}
@@ -34,7 +44,7 @@ if(typeof(w) == "undefined") {
 }
 
 function workerEventHandler(event) {
-    console.log( event );    
+    //console.log( event );    
     var data = event.data;
         
     //Add a delay to make sure we allways see an effect.
@@ -42,6 +52,9 @@ function workerEventHandler(event) {
         document.getElementById("sitePassword").value = data;
         var img = document.getElementById("progress");
         img.src = "blank.gif";
+        document.getElementById('compute').innerHTML = "Compute (<1s)";
+        document.getElementById("sitePassword").select(); //Select the password for copying
+
         unlockUI();    
     }, 100);
     
@@ -50,7 +63,7 @@ function workerEventHandler(event) {
 function startWorker() {
     if(typeof(Worker) !== "undefined") {    	    	
         lockUI();        
-        clearAllOutput(); //Clear the output while we are computing.
+        onInputChange(); //Clear the output while we are computing.
         
         //Build a message from the form to send
         var data = {};
@@ -68,6 +81,11 @@ function startWorker() {
 
         var img = document.getElementById("progress");
         img.src = "ajax-loader.gif";               
+        
+        //Store the userName and password locally so we can check for change.
+        masterPassword = data.masterPassword;
+        userName = data.userName;
+        document.getElementById('compute').innerHTML = "Computing";
                 
     } else {
         document.getElementById("result").value = "Sorry, your browser does not support Web Workers...";
