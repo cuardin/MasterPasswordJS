@@ -2,9 +2,7 @@
 function MPW()
 {
     //Statefull computations
-    this.mpNameSpace = "com.lyndir.masterpassword";        
-    this.userName = null;
-    this.masterPassword = null;
+    this.mpNameSpace = "com.lyndir.masterpassword";                
     this.masterKey = null;    
     
     this.mpw_compute_secret_key = function( userName, masterPassword )
@@ -22,8 +20,6 @@ function MPW()
     }
     
     this.mpw_clear = function() {
-        this.userName = null;
-        this.masterPassword = null;
         this.masterKey = null;
     }
 
