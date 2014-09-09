@@ -13,7 +13,7 @@ var MAX_VALUE = 2147483647;
  * p = parallelization cost
  *
  */
-function scrypt(passwd, salt, N, r, p, dkLen) {
+function scrypt(passwd, salt, N, r, p, dkLen, progressFun) {
     if (N == 0 || (N & (N - 1)) != 0) throw Error("N must be > 0 and a power of 2");
 
     if (N > MAX_VALUE / 128 / r) throw Error("Parameter N is too large");
@@ -29,7 +29,10 @@ function scrypt(passwd, salt, N, r, p, dkLen) {
     pbkdf2(passwd, new Uint8Array(salt), 1, B, p * 128 * r);    
 
     for(i = 0; i < p; i++) {
-        smix(B, i * 128 * r, r, N, V, XY);
+        if ( progressFun != undefined ) {
+            progressFun( i, p );
+        }
+        smix(B, i * 128 * r, r, N, V, XY);        
     }
 
     pbkdf2(passwd, B, 1, DK, dkLen);

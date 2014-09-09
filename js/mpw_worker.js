@@ -14,6 +14,14 @@ var userName = null;
 var masterPassword = null;
 var mpw = new MPW();
 
+function postProgress( i, p )
+{
+    var returnValue = {};
+    returnValue.type = "progress"
+    returnValue.data = "" + i*100.0/p + "%";
+    postMessage( JSON.stringify(returnValue) );    
+}
+
 function handleMessage(event) {    
     var data = JSON.parse(event.data);                
 
@@ -22,16 +30,23 @@ function handleMessage(event) {
             if ( !(userName == data.userName && masterPassword == data.masterPassword ) ) {
                 userName = data.userName;
                 masterPassword = data.masterPassword;
-                mpw.mpw_compute_secret_key( data.userName, data.masterPassword );  
+                mpw.mpw_compute_secret_key( data.userName, data.masterPassword, postProgress );  
             }
             
             var password = mpw.mpw_compute_site_password( data.siteType, data.siteName, data.siteCounter );
-            postMessage( password );
+            var returnValue = {};
+            returnValue.type = "password"
+            returnValue.data = password;
+            postMessage( JSON.stringify(returnValue) );
         } else {
             throw new Error("Unknown command: " + data.command );            
         }
     } catch ( error ) {
-        postMessage(error.message);
+        var returnValue = {};
+        returnValue.type = "error"
+        returnValue.data = error.message;
+    
+        postMessage(JSON.stringify(returnValue));
     }
     
 }

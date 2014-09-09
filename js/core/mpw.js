@@ -5,10 +5,10 @@ function MPW()
     this.mpNameSpace = "com.lyndir.masterpassword";                
     this.masterKey = null;    
     
-    this.mpw_compute_secret_key = function( userName, masterPassword )
+    this.mpw_compute_secret_key = function( userName, masterPassword, progressFun )
     {       
         var masterKeySalt = this.mpw_core_calculate_master_key_salt( userName );
-        this.masterKey    = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                        
+        this.masterKey    = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                        
     }
     
     this.mpw_compute_site_password = function( siteTypeString, siteName, siteCounter )
@@ -31,10 +31,10 @@ function MPW()
         return Array.apply([], uint8_arr);
     }
     
-    this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter )
+    this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter, progressFun )
     {        
         var masterKeySalt = this.mpw_core_calculate_master_key_salt(  userName )        
-        var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt );                
+        var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                
         var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                
         var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );                
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
@@ -64,7 +64,7 @@ function MPW()
         return this.do_convert_uint8_to_array( salt );
     }
     
-    this.mpw_core_calculate_master_key = function( masterPassword, masterKeySalt ) 
+    this.mpw_core_calculate_master_key = function( masterPassword, masterKeySalt, progressFun ) 
     {        
         if ( !(masterKeySalt instanceof Array) || typeof(masterPassword) != "string" ) {
             throw new Error("Bad input data (mpw_core_calculate_master_key): " + masterKeySalt instanceof Array + " masterPassword: " + typeof(masterPassword) );
@@ -75,7 +75,7 @@ function MPW()
         var p = 2;
         var dkLen = 64;
         
-        var secretKey = scrypt( masterPassword, masterKeySalt, N, r, p, dkLen) 
+        var secretKey = scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, progressFun); 
         
         return this.do_convert_uint8_to_array( secretKey );        
     }

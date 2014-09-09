@@ -45,18 +45,25 @@ if(typeof(w) == "undefined") {
 
 function workerEventHandler(event) {
     //console.log( event );    
-    var data = event.data;
+    var data = JSON.parse(event.data);
+    console.log( data );
         
     //Add a delay to make sure we allways see an effect.
-    setTimeout(function(event) {
-        document.getElementById("sitePassword").value = data;
-        var img = document.getElementById("progress");
-        img.src = "blank.gif";
-        document.getElementById('compute').innerHTML = "Compute (<1s)";
-        document.getElementById("sitePassword").select(); //Select the password for copying
+    if ( data.type == "password" ) {           
+        setTimeout(function(event) {
+            document.getElementById("sitePassword").value = data.data;  
+            var img = document.getElementById("progress");
+            img.src = "blank.gif";
+            document.getElementById('compute').innerHTML = "Compute (<1s)";
+            document.getElementById("sitePassword").select(); //Select the password for copying
 
-        unlockUI();    
-    }, 100);
+            unlockUI();    
+        }, 100);
+    } else if ( data.type == "progress" ) {
+        document.getElementById("compute").innerHTML = "Computing: " + data.data;
+    } else {
+       document.getElementById("sitePassword").value = data.data;  
+    }
     
 };
 
