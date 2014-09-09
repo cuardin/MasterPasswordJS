@@ -1,5 +1,3 @@
-//TODO: Add validator to check that inputs are reasonable
-
 //Get a list of all elements tagged with class "input".
 inputList = document.getElementsByClassName("input");
 //console.log( inputList );
@@ -7,6 +5,22 @@ inputList = document.getElementsByClassName("input");
 //Add an eventhandler to all of these elements.
 for ( var i = 0; i < inputList.length; i++ ) {
 	inputList[i].addEventListener("input", onInputChange);
+}
+
+//Add an event listener to check that number is properly entered.
+document.getElementById("siteCounter").addEventListener( "input", onInputNumberChange );
+function onInputNumberChange() {
+    var siteCounter = document.getElementById("siteCounter")
+    var value = parseInt(siteCounter.value);
+    if ( isNaN(value) ) {
+        var computeBtn = document.getElementById("compute");    
+        computeBtn.disabled = true;        
+        siteCounter.style="box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px; -moz-box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px; -webkit-box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px;";
+    } else {
+        var computeBtn = document.getElementById("compute");    
+        computeBtn.disabled = false;
+        siteCounter.style="";
+    }
 }
 
 var userName = null;
