@@ -31,13 +31,18 @@ input:focus, textarea:focus {
    
 .compute { 
     width: 150px; 
-    padding: 9px 15px; 
+    padding: 9px 15px;     
     background: #444; /*#617798*/
     border: 0; 
     font-size: 14px; 
     color: #EEE; 
     -moz-border-radius: 5px; 
     -webkit-border-radius: 5px; 
+}
+
+.compute:disabled {
+    background: #999;
+    color:      #EEE;
 }
 
 .submit {

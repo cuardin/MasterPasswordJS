@@ -15,27 +15,34 @@ TODO: Add validation of input arguments.
 
             <div class="userName"> 
                 <label for="userName">Username</label> 
-                <input type="text" name="userName" id="userName" class="input box" value="user01åäö"/>             
+                <input type="text" name="userName" id="userName" class="input mainInput box" value="user01åäö"/>             
             </div> 
 
             <div class="masterPassword"> 
                 <label for="masterPassword">Master Password</label> 
-                <input type="text" name="masterPassword" id="masterPassword" class="input box" value="MasterPass01"/>             
+                <input type="text" name="masterPassword" id="masterPassword" class="input mainInput box" value="MasterPass01"/>             
+            </div> 
+
+            <div class="submit"> 
+                <button class="compute" type="button" id="compute">
+                    Compute
+                </button>
+                <img src="blank.gif" id="progress" alt="Progress">                
             </div> 
 
             <div class="siteName"> 
                 <label for="siteName">Site</label> 
-                <input type="text" name="siteName" id="siteName" class="input box" value="site01.åäö"/>             
+                <input type="text" name="siteName" id="siteName" class="input siteInput box" value="site01.åäö" disabled="true"/>             
             </div> 
 
             <div class="siteCounter"> 
                 <label for="siteCounter">Site Counter</label> 
-                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1" class="input box"/>             
+                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1" class="input siteInput box" disabled="true"/>             
             </div> 
             
             <div class="siteType"> 
                 <label for="siteType">Site Type</label> 
-                <select id="siteType" class="input box" name="siteType">
+                <select id="siteType" class="input siteInput box" name="siteType" disabled="true">
                     <option value="maximum">Maximum</option>
                     <option value="long" selected>Long</option>
                     <option value="medium">Medium</option>
@@ -43,13 +50,6 @@ TODO: Add validation of input arguments.
                     <option value="basic">Basic</option>
                     <option value="pin">Pin</option>
                 </select> 
-            </div> 
-
-            <div class="submit"> 
-                <button class="compute" type="button" id="compute">
-                    Compute (~10s)
-                </button>
-                <img src="blank.gif" id="progress" alt="Progress">
             </div> 
 
             <div class="sitePassword"> 
