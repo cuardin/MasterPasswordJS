@@ -17,7 +17,7 @@ function postProgress( i, p )
 {
     var returnValue = {};
     returnValue.type = "progress"
-    returnValue.data = "" + i*100.0/p + "%";
+    returnValue.data = 100.0*i/p;
     postMessage( JSON.stringify(returnValue) );    
 }
 

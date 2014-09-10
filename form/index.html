@@ -23,26 +23,25 @@ TODO: Add validation of input arguments.
                 <input type="text" name="masterPassword" id="masterPassword" class="mainInput box" value="MasterPass01"/>             
             </div> 
 
-            <div class="submit"> 
-                <button class="compute" type="button" id="compute" disabled=true>
-                    Compute
-                </button>
+            
+            <div class="progress"> 
+                <progress value="0" max="100" id="compute" class="compute"></progress>                
                 <img src="blank.gif" id="progress" alt="Progress">                
             </div> 
 
             <div class="siteName"> 
                 <label for="siteName">Site</label> 
-                <input type="text" name="siteName" id="siteName" class="siteInput box" value="site01.åäö"/>             
+                <input type="text" name="siteName" id="siteName" class="siteInput box" value="site01.åäö" disabled="true"/>             
             </div> 
 
             <div class="siteCounter"> 
                 <label for="siteCounter">Site Counter</label> 
-                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1" class="siteInput box"/>             
+                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1" class="siteInput box" disabled="true"/>             
             </div> 
             
             <div class="siteType"> 
                 <label for="siteType">Site Type</label> 
-                <select id="siteType" class="siteInput box" name="siteType">
+                <select id="siteType" class="siteInput box" name="siteType" disabled="true">
                     <option value="maximum">Maximum</option>
                     <option value="long" selected>Long</option>
                     <option value="medium">Medium</option>

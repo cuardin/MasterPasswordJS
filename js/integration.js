@@ -1,3 +1,8 @@
+//Check if we should even be here.
+if(!window.Worker) { 
+    document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
+} 
+
 //***************************************
 // Declare all globals.
 var userName = null;
@@ -7,9 +12,6 @@ var w = null;
 
 //********************************************
 //Add event handlers to the worker object
-if(typeof(w) == "undefined") { //TODO: Separate out this check and run this first of all.
-    document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
-} 
 
 function workerEventHandler(event) {    
     var data = JSON.parse(event.data);    
@@ -17,16 +19,17 @@ function workerEventHandler(event) {
     if ( data.type == "password" ) {                   
         document.getElementById("sitePassword").value = data.data;  
         document.getElementById("progress").src = "blank.gif";
-        document.getElementById('compute').innerHTML = "Compute";                    
+        document.getElementById('compute').value = 100;        
     } else if ( data.type == "mainKey" ) {
         masterKey = data.data;
         document.getElementById("progress").src = "blank.gif";
-        document.getElementById('compute').innerHTML = "Compute";                    
+        document.getElementById('compute').value = 100;                                        
         startSiteWorker();                
     } else if ( data.type == "progress" ) {
-        document.getElementById("compute").innerHTML = "Computing: " + data.data;
+        console.log( data.data );
+        document.getElementById("compute").value = data.data;
     } else {
-       document.getElementById("sitePassword").value = data.data;  
+       document.getElementById("sitePassword").value = "Error: " + data.data;
     }    
 };
 
@@ -86,11 +89,16 @@ function onMainInputChange() {
     data.masterPassword = document.getElementById('masterPassword').value;
     data.command = "mainCompute";    
     var jsonString = JSON.stringify(data);
+        
+    //Start the progress tickers.
+    document.getElementById("progress").src = "ajax-loader.gif";               
+    document.getElementById("compute").value = 0;
+
+    //And unlock the lower half of the input.
+    unlockSiteInput();
     
     //Send a message to start the process.
     w.postMessage(jsonString);                      
-
-    document.getElementById("progress").src = "ajax-loader.gif";               
 }
 
 //***************************************************************
@@ -107,32 +115,12 @@ function onInputNumberChange() {
     }
 }
 
-//*******************************************************
-// Add an event listener to the compute button to start the master key computation.
-document.getElementById("compute").addEventListener("click", startMainWorker );
-function startMainWorker() {
-    if(typeof(Worker) !== "undefined") {    	    	
-        
-        //Build a message from the form to send
-        var data = {};
-        data.userName = document.getElementById('userName').value;
-        data.masterPassword = document.getElementById('masterPassword').value;
-        data.command = "mainCompute";
-        
-        var jsonString = JSON.stringify(data);
-        
-        //Send a message to start the process.
-        w.postMessage(jsonString);                      
-
-        var img = document.getElementById("progress");
-        img.src = "ajax-loader.gif";               
-        
-        //Store the userName and password locally so we can check for change.
-        masterPassword = data.masterPassword;
-        userName = data.userName;
-        document.getElementById('compute').innerHTML = "Computing";
-                
-    } else {
-        document.getElementById("result").value = "Sorry, your browser does not support Web Workers...";
+//**************************************
+//Utility function to unlock lower parts of the UI
+function unlockSiteInput()
+{
+    var siteInput = document.getElementsByClassName("siteInput");
+    for ( i = 0; i < siteInput.length; i++ ) {
+        siteInput[i].disabled = false;
     }
 }

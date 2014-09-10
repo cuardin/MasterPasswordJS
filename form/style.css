@@ -21,42 +21,31 @@ input:focus, textarea:focus {
     -webkit-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px; 
     } 
    
-.form label { 
+label { 
     margin-left: 10px; 
     margin-bottom: 8px;
     margin-top: 12px;
-    color: #777; /*#999999;     */
+    color: #777;
     display: block;
     } 
    
-.compute { 
-    width: 150px; 
-    padding: 9px 15px;     
-    background: #444; /*#617798*/
-    border: 0; 
-    font-size: 14px; 
-    color: #EEE; 
-    -moz-border-radius: 5px; 
-    -webkit-border-radius: 5px; 
-}
-
-.compute:disabled {
-    background: #999;
-    color:      #EEE;
-}
-
-.submit {
+div.progress {
     margin: 20px 0px 0px 0px;
 }
 
-img {       
+progress { 
+    width: 250px; 
+    margin: 9px 0px 0px 0px;     
+}
+
+img#progress {       
     margin: auto;
     vertical-align: middle;
     float: right;
 }
 
 h1 {
-    color: #444; /*#999999;     */
+    color: #444;
 }
 
 body {
