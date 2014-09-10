@@ -3,20 +3,17 @@
 var userName = null;
 var masterPassword = null;
 var masterKey = null;
-var w = new Worker("../js/mpw_worker.js");
+var w = null;
 
 //********************************************
 //Add event handlers to the worker object
 if(typeof(w) == "undefined") { //TODO: Separate out this check and run this first of all.
     document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
-} else {
-    w.addEventListener( "message", workerEventHandler, false);
-    w.addEventListener("error", workerEventHandler, false);
-}
+} 
 
 function workerEventHandler(event) {    
     var data = JSON.parse(event.data);    
-            
+
     if ( data.type == "password" ) {                   
         document.getElementById("sitePassword").value = data.data;  
         document.getElementById("progress").src = "blank.gif";
@@ -30,10 +27,8 @@ function workerEventHandler(event) {
         document.getElementById("compute").innerHTML = "Computing: " + data.data;
     } else {
        document.getElementById("sitePassword").value = data.data;  
-    }
-    
+    }    
 };
-
 
 //******************************
 //Make all siteInput elements recompute the site password.
@@ -43,32 +38,29 @@ for ( var i = 0; i < inputList.length; i++ ) {
     inputList[i].addEventListener("change", startSiteWorker);
 }
 
-function startSiteWorker() {    
-    
+function startSiteWorker() {        
     //Build a message from the form to send
     var data = {};
     data.masterKey = masterKey;
     data.siteName = document.getElementById('siteName').value;
     data.siteCounter = parseInt(document.getElementById('siteCounter').value);
-    if ( isNaN(data.siteCounter) || masterKey == null ) { //Check masterKey just in case. That should never happen, though.
+    if ( isNaN(data.siteCounter) ) { 
         document.getElementById("sitePassword").value = "N/A";  
         return;
     }
-        
+
     data.siteType = document.getElementById('siteType').value;
-    data.command = "siteCompute";
-    
+    data.command = "siteCompute";    
     var jsonString = JSON.stringify(data);
     
     //Send a message to start the process.
     w.postMessage(jsonString);                      
 
-    var img = document.getElementById("progress");
-    img.src = "ajax-loader.gif";                                  
+    document.getElementById("progress").src = "ajax-loader.gif";                                  
 }
 
 //******************************
-// Make all mainInput elements invalidate the password and reenable the compute button.
+// Make all mainInputChanges start the secret key computation, interrupting old ones.
 inputList = document.getElementsByClassName("mainInput");
 for ( var i = 0; i < inputList.length; i++ ) {
 	inputList[i].addEventListener("input", onMainInputChange);
@@ -77,6 +69,28 @@ for ( var i = 0; i < inputList.length; i++ ) {
 function onMainInputChange() {
     document.getElementById("sitePassword").value = "";
     masterKey = null; //Reset the masterKey.    
+    
+    //Terminate the worker if it isn't null
+    if ( w != null ) {
+        w.terminate();
+    }
+    
+    //Start the worker.
+    w = new Worker("../js/mpw_worker.js");
+    //Add a listener to the worker
+    w.addEventListener( "message", workerEventHandler, false);
+    
+    //Build a message from the form to send
+    var data = {};
+    data.userName = document.getElementById('userName').value;
+    data.masterPassword = document.getElementById('masterPassword').value;
+    data.command = "mainCompute";    
+    var jsonString = JSON.stringify(data);
+    
+    //Send a message to start the process.
+    w.postMessage(jsonString);                      
+
+    document.getElementById("progress").src = "ajax-loader.gif";               
 }
 
 //***************************************************************
