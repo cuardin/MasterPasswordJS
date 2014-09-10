@@ -1,31 +1,24 @@
 //TODO: Adjust all functions to handle both string and buffer input.
 function MPW()
 {
-    //Statefull computations
-    this.mpNameSpace = "com.lyndir.masterpassword";                
-    this.masterKey = null;    
+    //Stepwise computations.
+    this.mpNameSpace = "com.lyndir.masterpassword";                    
     
     this.mpw_compute_secret_key = function( userName, masterPassword, progressFun )
     {       
         var masterKeySalt = this.mpw_core_calculate_master_key_salt( userName );
-        this.masterKey    = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                        
+        var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                        
+        return masterKey;
     }
     
-    this.mpw_compute_site_password = function( siteTypeString, siteName, siteCounter )
+    this.mpw_compute_site_password = function( masterKey, siteTypeString, siteName, siteCounter)
     {
-        if ( this.masterKey == null ) {
-            throw new Error("Master Key is null. Recompute it first." );
-        }
         var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                
-        var passwordSeed = this.mpw_core_compute_hmac( this.masterKey, siteSeed );                
+        var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );                
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
         return password;
     }
-    
-    this.mpw_clear = function() {
-        this.masterKey = null;
-    }
-
+        
     this.do_convert_uint8_to_array = function ( uint8_arr ) 
     {
         return Array.apply([], uint8_arr);

@@ -218,10 +218,10 @@ QUnit.test( "testStatefulGenerateKey", function( assert ) {
   var masterPassword = "MasterPass01"   
 
   //Act
-  mpw.mpw_compute_secret_key( userName, masterPassword );  
+  var masterKey = mpw.mpw_compute_secret_key( userName, masterPassword );  
   
   //Assert  
-  var stringKey = util.convertBufferToHex(mpw.masterKey);
+  var stringKey = util.convertBufferToHex(masterKey);
   assert.equal( stringKey, "9124510a3ff74e95b5447686f717c52bd5f6b39676054472bf8ba83a72cd6972b790629de544d94d1e5f105d8c74a24910d944099cf4204dab16ac0feabb17b0" );  
 });
 
@@ -232,43 +232,12 @@ QUnit.test( "testStatefulGeneratePassword", function( assert ) {
   var siteName = "site01.åäö";
   var siteTypeString = "long";  
   var siteCounter = 1;     
-  mpw.masterKey = util.convertBufferFromHex( "9124510a3ff74e95b5447686f717c52bd5f6b39676054472bf8ba83a72cd6972b790629de544d94d1e5f105d8c74a24910d944099cf4204dab16ac0feabb17b0" );
+  var masterKey = util.convertBufferFromHex( "9124510a3ff74e95b5447686f717c52bd5f6b39676054472bf8ba83a72cd6972b790629de544d94d1e5f105d8c74a24910d944099cf4204dab16ac0feabb17b0" );
   
   //Act
-  var password = mpw.mpw_compute_site_password( siteTypeString, siteName, siteCounter );    
+  var password = mpw.mpw_compute_site_password( masterKey, siteTypeString, siteName, siteCounter );    
   
   //Assert
   assert.equal( password, "Gink2^LalqZuza" );    
-  
-});
-
-QUnit.test( "testStatefulGeneratePasswordNullKey", function( assert ) {
-  //Arrange
-  var util = new Util();
-  var mpw = new MPW();  
-  var siteName = "site01.åäö";
-  var siteTypeString = "long";  
-  var siteCounter = 1;       
-  
-  //Act
-  try {
-    var password = mpw.mpw_compute_site_password( siteTypeString, siteName, siteCounter );    
-    assert.ok(false, "An error should have been thrown" );
-  } catch ( e ) {
-    assert.ok(true);
-  }    
-});
-
-QUnit.test( "testStatefulClear", function( assert ) {
-  //Arrange
-  var util = new Util();
-  var mpw = new MPW();  
-  mpw.masterKey = util.convertBufferFromHex( "9124510a3ff74e95b5447686f717c52bd5f6b39676054472bf8ba83a72cd6972b790629de544d94d1e5f105d8c74a24910d944099cf4204dab16ac0feabb17b0" );
-  
-  //Act
-  mpw.mpw_clear();
-  
-  //Assert
-  assert.equal( mpw.masterKey, null );    
   
 });

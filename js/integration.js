@@ -2,6 +2,7 @@
 // Declare all globals.
 var userName = null;
 var masterPassword = null;
+var masterKey = null;
 var w = new Worker("../js/mpw_worker.js");
 
 //********************************************
@@ -15,17 +16,15 @@ if(typeof(w) == "undefined") { //TODO: Separate out this check and run this firs
 
 function workerEventHandler(event) {    
     var data = JSON.parse(event.data);    
-        
-    //Add a delay to make sure we allways see an effect.
+            
     if ( data.type == "password" ) {                   
         document.getElementById("sitePassword").value = data.data;  
         document.getElementById("progress").src = "blank.gif";
         document.getElementById('compute').innerHTML = "Compute";                    
     } else if ( data.type == "mainKey" ) {
+        masterKey = data.data;
         document.getElementById("progress").src = "blank.gif";
-        document.getElementById('compute').innerHTML = "Compute";            
-        unlockUI();   
-        disableComputeBtn();
+        document.getElementById('compute').innerHTML = "Compute";                    
         startSiteWorker();                
     } else if ( data.type == "progress" ) {
         document.getElementById("compute").innerHTML = "Computing: " + data.data;
@@ -44,29 +43,28 @@ for ( var i = 0; i < inputList.length; i++ ) {
     inputList[i].addEventListener("change", startSiteWorker);
 }
 
-function startSiteWorker() {
-    if(typeof(Worker) !== "undefined") {    	    	        
-        
-        //Build a message from the form to send
-        var data = {};
-        data.siteName = document.getElementById('siteName').value;
-        data.siteCounter = parseInt(document.getElementById('siteCounter').value);
-        if ( isNaN(data.siteCounter) ) {
-            document.getElementById("sitePassword").value = "N/A";  
-            return;
-        }
-            
-        data.siteType = document.getElementById('siteType').value;
-        data.command = "siteCompute";
-        
-        var jsonString = JSON.stringify(data);
-        
-        //Send a message to start the process.
-        w.postMessage(jsonString);                      
-
-        var img = document.getElementById("progress");
-        img.src = "ajax-loader.gif";                              
+function startSiteWorker() {    
+    
+    //Build a message from the form to send
+    var data = {};
+    data.masterKey = masterKey;
+    data.siteName = document.getElementById('siteName').value;
+    data.siteCounter = parseInt(document.getElementById('siteCounter').value);
+    if ( isNaN(data.siteCounter) || masterKey == null ) { //Check masterKey just in case. That should never happen, though.
+        document.getElementById("sitePassword").value = "N/A";  
+        return;
     }
+        
+    data.siteType = document.getElementById('siteType').value;
+    data.command = "siteCompute";
+    
+    var jsonString = JSON.stringify(data);
+    
+    //Send a message to start the process.
+    w.postMessage(jsonString);                      
+
+    var img = document.getElementById("progress");
+    img.src = "ajax-loader.gif";                                  
 }
 
 //******************************
@@ -78,13 +76,7 @@ for ( var i = 0; i < inputList.length; i++ ) {
 
 function onMainInputChange() {
     document.getElementById("sitePassword").value = "";
-    enableComputeBtn();
-    
-    inputList = document.getElementsByClassName("siteInput");    
-    //Add an eventhandler to all of these elements.
-    for ( var i = 0; i < inputList.length; i++ ) {
-        inputList[i].disabled = true;
-    }    
+    masterKey = null; //Reset the masterKey.    
 }
 
 //***************************************************************
@@ -101,11 +93,11 @@ function onInputNumberChange() {
     }
 }
 
+//*******************************************************
+// Add an event listener to the compute button to start the master key computation.
 document.getElementById("compute").addEventListener("click", startMainWorker );
-
 function startMainWorker() {
     if(typeof(Worker) !== "undefined") {    	    	
-        lockUI();        
         
         //Build a message from the form to send
         var data = {};
@@ -129,36 +121,4 @@ function startMainWorker() {
     } else {
         document.getElementById("result").value = "Sorry, your browser does not support Web Workers...";
     }
-}
-
-function lockUI()
-{   
-    disableComputeBtn();
-    
-    var inputList = document.getElementsByClassName("siteInput");
-    for ( var i = 0; i < inputList.length; i++ ) {
-        inputList[i].disabled = true;
-    }
-}
-
-function unlockUI()
-{    
-    enableComputeBtn();
-    
-    var inputList = document.getElementsByClassName("siteInput");
-    for ( var i = 0; i < inputList.length; i++ ) {
-        inputList[i].disabled = false;
-    }
-}
-
-function enableComputeBtn()
-{
-    var computeBtn = document.getElementById("compute");    
-    computeBtn.disabled = false;          
-}
-
-function disableComputeBtn()
-{
-    var computeBtn = document.getElementById("compute");    
-    computeBtn.disabled = true;          
 }

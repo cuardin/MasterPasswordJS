@@ -10,8 +10,6 @@ importScripts('core/mpw.js');
 
 self.addEventListener('message', handleMessage);
 
-var userName = null;
-var masterPassword = null;
 var mpw = new MPW();
 
 function postProgress( i, p )
@@ -26,19 +24,15 @@ function handleMessage(event) {
     var data = JSON.parse(event.data);                
 
     try {       
-        if ( data.command == "mainCompute" ) {
-            if ( !(userName == data.userName && masterPassword == data.masterPassword ) ) {
-                userName = data.userName;
-                masterPassword = data.masterPassword;
-                mpw.mpw_compute_secret_key( data.userName, data.masterPassword, postProgress );  
-            }
+        if ( data.command == "mainCompute" ) {            
+            var masterKey = mpw.mpw_compute_secret_key( data.userName, data.masterPassword, postProgress );  
             var returnValue = {};
             returnValue.type = "mainKey"
-            returnValue.data = "";
+            returnValue.data = masterKey;
             postMessage( JSON.stringify(returnValue) );
 
         } else if ( data.command == "siteCompute" ) {
-            var password = mpw.mpw_compute_site_password( data.siteType, data.siteName, data.siteCounter );
+            var password = mpw.mpw_compute_site_password( data.masterKey, data.siteType, data.siteName, data.siteCounter );
             var returnValue = {};
             returnValue.type = "password"
             returnValue.data = password;
