@@ -15,12 +15,12 @@ TODO: Add validation of input arguments.
 
             <div class="userName"> 
                 <label for="userName">Username</label> 
-                <input type="text" name="userName" id="userName" class="mainInput box" value="user01åäö"/>             
+                <input type="text" id="userName" class="mainInput box" value="user01åäö"/>             
             </div> 
 
             <div class="masterPassword"> 
                 <label for="masterPassword">Master Password</label> 
-                <input type="text" name="masterPassword" id="masterPassword" class="mainInput box" value="MasterPass01"/>             
+                <input type="text" id="masterPassword" class="mainInput box" value="MasterPass01"/>             
             </div> 
 
             
@@ -30,18 +30,18 @@ TODO: Add validation of input arguments.
             </div> 
 
             <div class="siteName"> 
-                <label for="siteName">Site</label> 
-                <input type="text" name="siteName" id="siteName" class="siteInput box" value="site01.åäö" disabled="true"/>             
+                <label for="siteName">Site</label>                                 
+                <input id="siteNameList" class="siteInput box" disabled="true"></input>
             </div> 
 
             <div class="siteCounter"> 
                 <label for="siteCounter">Site Counter</label> 
-                <input type="number" name="siteCounter" id="siteCounter" min="1" value="1" class="siteInput box" disabled="true"/>             
+                <input type="number" id="siteCounter" min="1" value="1" class="siteInput box" disabled="true"/>             
             </div> 
             
             <div class="siteType"> 
                 <label for="siteType">Site Type</label> 
-                <select id="siteType" class="siteInput box" name="siteType" disabled="true">
+                <select id="siteType" class="siteInput box" disabled="true">
                     <option value="maximum">Maximum</option>
                     <option value="long" selected>Long</option>
                     <option value="medium">Medium</option>
@@ -53,13 +53,15 @@ TODO: Add validation of input arguments.
 
             <div class="sitePassword"> 
                 <label for="sitePassword">Site Password</label> 
-                <input type="text" name="sitePassword" id="sitePassword" class="output box" readonly value="Expect: Gink2^LalqZuza"/>             
-            </div> 
+                <input type="text"  id="sitePassword" class="output box" readonly value="Expect: Gink2^LalqZuza"/>             
+            </div>             
         </form>
         <small class="validate">
             <a href="../test/runAll.html">Validate algorithm</a>
         </small>
     </div>
 </body>
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
 <script src="../js/integration.js"></script>
 </html

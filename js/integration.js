@@ -1,3 +1,5 @@
+//TODO: Find out why autocomplete isn't working.
+
 //Check if we should even be here.
 if(!window.Worker) { 
     document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
@@ -8,6 +10,8 @@ if(!window.Worker) {
 var userName = null;
 var masterPassword = null;
 var masterKey = null;
+var siteDataList = new Array();
+
 var w = null;
 
 //********************************************
@@ -15,37 +19,51 @@ var w = null;
 
 function workerEventHandler(event) {    
     var data = JSON.parse(event.data);    
+    console.log(data);
 
-    if ( data.type == "password" ) {                   
+    if ( data.type == "mainKey" ) {
+        masterKey = data.data;
+        updateSiteList( data.siteList );
+        document.getElementById("progress").src = "blank.gif";
+        document.getElementById('compute').value = 100;        
+        startSiteWorker();        
+    } else if ( data.type == "password" ) {                   
         document.getElementById("sitePassword").value = data.data;  
         document.getElementById("progress").src = "blank.gif";
         document.getElementById('compute').value = 100;        
-    } else if ( data.type == "mainKey" ) {
-        masterKey = data.data;
-        document.getElementById("progress").src = "blank.gif";
-        document.getElementById('compute').value = 100;                                        
-        startSiteWorker();                
-    } else if ( data.type == "progress" ) {
-        console.log( data.data );
+    } else  if ( data.type == "progress" ) {        
         document.getElementById("compute").value = data.data;
     } else {
        document.getElementById("sitePassword").value = "Error: " + data.data;
     }    
 };
 
+function updateSiteList( sList ) {
+    //Clear out any members from the site selection list.
+    siteDataList = new Array();    
+
+    //Add the site names to their list.
+    for ( var i = 0; i < sList.length; i++ ) {
+        var entry = { label: sList[i].siteName, value: JSON.stringify(sList[i]) }
+        siteDataList[i] = entry;        
+    }
+    console.log( siteDataList );
+}
+
 //******************************
 //Make all siteInput elements recompute the site password.
 inputList = document.getElementsByClassName("siteInput");
 for ( var i = 0; i < inputList.length; i++ ) {
-	inputList[i].addEventListener("input", startSiteWorker);
-    inputList[i].addEventListener("change", startSiteWorker);
+	inputList[i].addEventListener("input", startSiteWorker);        
 }
+document.getElementById("siteType").addEventListener( "change", startSiteWorker );
+
 
 function startSiteWorker() {        
     //Build a message from the form to send
     var data = {};
     data.masterKey = masterKey;
-    data.siteName = document.getElementById('siteName').value;
+    data.siteName = document.getElementById('siteNameList').value;
     data.siteCounter = parseInt(document.getElementById('siteCounter').value);
     if ( isNaN(data.siteCounter) ) { 
         document.getElementById("sitePassword").value = "N/A";  
@@ -115,6 +133,17 @@ function onInputNumberChange() {
     }
 }
 
+//****************************************
+//Add an event listener to handle when a stored site is selected.
+document.getElementById("siteNameList").addEventListener( "change", onStoredSiteChanged );
+function onStoredSiteChanged( event ) {
+    var siteInfo = JSON.parse(document.getElementById("siteNameList").value);
+    document.getElementById("siteName").value = siteInfo.siteName;
+    document.getElementById("siteType").value = siteInfo.siteType;
+    document.getElementById("siteCounter").value = siteInfo.siteCounter;
+    startSiteWorker();
+}
+
 //**************************************
 //Utility function to unlock lower parts of the UI
 function unlockSiteInput()
@@ -124,3 +153,11 @@ function unlockSiteInput()
         siteInput[i].disabled = false;
     }
 }
+
+//JQuery stuff
+$(function() {    
+    $( "#siteNameList" ).autocomplete({        
+        source: siteDataList,
+        autoFocus: true
+    });
+  });
