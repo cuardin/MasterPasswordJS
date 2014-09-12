@@ -76,7 +76,7 @@ div.siteName {
 .maindiv {    
  
     width: 300px;
-    
+    height: 100%;
     /* This is the key line that centers the middle column--it's buggy in certain versions of IE though. */    
     margin: 0 auto;
  

@@ -1,5 +1,3 @@
-//TODO: Find out why autocomplete isn't working.
-
 //Check if we should even be here.
 if(!window.Worker) { 
     document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
@@ -11,6 +9,7 @@ var userName = null;
 var masterPassword = null;
 var masterKey = null;
 var siteDataList = new Array();
+var siteNames = new Array();
 
 var w = null;
 
@@ -40,23 +39,24 @@ function workerEventHandler(event) {
 
 function updateSiteList( sList ) {
     //Clear out any members from the site selection list.
-    siteDataList = new Array();    
-
+    siteDataList.length = 0;
+    siteNames.length = 0;
+    
     //Add the site names to their list.
-    for ( var i = 0; i < sList.length; i++ ) {
-        var entry = { label: sList[i].siteName, value: JSON.stringify(sList[i]) }
-        siteDataList[i] = entry;        
+    for ( var i = 0; i < sList.length; i++ ) {        
+        siteDataList[i] = JSON.stringify(sList[i]);        
+        siteNames[i] = sList[i].siteName;
     }
     console.log( siteDataList );
 }
 
 //******************************
 //Make all siteInput elements recompute the site password.
-inputList = document.getElementsByClassName("siteInput");
+/*inputList = document.getElementsByClassName("siteInput");
 for ( var i = 0; i < inputList.length; i++ ) {
 	inputList[i].addEventListener("input", startSiteWorker);        
 }
-document.getElementById("siteType").addEventListener( "change", startSiteWorker );
+document.getElementById("siteType").addEventListener( "change", startSiteWorker );*/
 
 
 function startSiteWorker() {        
@@ -133,17 +133,6 @@ function onInputNumberChange() {
     }
 }
 
-//****************************************
-//Add an event listener to handle when a stored site is selected.
-document.getElementById("siteNameList").addEventListener( "change", onStoredSiteChanged );
-function onStoredSiteChanged( event ) {
-    var siteInfo = JSON.parse(document.getElementById("siteNameList").value);
-    document.getElementById("siteName").value = siteInfo.siteName;
-    document.getElementById("siteType").value = siteInfo.siteType;
-    document.getElementById("siteCounter").value = siteInfo.siteCounter;
-    startSiteWorker();
-}
-
 //**************************************
 //Utility function to unlock lower parts of the UI
 function unlockSiteInput()
@@ -157,7 +146,17 @@ function unlockSiteInput()
 //JQuery stuff
 $(function() {    
     $( "#siteNameList" ).autocomplete({        
-        source: siteDataList,
-        autoFocus: true
+        source: siteNames,
+        autoFocus: true,        
+        select: siteNameListInput1        
     });
-  });
+});
+function siteNameListInput1( event, ui ) {
+    var data = document.getElementById("siteNameList").value;    
+    console.log( ui.item.label );    
+}
+document.getElementById("siteNameList").addEventListener( "input", siteNameListInput2 );
+function siteNameListInput2( event ) {
+    var data = document.getElementById("siteNameList").value;
+    console.log(data);    
+}
