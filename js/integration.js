@@ -44,7 +44,7 @@ function updateSiteList( sList ) {
     
     //Add the site names to their list.
     for ( var i = 0; i < sList.length; i++ ) {        
-        siteDataList[i] = JSON.stringify(sList[i]);        
+        siteDataList[i] = sList[i];
         siteNames[i] = sList[i].siteName;
     }
     console.log( siteDataList );
@@ -148,15 +148,30 @@ $(function() {
     $( "#siteNameList" ).autocomplete({        
         source: siteNames,
         autoFocus: true,        
-        select: siteNameListInput1        
+        select: function(event,ui){ siteNameListInput(ui.item.label) },
+        messages: {
+            noResults: "",
+            results: function() {}
+        }        
     });
 });
-function siteNameListInput1( event, ui ) {
-    var data = document.getElementById("siteNameList").value;    
-    console.log( ui.item.label );    
-}
-document.getElementById("siteNameList").addEventListener( "input", siteNameListInput2 );
-function siteNameListInput2( event ) {
-    var data = document.getElementById("siteNameList").value;
-    console.log(data);    
+
+document.getElementById("siteNameList").addEventListener( "input", function ( event ) {
+    siteNameListInput( document.getElementById("siteNameList").value );    
+});
+
+function siteNameListInput( siteName )  
+{
+    console.log( siteName );
+    var siteData = null;
+    for ( var i = 0; i < siteNames.length; i++ ) {
+        if ( siteNames[i] == siteName ) {
+            siteData = siteDataList[i];
+        }
+    }
+    if ( siteData != null ) {
+        document.getElementById("siteCounter").value = siteData.siteCounter;
+        document.getElementById("siteType").value = siteData.siteType;        
+    }
+    startSiteWorker();
 }
