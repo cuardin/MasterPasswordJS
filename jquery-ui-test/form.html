@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="us">
+<head>
+	<meta charset="utf-8">
+	<title>jQuery UI Example Page</title>
+	<link href="jquery-ui.css" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">    	
+</head>
+<body>    
+    <div class="mainDiv" id="mainDiv">
+        <h1>MasterPassword</h1>
+        <form class="form"> 
+
+            <div class="userName"> 
+                <label for="userName">Username</label> 
+                <input type="text" id="userName" class="box ui-widget ui-widget-content ui-corner-all" value="user01åäö"/>             
+            </div> 
+
+            <div class="masterPassword"> 
+                <label for="masterPassword">Master Password</label> 
+                <input type="text" id="masterPassword" class="box ui-widget ui-widget-content ui-corner-all" value="MasterPass01"/>             
+            </div> 
+            
+            <div class="progress"> 
+                <div id="compute" class="box"></div>                
+                <img src="blank.gif" id="progress" alt="Progress">                
+            </div> 
+
+            <div class="siteName"> 
+                <label for="siteName">Site</label>                                                 
+                <input id="siteNameList" class="box ui-widget ui-widget-content ui-corner-all" ></input>
+            </div> 
+
+            <div class="siteCounter"> 
+                <label for="siteCounter">Site Counter</label> 
+                <input id="siteCounter" min="1" value="1" class="box siteInput" />             
+            </div> 
+            
+            <div class="siteType"> 
+                <label for="siteType">Site Type</label> 
+                <select id="siteType" class="box">
+                    <option value="maximum">Maximum</option>
+                    <option value="long" selected>Long</option>
+                    <option value="medium">Medium</option>
+                    <option value="short">Short</option>
+                    <option value="basic">Basic</option>
+                    <option value="pin">Pin</option>
+                </select> 
+            </div> 
+
+            <div class="sitePassword"> 
+                <label for="sitePassword">Site Password</label> 
+                <input type="text"  id="sitePassword" class="box output ui-widget ui-widget-content ui-corner-all" readonly value="Expect: Gink2^LalqZuza"/>             
+            </div>             
+        </form>
+        <small class="validate">
+            <a href="../test/runAll.html">Validate algorithm</a>
+        </small>
+    </div>
+</body>
+
+<script src="external/jquery/jquery.js"></script>
+<script src="jquery-ui.js"></script>
+<script>
+var availableTags = [
+	"ActionScript",
+	"AppleScript",
+	"Asp",
+	"BASIC",
+	"C",
+	"C++",
+	"Clojure",
+	"COBOL",
+	"ColdFusion",
+	"Erlang",
+	"Fortran",
+	"Groovy",
+	"Haskell",
+	"Java",
+	"JavaScript",
+	"Lisp",
+	"Perl",
+	"PHP",
+	"Python",
+	"Ruby",
+	"Scala",
+	"Scheme"
+];
+$( "#siteNameList" ).autocomplete({
+	source: availableTags
+});
+
+
+$( "#compute" ).progressbar({
+	value: 20
+});
+
+$( "#siteCounter" ).spinner({ min: 0, numberFormat: "n"});
+
+$( "#siteType" ).selectmenu();
+</script>
+</html>
+
