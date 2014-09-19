@@ -1,3 +1,5 @@
+//TODO: Fix envent handlers for site Coutner and site type.
+
 //Check if we should even be here.
 if(!window.Worker) { 
     document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
@@ -23,15 +25,15 @@ function workerEventHandler(event) {
     if ( data.type == "mainKey" ) {
         masterKey = data.data;
         updateSiteList( data.siteList );
-        document.getElementById("progress").src = "blank.gif";
-        document.getElementById('compute').value = 100;        
+        document.getElementById("progress").src = "blank.gif";        
+        $( "#compute" ).progressbar( "value", 100 );
         startSiteWorker();        
     } else if ( data.type == "password" ) {                   
         document.getElementById("sitePassword").value = data.data;  
         document.getElementById("progress").src = "blank.gif";
         document.getElementById('compute').value = 100;        
-    } else  if ( data.type == "progress" ) {        
-        document.getElementById("compute").value = data.data;
+    } else  if ( data.type == "progress" ) {                
+        $( "#compute" ).progressbar( "value", data.data );
     } else {
        document.getElementById("sitePassword").value = "Error: " + data.data;
     }    
@@ -49,15 +51,6 @@ function updateSiteList( sList ) {
     }
     console.log( siteDataList );
 }
-
-//******************************
-//Make all siteInput elements recompute the site password.
-/*inputList = document.getElementsByClassName("siteInput");
-for ( var i = 0; i < inputList.length; i++ ) {
-	inputList[i].addEventListener("input", startSiteWorker);        
-}
-document.getElementById("siteType").addEventListener( "change", startSiteWorker );*/
-
 
 function startSiteWorker() {        
     //Build a message from the form to send
@@ -144,16 +137,14 @@ function unlockSiteInput()
 }
 
 //JQuery stuff
-$(function() {    
-    $( "#siteNameList" ).autocomplete({        
-        source: siteNames,
-        autoFocus: true,        
-        select: function(event,ui){ siteNameListInput(ui.item.label) },
-        messages: {
-            noResults: "",
-            results: function() {}
-        }        
-    });
+$( "#siteNameList" ).autocomplete({            
+    source: siteNames,
+    autoFocus: true,        
+    select: function(event,ui){ siteNameListInput(ui.item.label) },
+    messages: {
+        noResults: "",
+        results: function() {}
+    }        
 });
 
 document.getElementById("siteNameList").addEventListener( "input", function ( event ) {
