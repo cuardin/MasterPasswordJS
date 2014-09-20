@@ -137,6 +137,22 @@ function unlockSiteInput()
 }
 
 //JQuery stuff
+
+$( "#compute" ).progressbar({
+    value: 100
+});
+
+$( "#siteCounter" ).spinner({ 
+    min: 1, 
+    numberFormat: "n",
+    change: startSiteWorker,
+    stop: startSiteWorker,
+});
+
+$( "#siteType" ).selectmenu({    
+    select: startSiteWorker
+});
+
 $( "#siteNameList" ).autocomplete({            
     source: siteNames,
     autoFocus: true,        
