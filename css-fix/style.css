@@ -1,0 +1,53 @@
+
+h1 {
+    margin: 10px;
+}
+
+.box {
+    width: 300px;
+    display: block;
+}
+
+.entry {
+    margin: 10px;
+}
+
+#compute { 
+    width: 250px;     
+}
+
+img#progress {               
+    float: right;    
+}
+
+
+.mainDiv {    
+ 
+    width: 325px;
+    height: 100%;
+    /* This is the key line that centers the middle column--it's buggy in certain versions of IE though. */    
+    margin: 0 auto;
+ 
+    /* Override IE hack */
+    text-align: left;    
+ 
+    /* So you can see it in action */
+    background: #EEE;
+    /*height: 100%;*/
+}
+
+#siteType {
+    width: 300px;
+}
+
+div.progress {
+    margin: 20px 0px 0px 0px;    
+}
+
+#siteCounter {
+    width: 270px;
+}
+
+.validate {
+    float: right;
+}
