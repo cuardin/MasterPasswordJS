@@ -1,81 +1,29 @@
-.box  { 
-    padding: 9px; 
-    border: solid 1px #E5E5E5; 
-    outline: 0; 
-    font: normal 13px/100% Verdana, Tahoma, sans-serif; 
-    width: 300px; 
-    /*background: #FFFFFF url('<span class="skimlinks-unlinked">bg_form.png</span>') left top repeat-x; */
-    background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF)); 
-    background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px); 
-    box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
-    -moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
-    -webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
-    -moz-border-radius: 5px; 
-    -webkit-border-radius: 5px;     
-    display:block;
-    } 
-      
-input:hover, textarea:hover, 
-input:focus, textarea:focus { 
-    border-color: #C9C9C9; 
-    -webkit-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px; 
-    } 
-   
-label { 
-    margin-left: 10px; 
-    margin-bottom: 8px;
-    margin-top: 12px;
-    color: #777;
-    display: block;
-    } 
-   
-div.progress {
-    margin: 20px 0px 0px 0px;
-}
-
-progress { 
-    width: 250px; 
-    margin: 9px 0px 0px 0px;     
-}
-
-img#progress {       
-    margin: auto;
-    vertical-align: middle;
-    float: right;
-}
 
 h1 {
-    color: #444;
+    margin: 10px;
 }
 
-body {
-    width: 100%    
-    background: #EEE;
-    margin: 5% 0;
-
-}
-
-div.siteName {
+.box {
     width: 300px;
+    display: block;
 }
 
-/*#siteNameList {
-    width: 200px;
-}*/
-
-.smallButton {
-    width: 100;
-    background: #444;    
-    color: #EEE;    
+.entry {
+    margin: 10px;
 }
 
-.smallButton:hover {
-    background: #222;
+#compute { 
+    width: 250px;     
 }
 
-.maindiv {    
+img#progress {               
+    float: right;    
+}
+
+
+.mainDiv {    
  
-    width: 300px;
+    width: 325px;
     height: 100%;
     /* This is the key line that centers the middle column--it's buggy in certain versions of IE though. */    
     margin: 0 auto;
@@ -84,60 +32,22 @@ div.siteName {
     text-align: left;    
  
     /* So you can see it in action */
-    /*background: #EEE;*/
+    background: #EEE;
     /*height: 100%;*/
 }
 
-.validate {
-    float: right;    
+#siteType {
+    width: 300px;
 }
 
-.ui-autocomplete {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 1000;
-  float: left;
-  display: none;
-  min-width: 160px;
-  _width: 160px;
-  padding: 4px 0;
-  margin: 2px 0 0 0;
-  list-style: none;
-  background-color: #ffffff;
-  border-color: #ccc;
-  border-color: rgba(0, 0, 0, 0.2);
-  border-style: solid;
-  border-width: 1px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding;
-  background-clip: padding-box;
-  border-right-width: 2px;
-  border-bottom-width: 2px;
- 
-  .ui-menu-item > a.ui-corner-all {
-    display: block;
-    padding: 3px 15px;
-    clear: both;
-    font-weight: normal;
-    line-height: 18px;
-    color: #555555;
-    white-space: nowrap;
- 
-    &.ui-state-hover, &.ui-state-active {
-      color: #ffffff;
-      text-decoration: none;
-      background-color: #0088cc;
-      border-radius: 0px;
-      -webkit-border-radius: 0px;
-      -moz-border-radius: 0px;
-      background-image: none;
-    }
-  }
+div.progress {
+    margin: 20px 0px 0px 0px;    
+}
+
+#siteCounter {
+    width: 270px;
+}
+
+.validate {
+    float: right;
 }
