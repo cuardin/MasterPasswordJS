@@ -6,6 +6,14 @@
 	<link href="jquery-ui.css" rel="stylesheet">
 	<link href="style.css" rel="stylesheet">    	
 </head>
+<style>
+        .ui-dialog-titlebar-close {
+            display: none;
+        }
+        .ui-dialog-titlebar {
+            display: none;
+        }
+</style>
 <body onbeforeunload="">    
     <div class="mainDiv" id="mainDiv">
         <h1>MasterPassword</h1>
@@ -57,19 +65,39 @@
             <a href="../test/runAll.html">Validate algorithm</a>
         </small>
     </div>
+    <div id="createUserDialog">
+        <label for="userName2">User Name again</label>
+        <input id="userName2"/>
+
+        <label for="masterPassword2">Master Password again</label>
+        <input id="masterPassword2"/>
+
+        <label for="email">Email</label>
+        <input id="email"/>
+
+        <label for="email2">Email again</label>
+        <input id="email2"/>
+    </div>
 </body>
 
 <script src="external/jquery/jquery.js"></script>
 <script src="jquery-ui.js"></script>
 <script>
+$(function() {
+            $("#createUserDialog").dialog({
+                autoOpen: true,
+                modal: true,
+                buttons: {
+                    "Done": function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
 
-$( "#compute" ).progressbar({
-	value: 100
-});
-
-$( "#siteCounter" ).spinner({ min: 0, numberFormat: "n"});
-
-$( "#siteType" ).selectmenu();
+            /*$("#button").on("click", function() {
+                $("#dialog").dialog("open");
+            });*/
+        });
 </script>
 <script src="../js/integration.js"></script>
 </html>
