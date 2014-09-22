@@ -12,15 +12,17 @@ var w = null;
 $(document).ready(function(){
     //Check if we should even be here.
     if(!window.Worker) { 
-        document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
+        $("mainDiv").html("Sorry, your browser does not support Web Workers...");        
         return;
     } 
 
     // Make all mainInputChanges start the secret key computation, interrupting old ones.
+    //jQuery does not seem to support input events.
     inputList = document.getElementsByClassName("mainInput");
     for ( var i = 0; i < inputList.length; i++ ) {
         inputList[i].addEventListener("input", onMainInputChange);
     }
+
     
     //Add an event listener to check that number is properly entered.
     document.getElementById("siteCounter").addEventListener( "input", onInputNumberChange );
@@ -49,13 +51,12 @@ $(document).ready(function(){
         messages: {
             noResults: "",
             results: function() {}
-    }        
-});
+        }        
+    });
 
-document.getElementById("siteNameList").addEventListener( "input", function ( event ) {
-    siteNameListInput( document.getElementById("siteNameList").value );    
-});
-
+    document.getElementById("siteNameList").addEventListener( "input", function ( event ) {
+        siteNameListInput( document.getElementById("siteNameList").value );    
+    });
 
 });
 
