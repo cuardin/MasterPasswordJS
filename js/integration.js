@@ -1,9 +1,3 @@
-
-//Check if we should even be here.
-if(!window.Worker) { 
-    document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
-} 
-
 //***************************************
 // Declare all globals.
 var userName = null;
@@ -14,9 +8,61 @@ var siteNames = new Array();
 
 var w = null;
 
+//Wrap all initializatio
+$(document).ready(function(){
+    //Check if we should even be here.
+    if(!window.Worker) { 
+        document.getElementById("mainDiv").innerHTML = "Sorry, your browser does not support Web Workers...";        
+        return;
+    } 
+
+    // Make all mainInputChanges start the secret key computation, interrupting old ones.
+    inputList = document.getElementsByClassName("mainInput");
+    for ( var i = 0; i < inputList.length; i++ ) {
+        inputList[i].addEventListener("input", onMainInputChange);
+    }
+    
+    //Add an event listener to check that number is properly entered.
+    document.getElementById("siteCounter").addEventListener( "input", onInputNumberChange );
+
+    //JQuery stuff
+
+    $( "#compute" ).progressbar({
+        value: 100,    
+    });
+
+    $( "#siteCounter" ).spinner({ 
+        min: 1, 
+        numberFormat: "n",
+        change: startSiteWorker,
+        stop: startSiteWorker,
+    });
+
+    $( "#siteType" ).selectmenu({    
+        select: startSiteWorker
+    });
+
+    $( "#siteNameList" ).autocomplete({            
+        source: siteNames,
+        autoFocus: true,        
+        select: function(event,ui){ siteNameListInput(ui.item.label) },
+        messages: {
+            noResults: "",
+            results: function() {}
+    }        
+});
+
+document.getElementById("siteNameList").addEventListener( "input", function ( event ) {
+    siteNameListInput( document.getElementById("siteNameList").value );    
+});
+
+
+});
+
+
+
 //********************************************
 //Add event handlers to the worker object
-
 function workerEventHandler(event) {    
     var data = JSON.parse(event.data);    
     console.log(data);
@@ -72,12 +118,6 @@ function startSiteWorker() {
     document.getElementById("progress").src = "ajax-loader.gif";                                  
 }
 
-//******************************
-// Make all mainInputChanges start the secret key computation, interrupting old ones.
-inputList = document.getElementsByClassName("mainInput");
-for ( var i = 0; i < inputList.length; i++ ) {
-	inputList[i].addEventListener("input", onMainInputChange);
-}
 
 function onMainInputChange() {
     document.getElementById("sitePassword").value = "";
@@ -111,10 +151,6 @@ function onMainInputChange() {
     w.postMessage(jsonString);                      
 }
 
-//***************************************************************
-//Add an event listener to check that number is properly entered.
-document.getElementById("siteCounter").addEventListener( "input", onInputNumberChange );
-
 function onInputNumberChange() {
     var siteCounter = document.getElementById("siteCounter")
     var value = parseInt(siteCounter.value);
@@ -135,36 +171,6 @@ function unlockSiteInput()
     }
 }
 
-//JQuery stuff
-
-$( "#compute" ).progressbar({
-    value: 100,    
-});
-
-$( "#siteCounter" ).spinner({ 
-    min: 1, 
-    numberFormat: "n",
-    change: startSiteWorker,
-    stop: startSiteWorker,
-});
-
-$( "#siteType" ).selectmenu({    
-    select: startSiteWorker
-});
-
-$( "#siteNameList" ).autocomplete({            
-    source: siteNames,
-    autoFocus: true,        
-    select: function(event,ui){ siteNameListInput(ui.item.label) },
-    messages: {
-        noResults: "",
-        results: function() {}
-    }        
-});
-
-document.getElementById("siteNameList").addEventListener( "input", function ( event ) {
-    siteNameListInput( document.getElementById("siteNameList").value );    
-});
 
 function siteNameListInput( siteName )  
 {
