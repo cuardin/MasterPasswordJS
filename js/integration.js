@@ -80,11 +80,19 @@ $(document).ready(function(){
     });        
     document.getElementById("email2").addEventListener( "input", function( event ) {
         validateTwoFieldsSame( "#email", "#email2" );    
-    });        
+    });            
+    document.getElementById("email").addEventListener( "input", function( event ) {
+        validateEmail( "#email" );  
+        //Revalidate the second if it is not empty.
+        if ( $("#email2").val().length != 0 ) {
+            validateTwoFieldsSame( "#email", "#email2" );      
+        }
+    });            
 });
 
 function validateTwoFieldsSame( field01, field02 ) 
 {
+    //TODO: Change the variable names here.
     var userName = $(field01).val();
     var userName2 = $(field02).val();
     if ( userName != userName2 ) {
@@ -93,6 +101,16 @@ function validateTwoFieldsSame( field01, field02 )
         $(field02).removeClass("ui-state-error");
     }
 
+}
+
+function validateEmail(field) { 
+    var email = $(field).val();
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if ( !re.test(email) ) {
+        $(field).addClass("ui-state-error");    
+    } else {
+        $(field).removeClass("ui-state-error");    
+    }
 }
 
 //********************************************
