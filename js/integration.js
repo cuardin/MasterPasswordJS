@@ -27,12 +27,12 @@ $(document).ready(function(){
     //Add an event listener to check that number is properly entered.
     document.getElementById("siteCounter").addEventListener( "input", onInputNumberChange );
 
-    //JQuery stuff
-
+    //Create the progress bar
     $( "#compute" ).progressbar({
         value: 100,    
     });
 
+    //Create the site counter
     $( "#siteCounter" ).spinner({ 
         min: 1, 
         numberFormat: "n",
@@ -40,10 +40,12 @@ $(document).ready(function(){
         stop: startSiteWorker,
     });
 
+    //Create the site type menu
     $( "#siteType" ).selectmenu({    
         select: startSiteWorker
     });
 
+    //Create the site name autocomplete.
     $( "#siteNameList" ).autocomplete({            
         source: siteNames,
         autoFocus: true,        
@@ -58,9 +60,40 @@ $(document).ready(function(){
         siteNameListInput( document.getElementById("siteNameList").value );    
     });
 
+    //Create the create new user popup
+    $("#createUserDialog").dialog({
+        autoOpen: true,
+        modal: true,
+        buttons: {
+            "Done": function() {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    //Add validation checks to create user dialog
+    document.getElementById("userName2").addEventListener( "input", function( event ) {
+        validateTwoFieldsSame( "#userName", "#userName2" );    
+    });            
+    document.getElementById("masterPassword2").addEventListener( "input", function( event ) {
+        validateTwoFieldsSame( "#masterPassword", "#masterPassword2" );    
+    });        
+    document.getElementById("email2").addEventListener( "input", function( event ) {
+        validateTwoFieldsSame( "#email", "#email2" );    
+    });        
 });
 
+function validateTwoFieldsSame( field01, field02 ) 
+{
+    var userName = $(field01).val();
+    var userName2 = $(field02).val();
+    if ( userName != userName2 ) {
+        $(field02).addClass("ui-state-error");
+    } else {
+        $(field02).removeClass("ui-state-error");
+    }
 
+}
 
 //********************************************
 //Add event handlers to the worker object
@@ -90,12 +123,19 @@ function updateSiteList( sList ) {
     siteDataList.length = 0;
     siteNames.length = 0;
     
+    console.log( sList );
+    
+    if ( sList == null ) {        
+        $("#createUserDialog").dialog("open");        
+        return;
+    }
+
     //Add the site names to their list.
     for ( var i = 0; i < sList.length; i++ ) {        
         siteDataList[i] = sList[i];
         siteNames[i] = sList[i].siteName;
     }
-    console.log( siteDataList );
+    
 }
 
 function startSiteWorker() {        

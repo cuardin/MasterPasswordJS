@@ -9,10 +9,7 @@
 <style>
         .ui-dialog-titlebar-close {
             display: none;
-        }
-        .ui-dialog-titlebar {
-            display: none;
-        }
+        }        
 </style>
 <body onbeforeunload="">    
     <div class="mainDiv" id="mainDiv">
@@ -65,40 +62,23 @@
             <a href="../test/runAll.html">Validate algorithm</a>
         </small>
     </div>
-    <div id="createUserDialog">
+    <div id="createUserDialog" title="Create new user">
         <label for="userName2">User Name again</label>
-        <input id="userName2"/>
+        <input id="userName2" class="ui-widget ui-widget-content ui-corner-all"/>
 
         <label for="masterPassword2">Master Password again</label>
-        <input id="masterPassword2"/>
+        <input id="masterPassword2" class="ui-widget ui-widget-content ui-corner-all"/>
 
         <label for="email">Email</label>
-        <input id="email"/>
+        <input id="email" class="ui-widget ui-widget-content ui-corner-all"/>
 
         <label for="email2">Email again</label>
-        <input id="email2"/>
+        <input id="email2" class="ui-widget ui-widget-content ui-corner-all"/>
     </div>
 </body>
 
 <script src="external/jquery/jquery.js"></script>
 <script src="jquery-ui.js"></script>
-<script>
-$(function() {
-            $("#createUserDialog").dialog({
-                autoOpen: true,
-                modal: true,
-                buttons: {
-                    "Done": function() {
-                        $(this).dialog("close");
-                    }
-                }
-            });
-
-            /*$("#button").on("click", function() {
-                $("#dialog").dialog("open");
-            });*/
-        });
-</script>
 <script src="../js/integration.js"></script>
 </html>
 
