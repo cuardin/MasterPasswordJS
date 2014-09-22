@@ -1,4 +1,3 @@
-//TODO: Fix envent handlers for site Coutner and site type.
 
 //Check if we should even be here.
 if(!window.Worker) { 
@@ -139,7 +138,7 @@ function unlockSiteInput()
 //JQuery stuff
 
 $( "#compute" ).progressbar({
-    value: 100
+    value: 100,    
 });
 
 $( "#siteCounter" ).spinner({ 

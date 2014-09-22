@@ -9,22 +9,28 @@ h1 {
 }
 
 .entry {
-    margin: 10px;
+    margin: 15px 0px;
+    clear: both;
 }
 
 #compute { 
-    width: 250px;     
+    float: left;
+    width: 250px;    
 }
 
 img#progress {               
     float: right;    
 }
 
+body {
+    background: #EEE;
+}
 
 .mainDiv {    
  
-    width: 325px;
+    width: 305px;
     height: 100%;
+    
     /* This is the key line that centers the middle column--it's buggy in certain versions of IE though. */    
     margin: 0 auto;
  
@@ -32,12 +38,12 @@ img#progress {
     text-align: left;    
  
     /* So you can see it in action */
-    background: #EEE;
+    /*background: #EEE;*/
     /*height: 100%;*/
 }
 
 #siteType {
-    width: 300px;
+    width: 305px;
 }
 
 div.progress {
@@ -45,7 +51,7 @@ div.progress {
 }
 
 #siteCounter {
-    width: 270px;
+    width: 273px;
 }
 
 .validate {
