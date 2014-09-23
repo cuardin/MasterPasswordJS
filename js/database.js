@@ -45,3 +45,15 @@ function dbSaveSite( uName, dbPass, site )
 	}
 }
 
+function dbDeleteSite( uName, dbPass, siteName ) 
+{	
+	var done = false;
+	for ( var i = 0; i < database.size; i++ ) {
+		if ( database[i].siteName == site.siteName ) {
+			database.splice(i,i);
+			return;
+		}
+	}
+}
+
+

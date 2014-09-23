@@ -1,3 +1,5 @@
+//TODO: Add, delete and then add site again. Why does this not work?
+
 //***************************************
 // Declare all globals.
 var userName = null;
@@ -78,6 +80,8 @@ $(document).ready(function(){
     });
 
     $("#saveSite").click( saveSite );
+
+    $("#deleteSite").click( deleteSite );
     
     //Add validation checks to create user dialog
     document.getElementById("userName2").addEventListener( "input", function( event ) {
@@ -97,6 +101,27 @@ $(document).ready(function(){
         }
     });            
 });
+
+function deleteSite()
+{       
+    //Create a job for the worker to submit the site to storage.
+    var data = {};
+    data.command = "deleteSite";    
+    data.masterKey = masterKey;        
+    data.userName = $("#userName").val();
+        
+    data.siteName = $("#siteName").val();
+        
+    var jsonString = JSON.stringify(data);
+    if ( w == null ) {
+        //In case a seed has not been computed yet.
+        onMainInputChange();
+    }
+    
+    //Send a message to start the process.
+    w.postMessage(jsonString);                          
+}
+
 
 function saveSite()
 {       
@@ -193,6 +218,17 @@ function workerEventHandler(event) {
             siteNames[siteNames.length] = siteName;
         } 
         siteDataList[siteName] = data.data;
+    
+    } else if ( data.type == "siteDeleted" ) {
+        console.log( "Site deleted:" );
+        console.log( data.data );            
+        var siteName = data.data;
+        siteDataList[siteName] == undefined;
+        for ( var i = 0; i < siteNames.length; i++ ) {
+            if ( siteNames[i] == siteName ) {
+                siteNames.splice(i,i);
+            }
+        }
 
     } else {
        document.getElementById("sitePassword").value = "Error: " + data.data;

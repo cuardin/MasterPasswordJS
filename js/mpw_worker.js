@@ -71,6 +71,18 @@ function handleMessage(event) {
             returnValue.data = site;
             postMessage( JSON.stringify(returnValue) );        
 
+        } else if ( data.command == "deleteSite" ) {
+
+            //Compute the password to be used to identify this user.
+            var password = mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
+
+            dbDeleteSite( data.userName, password, data.siteName );
+
+            var returnValue = {};
+            returnValue.type = "siteDeleted"
+            returnValue.data = data.siteName;
+            postMessage( JSON.stringify(returnValue) );        
+
         } else {
             throw new Error("Unknown command: " + data.command );            
         }

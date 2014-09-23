@@ -23,13 +23,15 @@ img#progress {
     float: right;    
 }
 
-#sitePassword { 
-    float: left;
-    width: 250px;    
+#sitePassword {     
+    width: 300px;    
 }
 
-#saveSite {               
-    float: right;    
+#addRemoveButtons {                   
+}
+
+.smallButton {
+    width: 30px;
 }
 
 body {
