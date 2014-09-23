@@ -1,7 +1,4 @@
 
-h1 {
-    margin: 10px;
-}
 
 .popBox {
     display: block;     
@@ -23,6 +20,15 @@ h1 {
 }
 
 img#progress {               
+    float: right;    
+}
+
+#sitePassword { 
+    float: left;
+    width: 250px;    
+}
+
+#saveSite {               
     float: right;    
 }
 
@@ -59,5 +65,7 @@ div.progress {
 }
 
 .validate {
+    margin: 20px 0px;
+    clear: both;
     float: right;
 }

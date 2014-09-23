@@ -3,7 +3,7 @@
 var userName = null;
 var masterPassword = null;
 var masterKey = null;
-var siteDataList = new Array();
+var siteDataList = {};
 var siteNames = new Array();
 
 var w = null;
@@ -46,7 +46,7 @@ $(document).ready(function(){
     });
 
     //Create the site name autocomplete.
-    $( "#siteNameList" ).autocomplete({            
+    $( "#siteName" ).autocomplete({            
         source: siteNames,
         autoFocus: true,        
         select: function(event,ui){ siteNameListInput(ui.item.label) },
@@ -56,8 +56,8 @@ $(document).ready(function(){
         }        
     });
 
-    document.getElementById("siteNameList").addEventListener( "input", function ( event ) {
-        siteNameListInput( document.getElementById("siteNameList").value );    
+    document.getElementById("siteName").addEventListener( "input", function ( event ) {
+        siteNameListInput( document.getElementById("siteName").value );    
     });
 
     //Create the create new user popup
@@ -77,6 +77,8 @@ $(document).ready(function(){
         }
     });
 
+    $("#saveSite").click( saveSite );
+    
     //Add validation checks to create user dialog
     document.getElementById("userName2").addEventListener( "input", function( event ) {
         validateTwoFieldsSame( "#userName", "#userName2" );    
@@ -95,6 +97,28 @@ $(document).ready(function(){
         }
     });            
 });
+
+function saveSite()
+{       
+    //Create a job for the worker to submit the site to storage.
+    var data = {};
+    data.command = "saveSite";    
+    data.masterKey = masterKey;        
+    data.userName = $("#userName").val();
+        
+    data.siteName = $("#siteName").val();
+    data.siteType = $("#siteType").val();
+    data.siteCounter = $("#siteCounter").val();
+        
+    var jsonString = JSON.stringify(data);
+    if ( w == null ) {
+        //In case a seed has not been computed yet.
+        onMainInputChange();
+    }
+    
+    //Send a message to start the process.
+    w.postMessage(jsonString);                          
+}
 
 function submitUser()
 {                
@@ -146,16 +170,30 @@ function workerEventHandler(event) {
         document.getElementById("progress").src = "blank.gif";        
         $( "#compute" ).progressbar( "value", 100 );
         startSiteWorker();        
+
     } else if ( data.type == "password" ) {                   
         document.getElementById("sitePassword").value = data.data;  
         document.getElementById("progress").src = "blank.gif";
         document.getElementById('compute').value = 100;        
+
     } else  if ( data.type == "progress" ) {                
         $( "#compute" ).progressbar( "value", data.data );
+
     } else if ( data.type == "userSubmitted" ) {
         console.log( "User submitted" );
         console.log( data.data );
         $("#createUserDialog").dialog("close");
+    
+    } else if ( data.type == "siteSaved" ) {
+        console.log( "Site saved:" );
+        console.log( data.data );            
+        var siteName = data.data.siteName;
+        if ( siteDataList[siteName] == null ) {
+            //New site needs to be registered.
+            siteNames[siteNames.length] = siteName;
+        } 
+        siteDataList[siteName] = data.data;
+
     } else {
        document.getElementById("sitePassword").value = "Error: " + data.data;
     }    
@@ -163,9 +201,9 @@ function workerEventHandler(event) {
 
 function updateSiteList( sList ) {
     //Clear out any members from the site selection list.
-    siteDataList.length = 0;
+    siteDataList.length = 0;    
     siteNames.length = 0;
-    
+
     console.log( sList );
     
     if ( sList == "badUserName" ) {        
@@ -177,8 +215,9 @@ function updateSiteList( sList ) {
 
     //Add the site names to their list.
     for ( var i = 0; i < sList.length; i++ ) {        
-        siteDataList[i] = sList[i];
-        siteNames[i] = sList[i].siteName;
+        var siteName = sList[i].siteName;
+        siteDataList[siteName] = sList[i];        
+        siteNames[i] = siteName;
     }
     
 }
@@ -187,7 +226,7 @@ function startSiteWorker() {
     //Build a message from the form to send
     var data = {};
     data.masterKey = masterKey;
-    data.siteName = document.getElementById('siteNameList').value;
+    data.siteName = document.getElementById('siteName').value;
     data.siteCounter = parseInt(document.getElementById('siteCounter').value);
     if ( isNaN(data.siteCounter) ) { 
         document.getElementById("sitePassword").value = "N/A";  
@@ -198,7 +237,12 @@ function startSiteWorker() {
     data.command = "siteCompute";    
     var jsonString = JSON.stringify(data);
     
-    //Send a message to start the process.
+    if ( w == null ) {
+        //If we don't have a worker, we need to compute the masterSeed first.
+        onMainInputChange();
+    }
+
+    //Send a message to start the process.    
     w.postMessage(jsonString);                      
 
     document.getElementById("progress").src = "ajax-loader.gif";                                  
@@ -261,12 +305,7 @@ function unlockSiteInput()
 function siteNameListInput( siteName )  
 {
     console.log( siteName );
-    var siteData = null;
-    for ( var i = 0; i < siteNames.length; i++ ) {
-        if ( siteNames[i] == siteName ) {
-            siteData = siteDataList[i];
-        }
-    }
+    var siteData = siteDataList[siteName];    
     if ( siteData != null ) {
         document.getElementById("siteCounter").value = siteData.siteCounter;
         document.getElementById("siteType").value = siteData.siteType;        

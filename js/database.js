@@ -31,22 +31,17 @@ function dbGetSiteList( uName, dbPass )
 }
 
 //Function to replace a site-info
-function dbReplaceSiteList( uName, dbPass, oldSite, newSite ) 
-{
-	if ( isNaN(oldSite) ) {
-		//Add the site
-		database[database.length] = newSite;
-	} else {
-		var done = false;
-		for ( var i = 0; i < database.size; i++ ) {
-			if ( database[i] == oldSite ) {
-				database[i] = newSite;
-				done = false;
-			}
+function dbSaveSite( uName, dbPass, site ) 
+{	
+	var done = false;
+	for ( var i = 0; i < database.size; i++ ) {
+		if ( database[i].siteName == site.siteName ) {
+			database[i] = site;
+			done = true;
 		}
-		if ( !done ) {
-			database[database.length] = newSite;
-		}
+	}
+	if ( !done ) {
+		database[database.length] = site;
 	}
 }
 

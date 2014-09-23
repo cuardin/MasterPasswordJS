@@ -41,6 +41,7 @@ function handleMessage(event) {
             returnValue.type = "password"
             returnValue.data = password;
             postMessage( JSON.stringify(returnValue) );
+
         } else if ( data.command == "createUser" ) {
             //Compute the password to be used to identify this user.
             var password = mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
@@ -52,6 +53,24 @@ function handleMessage(event) {
             returnValue.type = "userSubmitted"
             returnValue.data = rValue;
             postMessage( JSON.stringify(returnValue) );
+
+        } else if ( data.command == "saveSite" ) {
+
+            //Compute the password to be used to identify this user.
+            var password = mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
+
+            var site = {};
+            site.siteName = data.siteName;            
+            site.siteCounter = data.siteCounter;
+            site.siteType = data.siteType;            
+
+            dbSaveSite( data.userName, password, site );
+
+            var returnValue = {};
+            returnValue.type = "siteSaved"
+            returnValue.data = site;
+            postMessage( JSON.stringify(returnValue) );        
+
         } else {
             throw new Error("Unknown command: " + data.command );            
         }
