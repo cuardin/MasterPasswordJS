@@ -9,13 +9,24 @@ database[1] = site02;
 var userName = "user01åäö";
 var databasePassword = "BopvPeln3~Rima" //Add the database password. site: masterPasswordWebStorage
 
+//Function to create a new user
+function dbCreateUser( uName, dbPass, email ) 
+{
+	//STUB.
+    return true;
+}
+
 //Function to get list of site-infos
 function dbGetSiteList( uName, dbPass ) 
 {
 	if ( uName == userName && dbPass == databasePassword ) {
 		return database;
 	} else {
-		return null;
+		if ( uName != userName ) {
+            return "badUserName"
+        } else {
+            return "badPassword";
+        }
 	}
 }
 

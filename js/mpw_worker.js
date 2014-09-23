@@ -12,6 +12,7 @@ importScripts('database.js');
 self.addEventListener('message', handleMessage);
 
 var mpw = new MPW();
+var webStorageSite = 'masterPasswordWebStorage';
 
 function postProgress( i, p )
 {
@@ -40,6 +41,17 @@ function handleMessage(event) {
             returnValue.type = "password"
             returnValue.data = password;
             postMessage( JSON.stringify(returnValue) );
+        } else if ( data.command == "createUser" ) {
+            //Compute the password to be used to identify this user.
+            var password = mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
+            
+            //Now use the password to create a user.
+            var rValue = dbCreateUser( data.userName, password, data.email );            
+            
+            var returnValue = {};
+            returnValue.type = "userSubmitted"
+            returnValue.data = rValue;
+            postMessage( JSON.stringify(returnValue) );
         } else {
             throw new Error("Unknown command: " + data.command );            
         }
@@ -55,7 +67,7 @@ function handleMessage(event) {
 
 function loadSiteList( masterKey, userName )
 {
-    var password = mpw.mpw_compute_site_password( masterKey, 'long', 'masterPasswordWebStorage', 1 );
+    var password = mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
     var siteList = dbGetSiteList( userName, password );
     return siteList; 
 }

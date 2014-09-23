@@ -62,11 +62,17 @@ $(document).ready(function(){
 
     //Create the create new user popup
     $("#createUserDialog").dialog({
-        autoOpen: true,
+        autoOpen: false,
         modal: true,
+        //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
         buttons: {
-            "Done": function() {
-                $(this).dialog("close");
+            "Cancel": function() {                
+                $(this).dialog("close");           
+            }, 
+            "Submit": function() {
+                //SubmitUser starts a worker in the background that submits the user and then closes the dialog.
+                //TODO: Add a spinner to the button when submiting.
+                submitUser();                
             }
         }
     });
@@ -89,6 +95,21 @@ $(document).ready(function(){
         }
     });            
 });
+
+function submitUser()
+{                
+    var data = {};
+    data.command = "createUser";    
+    data.masterKey = masterKey;        
+    data.userName = $("#userName").val();
+    data.email = $("#email").val();
+        
+    var jsonString = JSON.stringify(data);
+    
+    //Send a message to start the process.
+    w.postMessage(jsonString);                      
+    
+}
 
 function validateTwoFieldsSame( field01, field02 ) 
 {
@@ -131,6 +152,10 @@ function workerEventHandler(event) {
         document.getElementById('compute').value = 100;        
     } else  if ( data.type == "progress" ) {                
         $( "#compute" ).progressbar( "value", data.data );
+    } else if ( data.type == "userSubmitted" ) {
+        console.log( "User submitted" );
+        console.log( data.data );
+        $("#createUserDialog").dialog("close");
     } else {
        document.getElementById("sitePassword").value = "Error: " + data.data;
     }    
@@ -143,8 +168,10 @@ function updateSiteList( sList ) {
     
     console.log( sList );
     
-    if ( sList == null ) {        
+    if ( sList == "badUserName" ) {        
         $("#createUserDialog").dialog("open");        
+        return;
+    } else if ( sList == "badPassword" ) {
         return;
     }
 
