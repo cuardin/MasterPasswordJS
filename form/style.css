@@ -3,6 +3,10 @@ h1 {
     margin: 10px;
 }
 
+.popBox {
+    display: block;     
+}
+
 .box {
     width: 300px;
     display: block;
