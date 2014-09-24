@@ -1,4 +1,4 @@
-//TODO: Add, delete and then add site again. Why does this not work?
+//TODO: Make sure the + and minus buttons only are enabled when they should be.
 
 //***************************************
 // Declare all globals.
@@ -223,10 +223,10 @@ function workerEventHandler(event) {
         console.log( "Site deleted:" );
         console.log( data.data );            
         var siteName = data.data;
-        siteDataList[siteName] == undefined;
+        siteDataList[siteName] = undefined;
         for ( var i = 0; i < siteNames.length; i++ ) {
             if ( siteNames[i] == siteName ) {
-                siteNames.splice(i,i);
+                siteNames[i] = '';
             }
         }
 
