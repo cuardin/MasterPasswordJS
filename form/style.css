@@ -34,6 +34,10 @@ img#progress {
     width: 30px;
 }
 
+.smallButton:disabled {
+    color: #F00;
+}
+
 body {
     background: #EEE;
 }

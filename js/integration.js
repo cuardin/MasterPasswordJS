@@ -1,4 +1,5 @@
 //TODO: Make sure the + and minus buttons only are enabled when they should be.
+//TODD: It seems that the actual disabling and enabling commands are not working. Test this.
 
 //***************************************
 // Declare all globals.
@@ -12,9 +13,16 @@ var w = null;
 
 //Wrap all initializatio
 $(document).ready(function(){
+
+    //Test the disabling stuff
+    //document.getElementById("deleteSite").disabled = true;
+    //document.getElementById("saveSite").disabled = true;
+
     //Check if we should even be here.
     if(!window.Worker) { 
+        //TODO: Check that this works.
         $("mainDiv").html("Sorry, your browser does not support Web Workers...");        
+        $("createUserDialog").html(""); //Clear the popup.
         return;
     } 
 
@@ -216,7 +224,7 @@ function workerEventHandler(event) {
         if ( siteDataList[siteName] == null ) {
             //New site needs to be registered.
             siteNames[siteNames.length] = siteName;
-        } 
+        }
         siteDataList[siteName] = data.data;
     
     } else if ( data.type == "siteDeleted" ) {
@@ -234,6 +242,46 @@ function workerEventHandler(event) {
        document.getElementById("sitePassword").value = "Error: " + data.data;
     }    
 };
+
+function setDeleteButtonStatus() 
+{    
+    var siteName = $("#siteName").val();
+    var exists = false;
+    for ( var i = 0; i < siteNames.length; i++ ) {
+        if ( siteNames[i] == siteName ) {
+            exists = true;
+        }
+    }    
+    if ( exists ) {
+        document.getElementById("deleteSite").disabled = false;        
+    } else {
+        document.getElementById("deleteSite").disabled = true;
+    }
+    console.log( "setDeleteButtonStatus" ); 
+    console.log( document.getElementById("deleteSite").disabled );
+}
+
+function setAddButtonStatus() 
+{    
+    var siteName = $("#siteName").val();
+    var siteCounter = $("#siteCounter").val();
+    var siteType = $("#siteType").val();
+
+    var closestMatch = siteDataList[siteName];
+    var matchExists = false;
+    if ( closestMatch == undefined ) {
+        matchExists = false;
+    } else {
+        matchExists = (closestMatch.siteCounter == siteCounter && closestMatch.siteType == siteType);
+    }    
+    if ( matchExists ) {
+        document.getElementById("saveSite").disabled = true;
+    } else {
+        document.getElementById("saveSite").disabled = false;
+    }
+    console.log( "setAddButtonStatus" );
+    console.log( document.getElementById("deleteSite").disabled );
+}
 
 function updateSiteList( sList ) {
     //Clear out any members from the site selection list.
@@ -259,6 +307,10 @@ function updateSiteList( sList ) {
 }
 
 function startSiteWorker() {        
+    //Make sure the save and delete buttons are correct.
+    setAddButtonStatus();
+    setDeleteButtonStatus();
+
     //Build a message from the form to send
     var data = {};
     data.masterKey = masterKey;
@@ -281,7 +333,7 @@ function startSiteWorker() {
     //Send a message to start the process.    
     w.postMessage(jsonString);                      
 
-    document.getElementById("progress").src = "ajax-loader.gif";                                  
+    document.getElementById("progress").src = "ajax-loader.gif";                                      
 }
 
 
@@ -308,10 +360,7 @@ function onMainInputChange() {
         
     //Start the progress tickers.
     document.getElementById("progress").src = "ajax-loader.gif";               
-    document.getElementById("compute").value = 0;
-
-    //And unlock the lower half of the input.
-    unlockSiteInput();
+    document.getElementById("compute").value = 0;    
     
     //Send a message to start the process.
     w.postMessage(jsonString);                      
@@ -325,18 +374,8 @@ function onInputNumberChange() {
     } else {
         siteCounter.style="";
     }
+    startSiteWorker();
 }
-
-//**************************************
-//Utility function to unlock lower parts of the UI
-function unlockSiteInput()
-{
-    var siteInput = document.getElementsByClassName("siteInput");
-    for ( i = 0; i < siteInput.length; i++ ) {
-        siteInput[i].disabled = false;
-    }
-}
-
 
 function siteNameListInput( siteName )  
 {
