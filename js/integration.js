@@ -66,6 +66,16 @@ $(document).ready(function(){
         }        
     });
 
+    $( "#saveSite").button( {
+        disabled: true,
+        label: "+",        
+    });
+
+    $( "#deleteSite").button( {
+        disabled: true,
+        label: "-",        
+    });
+
     document.getElementById("siteName").addEventListener( "input", function ( event ) {
         siteNameListInput();    
     });
@@ -253,11 +263,10 @@ function setDeleteButtonStatus()
         }
     }    
     if ( exists ) {
-        document.getElementById("deleteSite").disabled = false;        
+        $("#deleteSite").button("enable");
     } else {
-        document.getElementById("deleteSite").disabled = true;
-    }
-    console.log( "setDeleteButtonStatus" + document.getElementById("deleteSite").disabled );     
+        $("#deleteSite").button("disable");
+    }    
 }
 
 function setAddButtonStatus() 
@@ -274,11 +283,10 @@ function setAddButtonStatus()
         matchExists = (closestMatch.siteCounter == siteCounter && closestMatch.siteType == siteType);
     }    
     if ( matchExists ) {
-        document.getElementById("saveSite").disabled = true;
+        $("#saveSite").button("disable");
     } else {
-        document.getElementById("saveSite").disabled = false;
-    }
-    console.log( "setAddButtonStatus" + document.getElementById("deleteSite").disabled );
+        $("#saveSite").button("enable");
+    }    
 }
 
 function updateSiteList( sList ) {

@@ -27,17 +27,6 @@ img#progress {
     width: 300px;    
 }
 
-#addRemoveButtons {                   
-}
-
-.smallButton {
-    width: 30px;
-}
-
-.smallButton:disabled {
-    color: #F00;
-}
-
 body {
     background: #EEE;
 }
