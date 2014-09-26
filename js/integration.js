@@ -59,7 +59,7 @@ $(document).ready(function(){
     $( "#siteName" ).autocomplete({            
         source: siteNames,
         autoFocus: true,        
-        select: function(event,ui){ siteNameListInput(ui.item.label) },
+        close: function(event,ui){ siteNameListInput() },
         messages: {
             noResults: "",
             results: function() {}
@@ -67,7 +67,7 @@ $(document).ready(function(){
     });
 
     document.getElementById("siteName").addEventListener( "input", function ( event ) {
-        siteNameListInput( document.getElementById("siteName").value );    
+        siteNameListInput();    
     });
 
     //Create the create new user popup
@@ -257,8 +257,7 @@ function setDeleteButtonStatus()
     } else {
         document.getElementById("deleteSite").disabled = true;
     }
-    console.log( "setDeleteButtonStatus" ); 
-    console.log( document.getElementById("deleteSite").disabled );
+    console.log( "setDeleteButtonStatus" + document.getElementById("deleteSite").disabled );     
 }
 
 function setAddButtonStatus() 
@@ -279,8 +278,7 @@ function setAddButtonStatus()
     } else {
         document.getElementById("saveSite").disabled = false;
     }
-    console.log( "setAddButtonStatus" );
-    console.log( document.getElementById("deleteSite").disabled );
+    console.log( "setAddButtonStatus" + document.getElementById("deleteSite").disabled );
 }
 
 function updateSiteList( sList ) {
@@ -377,8 +375,9 @@ function onInputNumberChange() {
     startSiteWorker();
 }
 
-function siteNameListInput( siteName )  
+function siteNameListInput( )  
 {
+    var siteName = document.getElementById("siteName").value;
     console.log( siteName );
     var siteData = siteDataList[siteName];    
     if ( siteData != null ) {
