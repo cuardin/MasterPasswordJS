@@ -298,7 +298,7 @@ function updateSiteList( sList ) {
 
     console.log( sList );
     
-    if ( sList == "badUserName" ) {        
+    if ( sList == "badLogin" ) {        
         $("#createUserDialog").dialog("open");        
         return;
     } else if ( sList == "badPassword" ) {

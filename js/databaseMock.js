@@ -21,12 +21,8 @@ function dbGetSiteList( uName, dbPass )
 {
 	if ( uName == userName && dbPass == databasePassword ) {
 		return database;
-	} else {
-		if ( uName != userName ) {
-            return "badUserName"
-        } else {
-            return "badPassword";
-        }
+	} else {		
+            return "badLogin"       
 	}
 }
 
