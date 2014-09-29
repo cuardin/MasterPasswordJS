@@ -290,6 +290,8 @@ function setAddButtonStatus()
 }
 
 function updateSiteList( sList ) {
+    //This function is intentionally a bit awkward as we need to make sure we keep the references to siteDataList and siteNames.
+    //TODO: Get rid of siteNames and make siteDataList be an assosciative array.
     //Clear out any members from the site selection list.
     siteDataList.length = 0;    
     siteNames.length = 0;
@@ -304,9 +306,10 @@ function updateSiteList( sList ) {
     }
 
     //Add the site names to their list.
-    for ( var i = 0; i < sList.length; i++ ) {        
-        var siteName = sList[i].siteName;
-        siteDataList[siteName] = sList[i];        
+    keys = Object.keys(sList);
+    for ( var i = 0; i < keys.length; i++ ) {        
+        var siteName = keys[i];
+        siteDataList[siteName] = sList[siteName];        
         siteNames[i] = siteName;
     }
     
