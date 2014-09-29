@@ -1,59 +1,66 @@
-//Populate a database
-var database = {};
-var site01 = {}; site01.siteName = "site01.com"; site01.siteCounter = 1; site01.siteType = "long"; 
-database["site01.com"] = site01;
-var site02 = {}; site02.siteName = "site02.com"; site02.siteCounter = 3; site02.siteType = "pin"; 
-database["site02.com"] = site02;
+var rootAdress = "http://192.168.56.101/php_scripts/";
 
-//Store a user
-var userName = "user01åäö";
-var databasePassword = "BopvPeln3~Rima" //Add the database password. site: masterPasswordWebStorage
-
-//Function to create a new user
-function dbCreateUser( uName, dbPass, email ) 
+function dbEradicateUser( uName, dbPass ) 
 {
-	//STUB.
-    return true;
+    var xmlhttp = new XMLHttpRequest();
+    var arguments = "username=" + uName + "&password=" + dbPass;
+    var completeAddress = rootAdress + "eradicateUser.php?" + arguments;    
+    xmlhttp.open("GET",completeAddress,false);
+    xmlhttp.send();
 }
 
-//Function to get list of site-infos
+function forceValidateUser( uName, privateKey ) 
+{
+    var xmlhttp = new XMLHttpRequest();
+    var arguments = "username=" + uName + "&email=" + email + 
+            "&userCreationKey=" + userCreationKey +
+            "&password=" + password +
+            "&test=true";
+    var completeAddress = rootAdress + "createUser.php?" + arguments;    
+    console.log( completeAddress );
+    xmlhttp.open("GET",completeAddress,false);
+    xmlhttp.send();
+}
+
+function dbCreateTestUser( uName, email, password, userCreationKey ) 
+{
+    var xmlhttp = new XMLHttpRequest();
+    var arguments = "username=" + uName + "&email=" + email + 
+            "&userCreationKey=" + userCreationKey +
+            "&password=" + password +
+            "&test=true";
+    var completeAddress = rootAdress + "createUser.php?" + arguments;    
+    console.log( completeAddress );
+    xmlhttp.open("GET",completeAddress,false);
+    xmlhttp.send();
+    
+}
+
+function dpPut( uName, dbPass, key, value )
+{
+    var xmlhttp = new XMLHttpRequest();
+    var arguments = "username=" + uName + "&email=" + email + 
+            "&userCreationKey=" + userCreationKey +
+            "&password=" + password;
+    var completeAddress = rootAdress + "createUser.php?" + arguments;    
+    xmlhttp.open("GET",completeAddress,false);
+    xmlhttp.send();
+}
+
 function dbGetSiteList( uName, dbPass ) 
 {
-	if ( uName == userName && dbPass == databasePassword ) {
-		return database;
-	} else {
-		if ( uName != userName ) {
-            return "badUserName"
-        } else {
-            return "badPassword";
-        }
-	}
+	var xmlhttp = new XMLHttpRequest();
+	var arguments = "username=" + uName + "&password=" + dbPass;	
+	var completeAddress = rootAdress + "listFiles.php?" + arguments; 
+	console.log( completeAddress );
+	xmlhttp.open("GET",completeAddress,false);
+        xmlhttp.send();
+	var rValue = xmlhttp.responseText;
+	console.log( rValue );
+	/*try {
+		rValue = JSON.parse();
+	} catch ( e ) {
+		//Do nothing
+	}*/
+	return rValue;
 }
-
-//Function to replace a site-info
-function dbSaveSite( uName, dbPass, site ) 
-{	
-	var done = false;
-	for ( var i = 0; i < database.size; i++ ) {
-		if ( database[i].siteName == site.siteName ) {
-			database[i] = site;
-			done = true;
-		}
-	}
-	if ( !done ) {
-		database[database.length] = site;
-	}
-}
-
-function dbDeleteSite( uName, dbPass, siteName ) 
-{	
-	var done = false;
-	for ( var i = 0; i < database.size; i++ ) {
-		if ( database[i].siteName == site.siteName ) {
-			database.splice(i,i);
-			return;
-		}
-	}
-}
-
-

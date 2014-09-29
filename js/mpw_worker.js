@@ -7,7 +7,7 @@ importScripts('core/scrypt.js');
 
 importScripts('core/util.js');
 importScripts('core/mpw.js');
-importScripts('database.js');
+importScripts('databaseMock.js');
 
 self.addEventListener('message', handleMessage);
 
