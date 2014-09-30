@@ -10,7 +10,7 @@ var userName = "user01åäö";
 var databasePassword = "BopvPeln3~Rima" //Add the database password. site: masterPasswordWebStorage
 
 //Function to create a new user
-function dbCreateUser( uName, dbPass, email ) 
+function dbCreateUser( uName, dbPass, email )
 {
 	//STUB.
     return true;
@@ -19,37 +19,22 @@ function dbCreateUser( uName, dbPass, email )
 //Function to get list of site-infos
 function dbGetSiteList( uName, dbPass ) 
 {
-	if ( uName == userName && dbPass == databasePassword ) {
-		return database;
-	} else {		
-            return "badLogin"       
-	}
+    if ( uName === userName && dbPass === databasePassword ) {
+        return database;
+    } else {		
+        return "badLogin"       
+    }
 }
 
 //Function to replace a site-info
-function dbSaveSite( uName, dbPass, site ) 
+function dbSaveSite( uName, dbPass, siteName, site ) 
 {	
-	var done = false;
-	for ( var i = 0; i < database.size; i++ ) {
-		if ( database[i].siteName == site.siteName ) {
-			database[i] = site;
-			done = true;
-		}
-	}
-	if ( !done ) {
-		database[database.length] = site;
-	}
+    database[siteName] = site;
 }
 
 function dbDeleteSite( uName, dbPass, siteName ) 
-{	
-	var done = false;
-	for ( var i = 0; i < database.size; i++ ) {
-		if ( database[i].siteName == site.siteName ) {
-			database.splice(i,i);
-			return;
-		}
-	}
+{	    
+    database[siteName] = undefined;
 }
 
 

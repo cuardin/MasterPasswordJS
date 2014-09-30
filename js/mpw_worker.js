@@ -64,7 +64,7 @@ function handleMessage(event) {
             site.siteCounter = data.siteCounter;
             site.siteType = data.siteType;            
 
-            dbSaveSite( data.userName, password, site );
+            dbSaveSite( data.userName, password, data.siteName, site );
 
             var returnValue = {};
             returnValue.type = "siteSaved"
@@ -97,7 +97,7 @@ function handleMessage(event) {
 }
 
 function loadSiteList( masterKey, userName )
-{
+{    
     var password = mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
     var siteList = dbGetSiteList( userName, password );
     return siteList; 

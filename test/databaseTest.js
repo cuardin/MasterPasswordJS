@@ -12,7 +12,7 @@ QUnit.module( "module", {
         dbEradicateUser( userName, password, privateKey );
         
         //Now create a user
-        dbCreateTestUser( userName, email, password, antiSpamKey, privateKey );
+        dbCreateUser( userName, password, email, antiSpamKey, true );
         
         //And validate that user
         dbForceValidateUser( userName, privateKey );
@@ -24,7 +24,7 @@ QUnit.module( "module", {
     }
 });
 
-QUnit.test( "testGetFileListExistingUser", function( assert ) {    
+QUnit.test( "testUploadAndGetFileListExistingUser", function( assert ) {    
     
     //Arrange
     //And upload a file
@@ -37,6 +37,7 @@ QUnit.test( "testGetFileListExistingUser", function( assert ) {
     var siteList = dbGetSiteList( userName, password );    
     
     //Post-process
+    assert.notEqual( siteList[siteName], undefined );    
     var siteDataStr = siteList[siteName];
     siteDataStr = siteDataStr.replace(/\\/g, '');    
     var siteData = JSON.parse( siteDataStr );    
@@ -58,5 +59,62 @@ QUnit.test( "testGetFileListNonExistingUser", function( assert ) {
     
     //Assert    	
     assert.equal( siteList, "badLogin");    
+        
+});
+
+QUnit.test( "testDeleteFile", function( assert ) {    
+    
+    //Arrange
+    //And upload a file
+    var site = { "siteName": siteName, 
+        "siteCounter": siteCounter,
+        "siteType": siteType};
+    dbPut( userName, password, siteName, JSON.stringify(site) );   
+    
+    //Check the arrange
+    var siteList = dbGetSiteList( userName, password );    
+    assert.notEqual( siteList[siteName], undefined );    
+    
+    //Act	  
+    dbDeleteSite( userName, password, siteName );        
+    
+    //Assert    
+    var siteList = dbGetSiteList( userName, password );        
+    assert.equal( JSON.stringify(siteList), "[]" );    
+        
+});
+
+QUnit.test( "testUploadAndOverwriteFileListExistingUser", function( assert ) {    
+    
+    //Arrange
+    //Upload a file
+    var site = { "siteName": siteName, 
+        "siteCounter": siteCounter,
+        "siteType": siteType};
+    dbPut( userName, password, siteName, JSON.stringify(site) );
+   
+    //Act	  
+    var siteList = dbGetSiteList( userName, password );    
+    
+    //Post-process    
+    assert.notEqual( siteList[siteName], undefined );    
+    
+    //Act again
+    var site = { "siteName": siteName, 
+        "siteCounter": siteCounter+3,
+        "siteType": 'pin'};
+    dbPut( userName, password, siteName, JSON.stringify(site) );
+    
+    //Post-process
+    var siteList = dbGetSiteList( userName, password );    
+    assert.notEqual( siteList[siteName], undefined );    
+    var siteDataStr = siteList[siteName];
+    siteDataStr = siteDataStr.replace(/\\/g, '');    
+    var siteData = JSON.parse( siteDataStr );    
+    
+    //Assert    	
+    assert.equal( siteData.siteName, siteName  );
+    assert.equal( siteData.siteCounter, siteCounter+3 );
+    assert.equal( siteData.siteType, 'pin' );
         
 });

@@ -25,13 +25,15 @@ function dbForceValidateUser( uName, privateKey )
     //console.log( rValue );    
 }
 
-function dbCreateTestUser( uName, email, password, userCreationKey ) 
+function dbCreateUser( uName, password, email, userCreationKey, isTest ) 
 {
     var xmlhttp = new XMLHttpRequest();
     var arguments = "username=" + uName + "&email=" + email + 
-            "&userCreationKey=" + userCreationKey +
-            "&password=" + password +
-            "&test=true";
+        "&userCreationKey=" + userCreationKey +
+        "&password=" + password;
+    if ( isTest ) {
+        arguments = arguments + "&test=true";
+    }
     var completeAddress = rootAdress + "createUser.php?" + arguments;    
     //console.log( completeAddress );
     xmlhttp.open("GET",completeAddress,false);
@@ -40,7 +42,7 @@ function dbCreateTestUser( uName, email, password, userCreationKey )
     //console.log( rValue );
 }
 
-function dbPut( uName, dbPass, key, value )
+function dbSaveSite( uName, dbPass, key, value )
 {
     var xmlhttp = new XMLHttpRequest();
     var arguments = "username=" + uName + "&email=" + email +            
@@ -72,4 +74,16 @@ function dbGetSiteList( uName, dbPass )
             rValue = "badLogin"
     }
     return rValue;
+}
+
+function dbDeleteSite( uName, dbPass, siteName ) 
+{
+    var xmlhttp = new XMLHttpRequest();
+    var arguments = "username=" + uName + "&password=" + dbPass + "&fileName=" + siteName;
+    var completeAddress = rootAdress + "deleteFile.php?" + arguments;    
+    //console.log( completeAddress );
+    xmlhttp.open("GET",completeAddress,false);
+    xmlhttp.send();
+    var rValue = xmlhttp.responseText;
+    //console.log( rValue );
 }
