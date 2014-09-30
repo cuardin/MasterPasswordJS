@@ -7,7 +7,7 @@ importScripts('core/scrypt.js');
 
 importScripts('core/util.js');
 importScripts('core/mpw.js');
-importScripts('databaseMock.js');
+importScripts('database.js');
 
 self.addEventListener('message', handleMessage);
 
@@ -47,7 +47,8 @@ function handleMessage(event) {
             var password = mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
             
             //Now use the password to create a user.
-            var rValue = dbCreateUser( data.userName, password, data.email );            
+            var antiSpamKey = "UPP7fXLerV";
+            var rValue = dbCreateUser( data.userName, password, data.email, antiSpamKey, false);            
             
             var returnValue = {};
             returnValue.type = "userSubmitted"

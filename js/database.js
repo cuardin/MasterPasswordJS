@@ -45,7 +45,7 @@ function dbCreateUser( uName, password, email, userCreationKey, isTest )
 function dbSaveSite( uName, dbPass, key, value )
 {
     var xmlhttp = new XMLHttpRequest();
-    var arguments = "username=" + uName + "&email=" + email +            
+    var arguments = "username=" + uName + 
             "&password=" + password +
             "&fileName=" + key + 
             "&fileContents=" + value;
