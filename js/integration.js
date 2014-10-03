@@ -1,6 +1,10 @@
-//TODO: Make sure the + and minus buttons only are enabled when they should be.
-//TODD: It seems that the actual disabling and enabling commands are not working. Test this.
+/*<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
+<script>
+    var encrypted = CryptoJS.AES.encrypt("Message", "Secret Passphrase");
 
+    var decrypted = CryptoJS.AES.decrypt(encrypted, "Secret Passphrase");
+</script>
+*/
 //***************************************
 // Declare all globals.
 var userName = null;
