@@ -208,7 +208,7 @@ function workerEventHandler(event) {
     console.log(data);
 
     if ( data.type == "mainKey" ) {
-        masterKey = data.data;
+        masterKey = data.data;        
         updateSiteList( data.siteList );
         document.getElementById("progress").src = "blank.gif";        
         $( "#compute" ).progressbar( "value", 100 );
@@ -309,7 +309,9 @@ function updateSiteList( sList ) {
     keys = Object.keys(sList);
     for ( var i = 0; i < keys.length; i++ ) {        
         var siteName = keys[i];
-        siteDataList[siteName] = sList[siteName];        
+        var siteString = sList[siteName];
+        siteString = siteString.replace(/\\/g, '');    
+        siteDataList[siteName] = JSON.parse(siteString);        
         siteNames[i] = siteName;
     }
     
@@ -356,7 +358,7 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = new Worker("../js/mpw_worker.js");
+    w = new Worker("../js/mpw_worker.js?a=6");
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);
     
@@ -392,8 +394,9 @@ function siteNameListInput( )
     console.log( siteName );
     var siteData = siteDataList[siteName];    
     if ( siteData != null ) {
-        document.getElementById("siteCounter").value = siteData.siteCounter;
-        document.getElementById("siteType").value = siteData.siteType;        
+        $("#siteCounter").val(siteData.siteCounter);
+        $("#siteType").val(siteData.siteType);        
+        $("#siteType").selectmenu("refresh");    
     }
     startSiteWorker();
 }

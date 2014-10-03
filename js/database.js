@@ -46,7 +46,7 @@ function dbSaveSite( uName, dbPass, key, value )
 {
     var xmlhttp = new XMLHttpRequest();
     var arguments = "username=" + uName + 
-            "&password=" + password +
+            "&password=" + dbPass +
             "&fileName=" + key + 
             "&fileContents=" + value;
     var completeAddress = rootAdress + "uploadFile.php?" + arguments;    
@@ -68,7 +68,7 @@ function dbGetSiteList( uName, dbPass )
     var rValue = xmlhttp.responseText;
     //console.log( rValue );
     try {
-            rValue = JSON.parse(rValue);                
+        rValue = JSON.parse(rValue);                        
     } catch ( e ) {
             console.log( rValue );
             rValue = "badLogin"

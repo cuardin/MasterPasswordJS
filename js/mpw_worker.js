@@ -1,13 +1,14 @@
-importScripts('core/encoding-indexes.js');
-importScripts('core/encoding.js');
+var c = '?a=6';
+importScripts('core/encoding-indexes.js' + c );
+importScripts('core/encoding.js' + c );
 
-importScripts('core/jssha256.js');
-importScripts('core/pbkdf2.js');
-importScripts('core/scrypt.js');
+importScripts('core/jssha256.js' + c);
+importScripts('core/pbkdf2.js' + c);
+importScripts('core/scrypt.js' + c);
 
-importScripts('core/util.js');
-importScripts('core/mpw.js');
-importScripts('database.js');
+importScripts('core/util.js' + c);
+importScripts('core/mpw.js' + c);
+importScripts('database.js' + c);
 
 self.addEventListener('message', handleMessage);
 
@@ -65,7 +66,7 @@ function handleMessage(event) {
             site.siteCounter = data.siteCounter;
             site.siteType = data.siteType;            
 
-            dbSaveSite( data.userName, password, data.siteName, site );
+            dbSaveSite( data.userName, password, data.siteName, JSON.stringify(site) );
 
             var returnValue = {};
             returnValue.type = "siteSaved"
@@ -89,9 +90,12 @@ function handleMessage(event) {
         }
     } catch ( error ) {
         var returnValue = {};
-        returnValue.type = "error"
-        returnValue.data = error.message;
-    
+        returnValue.type = "error"        
+        returnValue.message = error.message;
+        returnValue.fileName = error.fileName;
+        returnValue.lineNumber = error.lineNumber;
+   
+   
         postMessage(JSON.stringify(returnValue));
     }
     
