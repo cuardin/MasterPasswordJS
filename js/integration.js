@@ -18,10 +18,6 @@ var w = null;
 //Wrap all initializatio
 $(document).ready(function(){
 
-    //Test the disabling stuff
-    //document.getElementById("deleteSite").disabled = true;
-    //document.getElementById("saveSite").disabled = true;
-
     //Check if we should even be here.
     if(!window.Worker) { 
         //TODO: Check that this works.
@@ -153,9 +149,10 @@ function saveSite()
     data.masterKey = masterKey;        
     data.userName = $("#userName").val();
         
-    data.siteName = $("#siteName").val();
-    data.siteType = $("#siteType").val();
-    data.siteCounter = $("#siteCounter").val();
+    data.site = {};
+    data.site.siteName = $("#siteName").val();
+    data.site.siteType = $("#siteType").val();
+    data.site.siteCounter = $("#siteCounter").val();
         
     var jsonString = JSON.stringify(data);
     if ( w == null ) {
@@ -362,7 +359,7 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = new Worker("../js/mpw_worker.js?a=6");
+    w = new Worker("../js/mpw_worker.js?a=7");
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);
     

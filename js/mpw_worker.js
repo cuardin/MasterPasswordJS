@@ -15,74 +15,28 @@ self.addEventListener('message', handleMessage);
 var mpw = new MPW();
 var webStorageSite = 'masterPasswordWebStorage';
 
-function postProgress( i, p )
-{
-    var returnValue = {};
-    returnValue.type = "progress"
-    returnValue.data = 100.0*i/p;
-    postMessage( JSON.stringify(returnValue) );    
-}
-
 function handleMessage(event) {    
     var data = JSON.parse(event.data);                
 
     try {       
-        if ( data.command == "mainCompute" ) {            
-            var masterKey = mpw.mpw_compute_secret_key( data.userName, data.masterPassword, postProgress );              
-            var siteList = loadSiteList(masterKey, data.userName );
-            var returnValue = {};
-            returnValue.type = "mainKey"
-            returnValue.data = masterKey;            
-            returnValue.siteList = siteList;
+        if ( data.command === "mainCompute" ) {                                    
+            var returnValue = computeMainKey( data.userName, data.masterPassword, mpw, postProgress );
             postMessage( JSON.stringify(returnValue) );
-
-        } else if ( data.command == "siteCompute" ) {
-            var password = mpw.mpw_compute_site_password( data.masterKey, data.siteType, data.siteName, data.siteCounter );
-            var returnValue = {};
-            returnValue.type = "password"
-            returnValue.data = password;
-            postMessage( JSON.stringify(returnValue) );
-
-        } else if ( data.command == "createUser" ) {
-            //Compute the password to be used to identify this user.
-            var password = mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
             
-            //Now use the password to create a user.
-            var antiSpamKey = "UPP7fXLerV";
-            var rValue = dbCreateUser( data.userName, password, data.email, antiSpamKey, false);            
-            
-            var returnValue = {};
-            returnValue.type = "userSubmitted"
-            returnValue.data = rValue;
+        } else if ( data.command === "siteCompute" ) {
+            var returnValue = computeSitePassword( data.masterKey, data.siteType, data.siteName, data.siteCounter, mpw );            
             postMessage( JSON.stringify(returnValue) );
-
-        } else if ( data.command == "saveSite" ) {
-
-            //Compute the password to be used to identify this user.
-            var password = mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
-
-            var site = {};
-            site.siteName = data.siteName;            
-            site.siteCounter = data.siteCounter;
-            site.siteType = data.siteType;            
-
-            dbSaveSite( data.userName, password, data.siteName, JSON.stringify(site) );
-
-            var returnValue = {};
-            returnValue.type = "siteSaved"
-            returnValue.data = site;
+            
+        } else if ( data.command === "createUser" ) {
+            var returnValue = createUser( data.masterKey, data.userName, data.email, mpw );            
+            postMessage( JSON.stringify(returnValue) );
+            
+        } else if ( data.command === "saveSite" ) {
+            var returnValue = saveSite( data.masterKey, data.userName, data.site, mpw );     
             postMessage( JSON.stringify(returnValue) );        
-
-        } else if ( data.command == "deleteSite" ) {
-
-            //Compute the password to be used to identify this user.
-            var password = mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
-
-            dbDeleteSite( data.userName, password, data.siteName );
-
-            var returnValue = {};
-            returnValue.type = "siteDeleted"
-            returnValue.data = data.siteName;
+            
+        } else if ( data.command === "deleteSite" ) {
+            var returnValue = deleteSite( data.masterKey, data.userName, data.siteName, mpw );            
             postMessage( JSON.stringify(returnValue) );        
 
         } else {
@@ -90,7 +44,7 @@ function handleMessage(event) {
         }
     } catch ( error ) {
         var returnValue = {};
-        returnValue.type = "error"        
+        returnValue.type = "error";        
         returnValue.message = error.message;
         returnValue.fileName = error.fileName;
         returnValue.lineNumber = error.lineNumber;
@@ -101,6 +55,14 @@ function handleMessage(event) {
     
 }
 
+function postProgress( i, p )
+{
+    var returnValue = {};
+    returnValue.type = "progress";
+    returnValue.data = 100.0*i/p;
+    postMessage( JSON.stringify(returnValue) );    
+}
+
 function loadSiteList( masterKey, userName )
 {    
     var password = mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
@@ -108,3 +70,66 @@ function loadSiteList( masterKey, userName )
     return siteList; 
 }
 
+function computeMainKey( userName, masterPassword, mpw, postProgress ) {
+    var masterKey = mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
+    var siteList = loadSiteList(masterKey, userName );
+    
+    var returnValue = {};
+    returnValue.type = "mainKey";
+    returnValue.data = masterKey;            
+    returnValue.siteList = siteList;
+    
+    return returnValue;
+}
+function computeSitePassword( masterKey, siteType, siteName, siteCounter, mpw )
+{
+    var password = mpw.mpw_compute_site_password( masterKey, siteType, siteName, siteCounter );
+    var returnValue = {};
+    returnValue.type = "password";
+    returnValue.data = password;
+    return returnValue;
+}
+
+function createUser( masterKey, userName, email, mpw )
+{
+    //Compute the password to be used to identify this user.
+    var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+
+    //Now use the password to create a user.
+    var antiSpamKey = "UPP7fXLerV";
+    var rValue = dbCreateUser( userName, password, email, antiSpamKey, false);            
+
+    var returnValue = {};
+    returnValue.type = "userSubmitted";
+    returnValue.data = rValue;
+    
+    return returnValue;
+}
+
+function saveSite( masterKey, userName, site, mpw )
+{
+    //Compute the password to be used to identify this user.
+    var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+    
+    dbSaveSite( userName, password, site.siteName, JSON.stringify(site) );
+
+    var returnValue = {};
+    returnValue.type = "siteSaved";
+    returnValue.data = site;
+    
+    return returnValue;
+}
+
+function deleteSite( masterKey, userName, siteName, mpw )
+{
+    //Compute the password to be used to identify this user.
+    var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+
+    dbDeleteSite( userName, password, siteName );
+
+    var returnValue = {};
+    returnValue.type = "siteDeleted";
+    returnValue.data = siteName;
+    
+    return returnValue;
+}
