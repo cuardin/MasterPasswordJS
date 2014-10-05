@@ -65,7 +65,7 @@ function postProgress( i, p )
     postMessage( JSON.stringify(returnValue) );    
 }
 
-function loadSiteList( masterKey, userName )
+function loadSiteList( masterKey, userName, mpw )
 {    
     var password = mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
     var siteList = dbGetSiteList( userName, password );    
@@ -75,7 +75,7 @@ function loadSiteList( masterKey, userName )
 
 function computeMainKey( userName, masterPassword, mpw, postProgress ) {
     var masterKey = mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
-    var siteList = loadSiteList(masterKey, userName );
+    var siteList = loadSiteList( masterKey, userName, mpw );
     
     var returnValue = {};
     returnValue.type = "mainKey";

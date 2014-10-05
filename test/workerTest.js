@@ -59,6 +59,25 @@ QUnit.test( "testGetFileListNonExistingUser", function( assert ) {
         
 });
 
+QUnit.test( "testGenerateMainKey", function( assert ) {    
+    
+    //Arrange    
+    var mpw = {};
+    mpw.mpw_compute_secret_key = function(uName, mPassword, pProgress ) {
+        if ( uName === userName && mPassword === masterPassword ) {
+            return masterKey;
+        }
+    };
+   
+    //Act	  
+    var rValue = computeMainKey( userName, masterPassword, mpw, null );
+    
+    //Assert    	
+    assert.equal( rValue.type, "masterKey" );    
+    assert.equal( rValue.data, masterKey );    
+        
+});
+
 QUnit.test( "testUnpackSiteList", function( assert ) {    
     
     //Arrange    
