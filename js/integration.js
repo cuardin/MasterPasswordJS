@@ -210,6 +210,8 @@ function workerEventHandler(event) {
 
     if ( data.type == "mainKey" ) {
         masterKey = data.data;        
+        console.log( "Master Key:" );
+        console.log ( JSON.stringify(masterKey) );
         updateSiteList( data.siteList );
         document.getElementById("progress").src = "blank.gif";        
         $( "#compute" ).progressbar( "value", 100 );

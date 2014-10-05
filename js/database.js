@@ -68,11 +68,11 @@ function dbGetSiteList( uName, dbPass )
     var rValue = xmlhttp.responseText;
     //console.log( rValue );
     try {
-        rValue = JSON.parse(rValue);                        
+        rValue = JSON.parse(rValue);        
     } catch ( e ) {
-            console.log( rValue );
-            rValue = "badLogin"
-    }
+        console.log( rValue );
+        rValue = "badLogin"
+}
     return rValue;
 }
 

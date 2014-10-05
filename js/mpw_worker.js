@@ -1,16 +1,18 @@
-var c = '?a=6';
-importScripts('core/encoding-indexes.js' + c );
-importScripts('core/encoding.js' + c );
+if ( typeof importScripts === 'function') {
+    var c = '?a=6';
+    importScripts('core/encoding-indexes.js' + c );
+    importScripts('core/encoding.js' + c );
 
-importScripts('core/jssha256.js' + c);
-importScripts('core/pbkdf2.js' + c);
-importScripts('core/scrypt.js' + c);
+    importScripts('core/jssha256.js' + c);
+    importScripts('core/pbkdf2.js' + c);
+    importScripts('core/scrypt.js' + c);
 
-importScripts('core/util.js' + c);
-importScripts('core/mpw.js' + c);
-importScripts('database.js' + c);
+    importScripts('core/util.js' + c);
+    importScripts('core/mpw.js' + c);
+    importScripts('database.js' + c);
 
-self.addEventListener('message', handleMessage);
+    self.addEventListener('message', handleMessage);
+}
 
 var mpw = new MPW();
 var webStorageSite = 'masterPasswordWebStorage';
@@ -66,7 +68,7 @@ function postProgress( i, p )
 function loadSiteList( masterKey, userName )
 {    
     var password = mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
-    var siteList = dbGetSiteList( userName, password );
+    var siteList = dbGetSiteList( userName, password );    
     return siteList; 
 }
 

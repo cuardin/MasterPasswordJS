@@ -31,7 +31,7 @@ QUnit.test( "testUploadAndGetFileListExistingUser", function( assert ) {
     var site = { "siteName": siteName, 
         "siteCounter": siteCounter,
         "siteType": siteType};
-    dbPut( userName, password, siteName, JSON.stringify(site) );
+    dbSaveSite( userName, password, siteName, JSON.stringify(site) );
    
     //Act	  
     var siteList = dbGetSiteList( userName, password );    
@@ -69,7 +69,7 @@ QUnit.test( "testDeleteFile", function( assert ) {
     var site = { "siteName": siteName, 
         "siteCounter": siteCounter,
         "siteType": siteType};
-    dbPut( userName, password, siteName, JSON.stringify(site) );   
+    dbSaveSite( userName, password, siteName, JSON.stringify(site) );   
     
     //Check the arrange
     var siteList = dbGetSiteList( userName, password );    
@@ -91,7 +91,7 @@ QUnit.test( "testUploadAndOverwriteFileListExistingUser", function( assert ) {
     var site = { "siteName": siteName, 
         "siteCounter": siteCounter,
         "siteType": siteType};
-    dbPut( userName, password, siteName, JSON.stringify(site) );
+    dbSaveSite( userName, password, siteName, JSON.stringify(site) );
    
     //Act	  
     var siteList = dbGetSiteList( userName, password );    
@@ -103,7 +103,7 @@ QUnit.test( "testUploadAndOverwriteFileListExistingUser", function( assert ) {
     var site = { "siteName": siteName, 
         "siteCounter": siteCounter+3,
         "siteType": 'pin'};
-    dbPut( userName, password, siteName, JSON.stringify(site) );
+    dbSaveSite( userName, password, siteName, JSON.stringify(site) );
     
     //Post-process
     var siteList = dbGetSiteList( userName, password );    
