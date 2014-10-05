@@ -69,6 +69,7 @@ function loadSiteList( masterKey, userName )
 {    
     var password = mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
     var siteList = dbGetSiteList( userName, password );    
+    var siteList = unpackSiteList( siteList );    
     return siteList; 
 }
 
@@ -134,4 +135,18 @@ function deleteSite( masterKey, userName, siteName, mpw )
     returnValue.data = siteName;
     
     return returnValue;
+}
+
+function unpackSiteList( siteList ) {
+    var site = {};
+    
+    //Add the site names to their list.
+    keys = Object.keys(siteList);
+    for ( var i = 0; i < keys.length; i++ ) {        
+        var siteName = keys[i];
+        var siteString = siteList[siteName];
+        siteString = siteString.replace(/\\/g, '');    
+        site[siteName] = JSON.parse(siteString);        
+    }
+    return site;
 }

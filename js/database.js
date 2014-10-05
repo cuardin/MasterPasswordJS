@@ -70,7 +70,7 @@ function dbGetSiteList( uName, dbPass )
     try {
         rValue = JSON.parse(rValue);        
     } catch ( e ) {
-        console.log( rValue );
+        //console.log( rValue );
         rValue = "badLogin"
 }
     return rValue;

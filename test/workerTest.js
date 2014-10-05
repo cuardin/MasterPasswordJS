@@ -25,6 +25,7 @@ QUnit.module( "module", {
     }
 });
 
+
 QUnit.test( "testLoadSiteList", function( assert ) {    
     
     //Arrange
@@ -35,14 +36,16 @@ QUnit.test( "testLoadSiteList", function( assert ) {
     dbSaveSite( userName, password, siteName, JSON.stringify(site) );    
     
     //Act
-    var siteList = loadSiteList( masterKey, userName );
-    siteList = JSON.parse(siteList[site.siteName]);
+    var siteList = loadSiteList( masterKey, userName );    
     
     //Assert
-    assert.equal(siteList.siteName, site.siteName );
+    assert.equal(siteList[siteName].siteName, siteName );
+    assert.equal(siteList[siteName].siteCounter, siteCounter );
+    assert.equal(siteList[siteName].siteCounter, siteCounter );
         
 });
-/*
+
+
 QUnit.test( "testGetFileListNonExistingUser", function( assert ) {    
     
     //Arrange    
@@ -56,4 +59,18 @@ QUnit.test( "testGetFileListNonExistingUser", function( assert ) {
         
 });
 
-*/
+QUnit.test( "testUnpackSiteList", function( assert ) {    
+    
+    //Arrange    
+    var siteList = {"site01.åäö":"{\\\"siteName\\\":\\\"site01.åäö\\\",\\\"siteCounter\\\":1,\\\"siteType\\\":\\\"long\\\"}"};
+       
+    //Act	  
+    var unpackedSiteList = unpackSiteList( siteList );
+    
+    //Assert    	
+    assert.equal( unpackedSiteList["site01.åäö"].siteName, "site01.åäö");
+    assert.equal( unpackedSiteList["site01.åäö"].siteCounter, 1);
+    assert.equal( unpackedSiteList["site01.åäö"].siteType, "long");
+    
+        
+});
