@@ -5,22 +5,23 @@ var antiSpamKey = "UPP7fXLerV"
 var siteName = "site01.åäö"
 var siteCounter = 1;
 var siteType = "long";
+var db = new Database();
 
 QUnit.module( "module", {
     setup: function( assert ) {
         //Clean slate
-        dbEradicateUser( userName, password, privateKey );
+        db.dbEradicateUser( userName, password, privateKey );
         
         //Now create a user
-        dbCreateUser( userName, password, email, antiSpamKey, true );
+        db.dbCreateUser( userName, password, email, antiSpamKey, true );
         
         //And validate that user
-        dbForceValidateUser( userName, privateKey );
+        db.dbForceValidateUser( userName, privateKey );
         
     }, 
     teardown: function( assert ) {
         //Clean slate
-        dbEradicateUser( userName, password );
+        db.dbEradicateUser( userName, password );
     }
 });
 
@@ -31,10 +32,10 @@ QUnit.test( "testUploadAndGetFileListExistingUser", function( assert ) {
     var site = { "siteName": siteName, 
         "siteCounter": siteCounter,
         "siteType": siteType};
-    dbSaveSite( userName, password, siteName, JSON.stringify(site) );
+    db.dbSaveSite( userName, password, siteName, JSON.stringify(site) );
    
     //Act	  
-    var siteList = dbGetSiteList( userName, password );    
+    var siteList = db.dbGetSiteList( userName, password );    
     
     //Post-process
     assert.notEqual( siteList[siteName], undefined );    
@@ -52,10 +53,10 @@ QUnit.test( "testUploadAndGetFileListExistingUser", function( assert ) {
 QUnit.test( "testGetFileListNonExistingUser", function( assert ) {    
     
     //Arrange    
-    dbEradicateUser( userName, password, privateKey );
+    db.dbEradicateUser( userName, password, privateKey );
    
     //Act	  
-    var siteList = dbGetSiteList( userName, password );        
+    var siteList = db.dbGetSiteList( userName, password );        
     
     //Assert    	
     assert.equal( siteList, "badLogin");    
@@ -69,17 +70,17 @@ QUnit.test( "testDeleteFile", function( assert ) {
     var site = { "siteName": siteName, 
         "siteCounter": siteCounter,
         "siteType": siteType};
-    dbSaveSite( userName, password, siteName, JSON.stringify(site) );   
+    db.dbSaveSite( userName, password, siteName, JSON.stringify(site) );   
     
     //Check the arrange
-    var siteList = dbGetSiteList( userName, password );    
+    var siteList = db.dbGetSiteList( userName, password );    
     assert.notEqual( siteList[siteName], undefined );    
     
     //Act	  
-    dbDeleteSite( userName, password, siteName );        
+    db.dbDeleteSite( userName, password, siteName );        
     
     //Assert    
-    var siteList = dbGetSiteList( userName, password );        
+    var siteList = db.dbGetSiteList( userName, password );        
     assert.equal( JSON.stringify(siteList), "[]" );    
         
 });
@@ -91,10 +92,10 @@ QUnit.test( "testUploadAndOverwriteFileListExistingUser", function( assert ) {
     var site = { "siteName": siteName, 
         "siteCounter": siteCounter,
         "siteType": siteType};
-    dbSaveSite( userName, password, siteName, JSON.stringify(site) );
+    db.dbSaveSite( userName, password, siteName, JSON.stringify(site) );
    
     //Act	  
-    var siteList = dbGetSiteList( userName, password );    
+    var siteList = db.dbGetSiteList( userName, password );    
     
     //Post-process    
     assert.notEqual( siteList[siteName], undefined );    
@@ -103,10 +104,10 @@ QUnit.test( "testUploadAndOverwriteFileListExistingUser", function( assert ) {
     var site = { "siteName": siteName, 
         "siteCounter": siteCounter+3,
         "siteType": 'pin'};
-    dbSaveSite( userName, password, siteName, JSON.stringify(site) );
+    db.dbSaveSite( userName, password, siteName, JSON.stringify(site) );
     
     //Post-process
-    var siteList = dbGetSiteList( userName, password );    
+    var siteList = db.dbGetSiteList( userName, password );    
     assert.notEqual( siteList[siteName], undefined );    
     var siteDataStr = siteList[siteName];
     siteDataStr = siteDataStr.replace(/\\/g, '');    
