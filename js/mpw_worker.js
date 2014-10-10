@@ -54,7 +54,7 @@ function handleMessage(event) {
 
 
         postMessage(JSON.stringify(returnValue));
-    }
+    };
 
 }
 
@@ -80,7 +80,7 @@ function MPWWorker() {
             var siteList = this.unpackSiteList( siteList );    
             return siteList; 
         }
-    }
+    };
 
     this.computeMainKey = function ( userName, masterPassword, postProgress ) {
         var masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
@@ -131,7 +131,7 @@ function MPWWorker() {
         returnValue.data = site;
 
         return returnValue;
-    }
+    };
 
     this.deleteSite = function ( masterKey, userName, siteName  )
     {
@@ -145,7 +145,7 @@ function MPWWorker() {
         returnValue.data = siteName;
 
         return returnValue;
-    }
+    };
 
     this.unpackSiteList = function ( siteList ) {
         var site = {};
@@ -159,5 +159,5 @@ function MPWWorker() {
             site[siteName] = JSON.parse(siteString);        
         }
         return site;
-    }
+    };
 }
