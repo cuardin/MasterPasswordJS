@@ -14,11 +14,11 @@ if ( typeof importScripts === 'function') {
     self.addEventListener('message', handleMessage);
 }
 
-var mpw = new MPW();
 var webStorageSite = 'masterPasswordWebStorage';
 
 
 function handleMessage(event) {    
+    var mpw = new MPW();
     var data = JSON.parse(event.data);                
 
     try {       
@@ -66,39 +66,44 @@ function postProgress( i, p )
     postMessage( JSON.stringify(returnValue) );    
 }
 
-function worker() {
+function MPWWorker() {
     this.mpw = new MPW();
     this.db = new Database();
     
-    function loadSiteList( masterKey, userName, mpw )
+    this.loadSiteList = function ( masterKey, userName )
     {    
         var password = this.mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
-        var siteList = dbGetSiteList( userName, password );    
-        var siteList = unpackSiteList( siteList );    
-        return siteList; 
+        var siteList = db.dbGetSiteList( userName, password );    
+        if ( siteList === "badLogin") {
+            return siteList;
+        } else {
+            var siteList = this.unpackSiteList( siteList );    
+            return siteList; 
+        }
     }
 
-    function computeMainKey( userName, masterPassword, mpw, postProgress ) {
-        var masterKey = mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
-        var siteList = loadSiteList( masterKey, userName, mpw );
+    this.computeMainKey = function ( userName, masterPassword, postProgress ) {
+        var masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
+        var siteList = this.loadSiteList( masterKey, userName );
 
         var returnValue = {};
-        returnValue.type = "mainKey";
+        returnValue.type = "masterKey";
         returnValue.data = masterKey;            
         returnValue.siteList = siteList;
 
         return returnValue;
     }
-    function computeSitePassword( masterKey, siteType, siteName, siteCounter, mpw )
+    
+    this.computeSitePassword = function ( masterKey, siteType, siteName, siteCounter )
     {
-        var password = mpw.mpw_compute_site_password( masterKey, siteType, siteName, siteCounter );
+        var password = this.mpw.mpw_compute_site_password( masterKey, siteType, siteName, siteCounter );
         var returnValue = {};
-        returnValue.type = "password";
+        returnValue.type = "sitePassword";
         returnValue.data = password;
         return returnValue;
     }
 
-    function createUser( masterKey, userName, email, mpw )
+    this.createUser = function ( masterKey, userName, email )
     {
         //Compute the password to be used to identify this user.
         var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
@@ -114,7 +119,7 @@ function worker() {
         return returnValue;
     }
 
-    function saveSite( masterKey, userName, site, mpw )
+    this.saveSite = function ( masterKey, userName, site )
     {
         //Compute the password to be used to identify this user.
         var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
@@ -128,7 +133,7 @@ function worker() {
         return returnValue;
     }
 
-    function deleteSite( masterKey, userName, siteName, mpw )
+    this.deleteSite = function ( masterKey, userName, siteName  )
     {
         //Compute the password to be used to identify this user.
         var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
@@ -142,7 +147,7 @@ function worker() {
         return returnValue;
     }
 
-    function unpackSiteList( siteList ) {
+    this.unpackSiteList = function ( siteList ) {
         var site = {};
 
         //Add the site names to their list.
