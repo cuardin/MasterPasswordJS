@@ -103,6 +103,64 @@ QUnit.test( "testComputeSitePassword", function( assert ) {
         
 });
 
+QUnit.test( "testCreateUser", function( assert ) {    
+    
+    //Arrange        
+    //Mock the database connection
+    worker.db.dbCreateUser = function dbCreateUser( userName, password, email, antiSpamKey, fun )
+    {
+        return userName + password + email + antiSpamKey + fun;
+    };
+   
+    //Act	  
+    var rValue = worker.createUser( masterKey, userName, email );
+    
+    //Assert    	
+    assert.equal( rValue.type, "userSubmitted" );    
+    assert.equal( rValue.data, userName + password + email + antiSpamKey + false );    
+        
+});
+
+QUnit.test("testSaveSite", function( assert ) {    
+    var site = { "siteName": siteName, "siteType": siteType, "siteCounter": siteCounter };
+    
+    worker.db.dbSaveSite = function ( uName, dbPass, key, value )
+    {
+        if ( uName === userName && dbPass === password && key === siteName && value == JSON.stringify(site) ) {
+            return "OK";
+        } else {            
+            throw new Error("Error: ")
+        }
+    };
+    
+    var rValue = worker.saveSite( masterKey, userName, site );
+    
+    //Assert    
+    assert.equal( rValue.type, "siteSaved" );    
+    assert.equal( rValue.data, site );    
+    
+});
+
+QUnit.test("testDeleteSite", function( assert ) {    
+    
+    
+    worker.db.dbDeleteSite = function ( uName, dbPass, sName )
+    {
+        if ( uName === userName && dbPass === password && sName === siteName  ) {
+            return "OK";
+        } else {            
+            throw new Error("Error: ");
+        }
+    };
+    
+    var rValue = worker.deleteSite( masterKey, userName, siteName );
+    
+    //Assert    
+    assert.equal( rValue.type, "siteDeleted" );    
+    assert.equal( rValue.data, siteName );    
+    
+});
+
 QUnit.test( "testUnpackSiteList", function( assert ) {    
     
     //Arrange    

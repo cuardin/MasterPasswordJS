@@ -92,7 +92,7 @@ function MPWWorker() {
         returnValue.siteList = siteList;
 
         return returnValue;
-    }
+    };
     
     this.computeSitePassword = function ( masterKey, siteType, siteName, siteCounter )
     {
@@ -101,30 +101,30 @@ function MPWWorker() {
         returnValue.type = "sitePassword";
         returnValue.data = password;
         return returnValue;
-    }
+    };
 
     this.createUser = function ( masterKey, userName, email )
     {
         //Compute the password to be used to identify this user.
-        var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
 
         //Now use the password to create a user.
         var antiSpamKey = "UPP7fXLerV";
-        var rValue = dbCreateUser( userName, password, email, antiSpamKey, false);            
+        var rValue = this.db.dbCreateUser( userName, password, email, antiSpamKey, false);            
 
         var returnValue = {};
         returnValue.type = "userSubmitted";
         returnValue.data = rValue;
 
         return returnValue;
-    }
+    };
 
     this.saveSite = function ( masterKey, userName, site )
     {
         //Compute the password to be used to identify this user.
-        var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
 
-        dbSaveSite( userName, password, site.siteName, JSON.stringify(site) );
+        this.db.dbSaveSite( userName, password, site.siteName, JSON.stringify(site) );
 
         var returnValue = {};
         returnValue.type = "siteSaved";
@@ -136,9 +136,9 @@ function MPWWorker() {
     this.deleteSite = function ( masterKey, userName, siteName  )
     {
         //Compute the password to be used to identify this user.
-        var password = mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
 
-        dbDeleteSite( userName, password, siteName );
+        this.db.dbDeleteSite( userName, password, siteName );
 
         var returnValue = {};
         returnValue.type = "siteDeleted";
