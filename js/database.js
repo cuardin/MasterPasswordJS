@@ -11,6 +11,11 @@ function Database() {
         xmlhttp.send();
         var rValue = xmlhttp.responseText;
         //console.log( rValue );
+        if ( rValue.substr(0,2) === "OK" ) {
+            return;
+        } else {
+            throw new Error("Error: " + rValue);            
+        }
     };
 
     this.dbForceValidateUser = function( uName, privateKey ) 
@@ -24,6 +29,11 @@ function Database() {
         xmlhttp.send();
         var rValue = xmlhttp.responseText;
         //console.log( rValue );    
+        if ( rValue.substr(0,2) === "OK" ) {
+            return;
+        } else {
+            throw new Error("Error: " + rValue);            
+        }
     };
 
     this.dbCreateUser = function ( uName, password, email, userCreationKey, isTest ) 
@@ -39,8 +49,7 @@ function Database() {
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();
-        var rValue = xmlhttp.responseText;
-        console.log( rValue.substr(0,2) );
+        var rValue = xmlhttp.responseText;        
         if ( rValue.substr(0,2) === "OK" ) {
             return;
         } else {
@@ -61,6 +70,11 @@ function Database() {
         xmlhttp.send();
         var rValue = xmlhttp.responseText;
         //console.log( rValue );
+        if ( rValue.substr(0,2) === "OK" ) {
+            return;
+        } else {
+            throw new Error("Error: " + rValue);            
+        }
     };
 
     this.dbGetSiteList = function ( uName, dbPass ) 
@@ -78,7 +92,7 @@ function Database() {
         } catch ( e ) {
             //console.log( rValue );
             rValue = "badLogin";
-    }
+        }
         return rValue;
     };
 
@@ -92,5 +106,10 @@ function Database() {
         xmlhttp.send();
         var rValue = xmlhttp.responseText;
         //console.log( rValue );
+        if ( rValue.substr(0,2) === "OK" ) {
+            return;
+        } else {
+            throw new Error("Error: " + rValue);            
+        }
     };
 }

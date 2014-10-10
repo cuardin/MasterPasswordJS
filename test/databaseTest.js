@@ -10,7 +10,11 @@ var db = new Database();
 QUnit.module( "module", {
     setup: function( assert ) {
         //Clean slate
-        db.dbEradicateUser( userName, password, privateKey );
+        try {
+            db.dbEradicateUser( userName, password, privateKey );
+        } catch ( e ) {
+            
+        }
         
         //Now create a user
         db.dbCreateUser( userName, password, email, antiSpamKey, true );
@@ -21,7 +25,9 @@ QUnit.module( "module", {
     }, 
     teardown: function( assert ) {
         //Clean slate
-        db.dbEradicateUser( userName, password );
+        try {
+            db.dbEradicateUser( userName, password );
+        } catch ( e ) {}
     }
 });
 
@@ -37,7 +43,9 @@ QUnit.test( "testCreateDuplicateEmail", function( assert ) {
     } catch ( e ) {
        assert.ok( true );
     } finally {
-        db.dbEradicateUser( userName02, password, privateKey );
+        try {
+            db.dbEradicateUser( userName02, password, privateKey );
+        } catch(e) { }
     }        
     
 });
