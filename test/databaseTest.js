@@ -1,8 +1,8 @@
 var userName = "user01åäö";
 var password = "BopvPeln3~Rima"; //"MasterPass01", counter 1, type long, site: masterPasswordWebStorage
 var email = "daniel@armyr.se";
-var antiSpamKey = "UPP7fXLerV"
-var siteName = "site01.åäö"
+var antiSpamKey = "UPP7fXLerV";
+var siteName = "site01.åäö";
 var siteCounter = 1;
 var siteType = "long";
 var db = new Database();
@@ -23,6 +23,23 @@ QUnit.module( "module", {
         //Clean slate
         db.dbEradicateUser( userName, password );
     }
+});
+
+QUnit.test( "testCreateDuplicateEmail", function( assert ) {    
+    //Arrange    
+    var userName02 = "anotherUserÅÄÖ";
+    
+    //Act
+    try {
+        db.dbCreateUser( userName02, password, email, antiSpamKey, true );
+        //Assert
+        assert.ok(false, "An exception should have been thrown");
+    } catch ( e ) {
+       assert.ok( true );
+    } finally {
+        db.dbEradicateUser( userName02, password, privateKey );
+    }        
+    
 });
 
 QUnit.test( "testUploadAndGetFileListExistingUser", function( assert ) {    

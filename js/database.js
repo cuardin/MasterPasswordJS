@@ -40,7 +40,12 @@ function Database() {
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();
         var rValue = xmlhttp.responseText;
-        //console.log( rValue );
+        console.log( rValue.substr(0,2) );
+        if ( rValue.substr(0,2) === "OK" ) {
+            return;
+        } else {
+            throw new Error("Error: " + rValue);            
+        }
     };
 
     this.dbSaveSite = function ( uName, dbPass, key, value )
