@@ -208,7 +208,7 @@ function workerEventHandler(event) {
     var data = JSON.parse(event.data);    
     console.log(data);
 
-    if ( data.type == "mainKey" ) {
+    if ( data.type == "masterKey" ) {
         masterKey = data.data;        
         console.log( "Master Key:" );
         console.log ( JSON.stringify(masterKey) );
@@ -301,10 +301,10 @@ function updateSiteList( sList ) {
 
     console.log( sList );
     
-    if ( sList == "badLogin" ) {        
+    if ( sList === "badLogin" ) {        
         $("#createUserDialog").dialog("open");        
         return;
-    } else if ( sList == "badPassword" ) {
+    } else if ( sList === "badPassword" ) {
         return;
     }
 
@@ -339,7 +339,7 @@ function startSiteWorker() {
     data.command = "siteCompute";    
     var jsonString = JSON.stringify(data);
     
-    if ( w == null ) {
+    if ( w === null ) {
         //If we don't have a worker, we need to compute the masterSeed first.
         onMainInputChange();
     }
@@ -361,7 +361,7 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = new Worker("../js/mpw_worker.js?a=7");
+    w = new Worker("../js/mpw_worker.js?a=8");
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);
     

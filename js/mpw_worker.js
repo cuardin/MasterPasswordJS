@@ -1,5 +1,5 @@
 if ( typeof importScripts === 'function') {
-    var c = '?a=6';
+    var c = '?a=7';
     importScripts('core/encoding-indexes.js' + c );
     importScripts('core/encoding.js' + c );
 
@@ -16,30 +16,38 @@ if ( typeof importScripts === 'function') {
 
 var webStorageSite = 'masterPasswordWebStorage';
 
+var postProgress = function ( i, p )
+{
+    var returnValue = {};
+    returnValue.type = "progress";
+    returnValue.data = 100.0*i/p;
+    postMessage( JSON.stringify(returnValue) );    
+};
 
 function handleMessage(event) {    
-    var mpw = new MPW();
+    
     var data = JSON.parse(event.data);                
-
+    var worker = new MPWWorker();
+    
     try {       
         if ( data.command === "mainCompute" ) {                                    
-            var returnValue = computeMainKey( data.userName, data.masterPassword, mpw, postProgress );
+            var returnValue = worker.computeMainKey( data.userName, data.masterPassword, postProgress );
             postMessage( JSON.stringify(returnValue) );
 
         } else if ( data.command === "siteCompute" ) {
-            var returnValue = computeSitePassword( data.masterKey, data.siteType, data.siteName, data.siteCounter, mpw );            
+            var returnValue = worker.computeSitePassword( data.masterKey, data.siteType, data.siteName, data.siteCounter );            
             postMessage( JSON.stringify(returnValue) );
 
         } else if ( data.command === "createUser" ) {
-            var returnValue = createUser( data.masterKey, data.userName, data.email, mpw );            
+            var returnValue = worker.createUser( data.masterKey, data.userName, data.email );            
             postMessage( JSON.stringify(returnValue) );
 
         } else if ( data.command === "saveSite" ) {
-            var returnValue = saveSite( data.masterKey, data.userName, data.site, mpw );     
+            var returnValue = worker.saveSite( data.masterKey, data.userName, data.site );     
             postMessage( JSON.stringify(returnValue) );        
 
         } else if ( data.command === "deleteSite" ) {
-            var returnValue = deleteSite( data.masterKey, data.userName, data.siteName, mpw );            
+            var returnValue = worker.deleteSite( data.masterKey, data.userName, data.siteName );            
             postMessage( JSON.stringify(returnValue) );        
 
         } else {
@@ -58,13 +66,6 @@ function handleMessage(event) {
 
 }
 
-function postProgress( i, p )
-{
-    var returnValue = {};
-    returnValue.type = "progress";
-    returnValue.data = 100.0*i/p;
-    postMessage( JSON.stringify(returnValue) );    
-}
 
 function MPWWorker() {
     this.mpw = new MPW();

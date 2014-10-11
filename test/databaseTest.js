@@ -1,6 +1,6 @@
 var userName = "user01åäö";
 var password = "BopvPeln3~Rima"; //"MasterPass01", counter 1, type long, site: masterPasswordWebStorage
-var email = "daniel@armyr.se";
+var email = "daniel2@armyr.se";
 var antiSpamKey = "UPP7fXLerV";
 var siteName = "site01.åäö";
 var siteCounter = 1;

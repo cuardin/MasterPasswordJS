@@ -12,7 +12,7 @@ function Database() {
         var rValue = xmlhttp.responseText;
         //console.log( rValue );
         if ( rValue.substr(0,2) === "OK" ) {
-            return;
+            return "OK";
         } else {
             throw new Error("Error: " + rValue);            
         }
@@ -30,7 +30,7 @@ function Database() {
         var rValue = xmlhttp.responseText;
         //console.log( rValue );    
         if ( rValue.substr(0,2) === "OK" ) {
-            return;
+            return "OK";
         } else {
             throw new Error("Error: " + rValue);            
         }
@@ -51,7 +51,7 @@ function Database() {
         xmlhttp.send();
         var rValue = xmlhttp.responseText;        
         if ( rValue.substr(0,2) === "OK" ) {
-            return;
+            return "OK";
         } else {
             throw new Error("Error: " + rValue);            
         }
@@ -71,7 +71,7 @@ function Database() {
         var rValue = xmlhttp.responseText;
         //console.log( rValue );
         if ( rValue.substr(0,2) === "OK" ) {
-            return;
+            return "OK";
         } else {
             throw new Error("Error: " + rValue);            
         }
@@ -107,7 +107,7 @@ function Database() {
         var rValue = xmlhttp.responseText;
         //console.log( rValue );
         if ( rValue.substr(0,2) === "OK" ) {
-            return;
+            return "OK";
         } else {
             throw new Error("Error: " + rValue);            
         }
