@@ -73,7 +73,7 @@ function MPWWorker() {
     this.loadSiteList = function ( masterKey, userName )
     {    
         var password = this.mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
-        var siteList = db.dbGetSiteList( userName, password );    
+        var siteList = this.db.dbGetSiteList( userName, password );    
         if ( siteList === "badLogin") {
             return siteList;
         } else {

@@ -12,27 +12,11 @@ var worker = {};
 
 QUnit.module( "module", {
     setup: function( assert ) {
-        //Clean slate
-        try {
-            db.dbEradicateUser( userName, password, privateKey );
-        } catch ( e ) {}
-        
-        //Now create a user
-        db.dbCreateUser( userName, password, email, antiSpamKey, true );
-        
-        //And validate that user
-        db.dbForceValidateUser( userName, privateKey );
-        
         //And make sure we have a worker object
         worker = new MPWWorker();
         
     }, 
     teardown: function( assert ) {
-        //Clean slate
-        try {
-            db.dbEradicateUser( userName, password );
-        } catch ( e ) {}
-        
         //And make sure we clean up our worker
         worker = {};
     }
@@ -42,11 +26,20 @@ QUnit.module( "module", {
 QUnit.test( "testLoadSiteList", function( assert ) {    
     
     //Arrange
-    //And upload a file
-    var site = { "siteName": siteName, 
-        "siteCounter": siteCounter,
-        "siteType": siteType};
-    db.dbSaveSite( userName, password, siteName, JSON.stringify(site) );    
+    //And upload a file    
+    worker.db.dbGetSiteList = function ( uName, pword ) {
+        if ( uName === userName && pword === password ) {
+            var site = { "siteName": siteName, 
+                "siteCounter": siteCounter,
+                "siteType": siteType};
+            var rValue = {};
+            rValue[siteName] = JSON.stringify(site);
+            return rValue;
+        } else {
+            throw Error("Error!");
+        }
+    }
+        
     
     //Act
     var siteList = worker.loadSiteList( masterKey, userName );    
@@ -62,8 +55,9 @@ QUnit.test( "testLoadSiteList", function( assert ) {
 QUnit.test( "loadSiteListNonExistingUser", function( assert ) {    
     
     //Arrange    
-    db.dbEradicateUser( userName, password, privateKey );
-   
+    //db.dbEradicateUser( userName, password, privateKey );
+    worker.db.dbGetSiteList = function ( uName, pword ) { return "badLogin" };
+    
     //Act	  
     var siteList = worker.loadSiteList( masterKey, userName );    
     
