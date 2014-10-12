@@ -13,21 +13,12 @@ $(document).ready(function(){
     //Check if we should even be here.
     if(!window.Worker) { 
         //TODO: Check that this works.
-        $("mainDiv").html("Sorry, your browser does not support Web Workers...");        
-        $("createUserDialog").html(""); //Clear the popup.
+        setMainDiv("Sorry, your browser does not support Web Workers...");                
         return;
     } 
 
     // Make all mainInputChanges start the secret key computation, interrupting old ones.
-    //jQuery does not seem to support input events.
-    inputList = document.getElementsByClassName("mainInput");
-    for ( var i = 0; i < inputList.length; i++ ) {
-        inputList[i].addEventListener("input", onMainInputChange);
-    }
-
-    
-    //Add an event listener to check that number is properly entered.
-    document.getElementById("siteCounter").addEventListener( "input", onInputNumberChange );
+    setEventHandlerOnClass( "mainInput", "input", onMainInputChange );           
 
     //Create the progress bar
     $( "#compute" ).progressbar({
@@ -41,6 +32,8 @@ $(document).ready(function(){
         change: startSiteWorker,
         stop: startSiteWorker
     });
+    //We need to add this one as well to handle text input.
+    setEventHandlerOnID( "siteCounter", "input", onInputNumberChange );    
 
     //Create the site type menu
     $( "#siteType" ).selectmenu({    
@@ -75,10 +68,8 @@ $(document).ready(function(){
         label: "-"       
     });
 
-    document.getElementById("siteName").addEventListener( "input", function ( event ) {
-        siteNameListInput();    
-    });
-
+    setEventHandlerOnID( "siteName", "input", function ( event ) {siteNameListInput();} );
+    
     //Create the create new user popup
     $("#createUserDialog").dialog({
         autoOpen: false,
