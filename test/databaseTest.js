@@ -12,9 +12,8 @@ QUnit.module( "module", {
         //Clean slate
         try {
             db.dbEradicateUser( userName, password, privateKey );
-        } catch ( e ) {
-            
-        }
+        } catch ( e ) {            
+        }        
         
         //Now create a user
         db.dbCreateUser( userName, password, email, antiSpamKey, true );
