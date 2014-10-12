@@ -217,7 +217,7 @@ function workerEventHandler(event) {
         $( "#compute" ).progressbar( "value", 100 );
         startSiteWorker();        
 
-    } else if ( data.type == "password" ) {                   
+    } else if ( data.type == "sitePassword" ) {                   
         document.getElementById("sitePassword").value = data.data;  
         document.getElementById("progress").src = "blank.gif";
         document.getElementById('compute').value = 100;        
