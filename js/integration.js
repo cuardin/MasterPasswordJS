@@ -1,17 +1,9 @@
-/*<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
-<script>
-    var encrypted = CryptoJS.AES.encrypt("Message", "Secret Passphrase");
-
-    var decrypted = CryptoJS.AES.decrypt(encrypted, "Secret Passphrase");
-</script>
-*/
 //***************************************
 // Declare all globals.
 var userName = null;
 var masterPassword = null;
-var masterKey = null;
+var masterKey = JSON.parse("[142,75,182,210,3,70,175,186,7,179,19,96,59,154,177,216,130,111,83,105,55,224,128,48,220,214,243,112,168,191,84,175,75,41,45,198,197,49,203,112,1,164,129,172,205,25,192,113,121,49,13,241,85,209,200,132,182,223,213,193,175,177,142,131]");
 var siteDataList = {};
-var siteNames = new Array();
 
 var w = null;
 
@@ -39,7 +31,7 @@ $(document).ready(function(){
 
     //Create the progress bar
     $( "#compute" ).progressbar({
-        value: 100,    
+        value: 100
     });
 
     //Create the site counter
@@ -47,7 +39,7 @@ $(document).ready(function(){
         min: 1, 
         numberFormat: "n",
         change: startSiteWorker,
-        stop: startSiteWorker,
+        stop: startSiteWorker
     });
 
     //Create the site type menu
@@ -57,9 +49,16 @@ $(document).ready(function(){
 
     //Create the site name autocomplete.
     $( "#siteName" ).autocomplete({            
-        source: siteNames,
+        source: function(request,response) { 
+            var keys = Object.keys(siteDataList);            
+            keys = keys.filter( function(val) { 
+                var r = val.match(request.term); 
+                return r !== null;
+            } );
+            response(keys);
+        },
         autoFocus: true,        
-        close: function(event,ui){ siteNameListInput() },
+        close: function(event,ui){ siteNameListInput(); },
         messages: {
             noResults: "",
             results: function() {}
@@ -68,12 +67,12 @@ $(document).ready(function(){
 
     $( "#saveSite").button( {
         disabled: true,
-        label: "+",        
+        label: "+"     
     });
 
     $( "#deleteSite").button( {
         disabled: true,
-        label: "-",        
+        label: "-"       
     });
 
     document.getElementById("siteName").addEventListener( "input", function ( event ) {
@@ -114,7 +113,7 @@ $(document).ready(function(){
     document.getElementById("email").addEventListener( "input", function( event ) {
         validateEmail( "#email" );  
         //Revalidate the second if it is not empty.
-        if ( $("#email2").val().length != 0 ) {
+        if ( $("#email2").val().length !== 0 ) {
             validateTwoFieldsSame( "#email", "#email2" );      
         }
     });            
@@ -131,7 +130,7 @@ function deleteSite()
     data.siteName = $("#siteName").val();
         
     var jsonString = JSON.stringify(data);
-    if ( w == null ) {
+    if ( w === null ) {
         //In case a seed has not been computed yet.
         onMainInputChange();
     }
@@ -155,7 +154,7 @@ function saveSite()
     data.site.siteCounter = $("#siteCounter").val();
         
     var jsonString = JSON.stringify(data);
-    if ( w == null ) {
+    if ( w === null ) {
         //In case a seed has not been computed yet.
         onMainInputChange();
     }
@@ -184,7 +183,7 @@ function validateTwoFieldsSame( field01, field02 )
     //TODO: Change the variable names here.
     var userName = $(field01).val();
     var userName2 = $(field02).val();
-    if ( userName != userName2 ) {
+    if ( userName !== userName2 ) {
         $(field02).addClass("ui-state-error");
     } else {
         $(field02).removeClass("ui-state-error");
@@ -208,49 +207,39 @@ function workerEventHandler(event) {
     var data = JSON.parse(event.data);    
     console.log(data);
 
-    if ( data.type == "masterKey" ) {
+    if ( data.type === "masterKey" ) {
         masterKey = data.data;        
         console.log( "Master Key:" );
         console.log ( JSON.stringify(masterKey) );
+        document.getElementById("progress").src = "blank.gif";                
         updateSiteList( data.siteList );
-        document.getElementById("progress").src = "blank.gif";        
         $( "#compute" ).progressbar( "value", 100 );
         startSiteWorker();        
 
-    } else if ( data.type == "sitePassword" ) {                   
+    } else if ( data.type === "sitePassword" ) {                   
         document.getElementById("sitePassword").value = data.data;  
         document.getElementById("progress").src = "blank.gif";
         document.getElementById('compute').value = 100;        
 
-    } else  if ( data.type == "progress" ) {                
+    } else  if ( data.type === "progress" ) {                
         $( "#compute" ).progressbar( "value", data.data );
 
-    } else if ( data.type == "userSubmitted" ) {
+    } else if ( data.type === "userSubmitted" ) {
         console.log( "User submitted" );
         console.log( data.data );
         $("#createUserDialog").dialog("close");
     
-    } else if ( data.type == "siteSaved" ) {
+    } else if ( data.type === "siteSaved" ) {
         console.log( "Site saved:" );
         console.log( data.data );            
-        var siteName = data.data.siteName;
-        if ( siteDataList[siteName] == null ) {
-            //New site needs to be registered.
-            siteNames[siteNames.length] = siteName;
-        }
+        var siteName = data.data.siteName;        
         siteDataList[siteName] = data.data;
     
-    } else if ( data.type == "siteDeleted" ) {
+    } else if ( data.type === "siteDeleted" ) {
         console.log( "Site deleted:" );
         console.log( data.data );            
         var siteName = data.data;
-        siteDataList[siteName] = undefined;
-        for ( var i = 0; i < siteNames.length; i++ ) {
-            if ( siteNames[i] == siteName ) {
-                siteNames[i] = '';
-            }
-        }
-
+        delete siteDataList[siteName];
     } else {
        document.getElementById("sitePassword").value = "Error: " + data.data;
     }    
@@ -258,14 +247,8 @@ function workerEventHandler(event) {
 
 function setDeleteButtonStatus() 
 {    
-    var siteName = $("#siteName").val();
-    var exists = false;
-    for ( var i = 0; i < siteNames.length; i++ ) {
-        if ( siteNames[i] == siteName ) {
-            exists = true;
-        }
-    }    
-    if ( exists ) {
+    var siteName = $("#siteName").val();    
+    if ( siteDataList[siteName] !== undefined ) {
         $("#deleteSite").button("enable");
     } else {
         $("#deleteSite").button("disable");
@@ -280,10 +263,10 @@ function setAddButtonStatus()
 
     var closestMatch = siteDataList[siteName];
     var matchExists = false;
-    if ( closestMatch == undefined ) {
+    if ( closestMatch === undefined ) {
         matchExists = false;
     } else {
-        matchExists = (closestMatch.siteCounter == siteCounter && closestMatch.siteType == siteType);
+        matchExists = (closestMatch.siteCounter === siteCounter && closestMatch.siteType === siteType);
     }    
     if ( matchExists ) {
         $("#saveSite").button("disable");
@@ -292,12 +275,8 @@ function setAddButtonStatus()
     }    
 }
 
-function updateSiteList( sList ) {
-    //This function is intentionally a bit awkward as we need to make sure we keep the references to siteDataList and siteNames.
-    //TODO: Get rid of siteNames and make siteDataList be an assosciative array.
-    //Clear out any members from the site selection list.
-    siteDataList.length = 0;    
-    siteNames.length = 0;
+function updateSiteList( sList ) {    
+    siteDataList.length = 0;     
 
     console.log( sList );
     
@@ -312,12 +291,8 @@ function updateSiteList( sList ) {
     keys = Object.keys(sList);
     for ( var i = 0; i < keys.length; i++ ) {        
         var siteName = keys[i];
-        var siteString = sList[siteName];
-        siteString = siteString.replace(/\\/g, '');    
-        siteDataList[siteName] = JSON.parse(siteString);        
-        siteNames[i] = siteName;
+        siteDataList[siteName] = sList[siteName]; 
     }
-    
 }
 
 function startSiteWorker() {        
@@ -356,7 +331,7 @@ function onMainInputChange() {
     masterKey = null; //Reset the masterKey.    
     
     //Terminate the worker if it isn't null
-    if ( w != null ) {
+    if ( w !== null ) {
         w.terminate();
     }
     
@@ -381,7 +356,7 @@ function onMainInputChange() {
 }
 
 function onInputNumberChange() {
-    var siteCounter = document.getElementById("siteCounter")
+    var siteCounter = document.getElementById("siteCounter");
     var value = parseInt(siteCounter.value);
     if ( isNaN(value) ) {
         siteCounter.style="box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px; -moz-box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px; -webkit-box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px;";
@@ -396,7 +371,7 @@ function siteNameListInput( )
     var siteName = document.getElementById("siteName").value;
     console.log( siteName );
     var siteData = siteDataList[siteName];    
-    if ( siteData != null ) {
+    if ( siteData !== undefined && siteData !== null ) {
         $("#siteCounter").val(siteData.siteCounter);
         $("#siteType").val(siteData.siteType);        
         $("#siteType").selectmenu("refresh");    
