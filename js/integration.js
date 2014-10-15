@@ -225,12 +225,15 @@ function workerEventHandler(event) {
         console.log( data.data );            
         var siteName = data.data.siteName;        
         siteDataList[siteName] = data.data;
-    
+        setAddButtonStatus();
+        setDeleteButtonStatus();
     } else if ( data.type === "siteDeleted" ) {
         console.log( "Site deleted:" );
         console.log( data.data );            
         var siteName = data.data;
         delete siteDataList[siteName];
+        setAddButtonStatus();
+        setDeleteButtonStatus();
     } else {
        document.getElementById("sitePassword").value = "Error: " + data.data;
     }    
