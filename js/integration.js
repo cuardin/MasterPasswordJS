@@ -87,6 +87,17 @@ $(document).ready(function(){
         }
     });
 
+    //Create the create new user popup
+    $("#duplicateUserDialog").dialog({
+        autoOpen: false,
+        modal: true,        
+        buttons: {
+            "OK": function() {                
+                $(this).dialog("close");           
+            },             
+        }
+    });
+
     $("#saveSite").click( saveSite );
 
     $("#deleteSite").click( deleteSite );
@@ -218,7 +229,12 @@ function workerEventHandler(event) {
     } else if ( data.type === "userSubmitted" ) {
         console.log( "User submitted" );
         console.log( data.data );
+        //TODO: Whenever we close the user creation dialog, we should clear all values.
         $("#createUserDialog").dialog("close");
+        if ( data.data === "DUPLICATE_USER" ) {
+            console.log( "Opening duplicate user dialog" );
+            $("#duplicateUserDialog").dialog("open");
+        }
     
     } else if ( data.type === "siteSaved" ) {
         console.log( "Site saved:" );
