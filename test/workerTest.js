@@ -115,6 +115,25 @@ QUnit.test( "testCreateUser", function( assert ) {
         
 });
 
+QUnit.test( "testCreateDuplicateUser", function( assert ) {    
+    
+    //Arrange        
+    //Mock the database connection that returns duplicate user.
+    worker.db.dbCreateUser = function dbCreateUser( userName, password, email, antiSpamKey, fun )
+    {        
+        return "DUPLICATE_USER";
+    };
+   
+    //Act	  
+    var rValue = worker.createUser( masterKey, userName, email );
+    
+    //Assert    	
+    assert.equal( rValue.type, "userSubmitted" );            
+    assert.equal( rValue.data, "DUPLICATE_USER" );            
+        
+});
+
+
 QUnit.test("testSaveSite", function( assert ) {    
     var site = { "siteName": siteName, "siteType": siteType, "siteCounter": siteCounter };
     

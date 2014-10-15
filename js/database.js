@@ -52,6 +52,8 @@ function Database() {
         var rValue = xmlhttp.responseText;        
         if ( rValue.substr(0,2) === "OK" ) {
             return "OK";
+        } else if ( rValue.substr(0,14) === "DUPLICATE_USER") {
+            return "DUPLICATE_USER";
         } else {
             throw new Error("Error: " + rValue);            
         }

@@ -36,14 +36,31 @@ QUnit.test( "testCreateDuplicateEmail", function( assert ) {
     
     //Act
     try {
-        db.dbCreateUser( userName02, password, email, antiSpamKey, true );
-        //Assert
-        assert.ok(false, "An exception should have been thrown");
+        var result = db.dbCreateUser( userName02, password, email, antiSpamKey, true );
+        assert.equal( result, "DUPLICATE_USER" );
     } catch ( e ) {
-       assert.ok( true );
+       assert.ok(false, "An exception was unexpectedly thrown.");
     } finally {
         try {
             db.dbEradicateUser( userName02, password, privateKey );
+        } catch(e) { }
+    }        
+    
+});
+
+QUnit.test( "testCreateDuplicateUserName", function( assert ) {    
+    //Arrange    
+    var email02 = "another@email.com";
+    
+    //Act
+    try {
+        var result = db.dbCreateUser( userName, password, email02, antiSpamKey, true );
+        assert.equal( result, "DUPLICATE_USER" );
+    } catch ( e ) {
+       assert.ok(false, "An exception was unexpectedly thrown.");
+    } finally {
+        try {
+            db.dbEradicateUser( userName, password, privateKey );
         } catch(e) { }
     }        
     
