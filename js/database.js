@@ -88,12 +88,20 @@ function Database() {
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();
         var rValue = xmlhttp.responseText;
-        //console.log( rValue );
+        if ( rValue.substring(0,4) === "FAIL") {
+            if ( rValue === "FAIL: BAD_LOGIN" ) {
+                return "badLogin";
+            } else if ( rValue === "FAIL: UNVALIDATED_USER" ) {
+                return "unvalidatedUser"
+            } else {
+                return "badData";
+            }
+        }
         try {
             rValue = JSON.parse(rValue);        
         } catch ( e ) {
-            //console.log( rValue );
-            rValue = "badLogin";
+            return "badData";
+            
         }
         return rValue;
     };

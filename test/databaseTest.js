@@ -104,6 +104,32 @@ QUnit.test( "testGetFileListNonExistingUser", function( assert ) {
         
 });
 
+QUnit.test( "testGetFileListBadPassword", function( assert ) {    
+    
+    //Arrange       
+   
+    //Act	  
+    var siteList = db.dbGetSiteList( userName, '--');
+    
+    //Assert    	
+    assert.equal( siteList, "badLogin");    
+        
+});
+
+QUnit.test( "testGetFileListUnvalidatedUser", function( assert ) {    
+    
+    //Arrange: Delete and recreate user without validation.
+    db.dbEradicateUser( userName, password, privateKey );
+    db.dbCreateUser( userName, password, email, antiSpamKey, true );
+    
+    //Act	  
+    var siteList = db.dbGetSiteList( userName, password);
+    
+    //Assert    	
+    assert.equal( siteList, "unvalidatedUser");    
+        
+});
+
 QUnit.test( "testDeleteFile", function( assert ) {    
     
     //Arrange
