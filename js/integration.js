@@ -213,15 +213,15 @@ function workerEventHandler(event) {
         masterKey = data.data;        
         console.log( "Master Key:" );
         console.log ( JSON.stringify(masterKey) );
-        document.getElementById("progress").src = "blank.gif";                
+        $("#progress").attr("src", "blank.gif" );                
         updateSiteList( data.siteList );
         $( "#compute" ).progressbar( "value", 100 );
         startSiteWorker();        
 
     } else if ( data.type === "sitePassword" ) {                   
-        document.getElementById("sitePassword").value = data.data;  
-        document.getElementById("progress").src = "blank.gif";
-        document.getElementById('compute').value = 100;        
+        $("#sitePassword").val( data.data );  
+        $("#progress").attr( "src", "blank.gif");
+        $( "#compute" ).progressbar( "value", 100 );
 
     } else  if ( data.type === "progress" ) {                
         $( "#compute" ).progressbar( "value", data.data );
