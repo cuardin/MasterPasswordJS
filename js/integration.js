@@ -88,7 +88,7 @@ $(document).ready(function(){
     });
 
     //Create the create new user popup
-    $("#duplicateUserDialog").dialog({
+    $("#infoDialog").dialog({
         autoOpen: false,
         modal: true,        
         buttons: {
@@ -233,7 +233,8 @@ function workerEventHandler(event) {
         $("#createUserDialog").dialog("close");
         if ( data.data === "DUPLICATE_USER" ) {
             console.log( "Opening duplicate user dialog" );
-            $("#duplicateUserDialog").dialog("open");
+            $("#infoDialog").dialog("option", "title", "User allready exists");
+            $("#infoDialog").dialog("open");
         }
     
     } else if ( data.type === "siteSaved" ) {
@@ -290,10 +291,12 @@ function updateSiteList( sList ) {
 
     console.log( sList );
     
-    if ( sList === "badLogin" ) {        
+    if ( sList === "badLogin" ) {                
         $("#createUserDialog").dialog("open");        
-        return;
-    } else if ( sList === "badPassword" ) {
+        return;    
+    } else if ( sList === "unvalidatedUser" ) {
+        $("#infoDialog").dialog("option", "title", "User not validated");
+        $("#infoDialog").dialog("open");        
         return;
     }
 
