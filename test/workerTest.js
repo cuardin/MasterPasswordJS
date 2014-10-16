@@ -3,8 +3,8 @@ var masterPassword = "MasterPass01";
 var password = "BopvPeln3~Rima"; //"MasterPass01", counter 1, type long, site: masterPasswordWebStorage
 var masterKey = JSON.parse("[145,36,81,10,63,247,78,149,181,68,118,134,247,23,197,43,213,246,179,150,118,5,68,114,191,139,168,58,114,205,105,114,183,144,98,157,229,68,217,77,30,95,16,93,140,116,162,73,16,217,68,9,156,244,32,77,171,22,172,15,234,187,23,176]");
 var email = "daniel2@armyr.se";
-var antiSpamKey = "UPP7fXLerV"
-var siteName = "site01.åäö"
+var antiSpamKey = "UPP7fXLerV";
+var siteName = "site01.åäö";
 var siteCounter = 1;
 var siteType = "long";
 var db = new Database();
@@ -38,9 +38,8 @@ QUnit.test( "testLoadSiteList", function( assert ) {
         } else {
             throw Error("Error!");
         }
-    }
-        
-    
+    };
+            
     //Act
     var siteList = worker.loadSiteList( masterKey, userName );    
     
@@ -56,13 +55,28 @@ QUnit.test( "loadSiteListNonExistingUser", function( assert ) {
     
     //Arrange    
     //db.dbEradicateUser( userName, password, privateKey );
-    worker.db.dbGetSiteList = function ( uName, pword ) { return "badLogin" };
+    worker.db.dbGetSiteList = function ( uName, pword ) { return "badLogin"; };
     
     //Act	  
     var siteList = worker.loadSiteList( masterKey, userName );    
     
     //Assert    	
     assert.equal( siteList, "badLogin");    
+        
+});
+
+
+QUnit.test( "loadSiteListUnvalidatedUser", function( assert ) {    
+    
+    //Arrange    
+    //db.dbEradicateUser( userName, password, privateKey );
+    worker.db.dbGetSiteList = function ( uName, pword ) { return "unvalidatedUser"; };
+    
+    //Act	  
+    var siteList = worker.loadSiteList( masterKey, userName );    
+    
+    //Assert    	
+    assert.equal( siteList, "unvalidatedUser");    
         
 });
 
@@ -139,10 +153,10 @@ QUnit.test("testSaveSite", function( assert ) {
     
     worker.db.dbSaveSite = function ( uName, dbPass, key, value )
     {
-        if ( uName === userName && dbPass === password && key === siteName && value == JSON.stringify(site) ) {
+        if ( uName === userName && dbPass === password && key === siteName && value === JSON.stringify(site) ) {
             return "OK";
         } else {            
-            throw new Error("Error: ")
+            throw new Error("Error: ");
         }
     };
     
