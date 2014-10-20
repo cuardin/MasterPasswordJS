@@ -24,12 +24,7 @@ function MPW()
     {
         return Array.apply([], uint8_arr);
     }
-    
-    this.do_convert_array_to_uint8 = function ( uint8_arr ) 
-    {
-        return Array.apply([], uint8_arr);
-    }
-    
+        
     this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter, progressFun )
     {        
         var masterKeySalt = this.mpw_core_calculate_master_key_salt(  userName )        
@@ -60,32 +55,31 @@ function MPW()
         salt.set(mpNameSpaceRaw, i); i += mpNameSpaceRaw.length;
         saltView.setUint32(i, userNameRaw.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
         salt.set(userNameRaw, i); i += userNameRaw.length;
-        return this.do_convert_uint8_to_array( salt );
+        return salt;
     }
     
     this.mpw_core_calculate_master_key = function( masterPassword, masterKeySalt, progressFun ) 
     {        
-        if ( !(masterKeySalt instanceof Array) || typeof(masterPassword) != "string" ) {
-            throw new Error("Bad input data (mpw_core_calculate_master_key): " + masterKeySalt instanceof Array + " masterPassword: " + typeof(masterPassword) );
+        console.log( masterKeySalt );
+        if ( !(masterKeySalt instanceof Uint8Array) || typeof(masterPassword) != "string" ) {
+            throw new Error("Bad input data (mpw_core_calculate_master_key): " + typeof(masterKeySalt) + " masterPassword: " + typeof(masterPassword) );
         }
         
         var encoder = new TextEncoder("utf-8");
-        var masterPasswordRaw = encoder.encode( masterPassword );
-        
-        var masterKeySaltRaw = Uint8Array( masterKeySalt );
+        var masterPasswordRaw = encoder.encode( masterPassword );                
         
         var N = 32768;
         var r = 8;
         var p = 2;
         var dkLen = 64;
         
-        var SCRYPT_MEMORY = 512 * 1024 * 1024;
+        var SCRYPT_MEMORY = 512 * 1024 * 1024 / 8;
         var scrypt_module = scrypt_module_factory(SCRYPT_MEMORY);        
-        var secretKey = scrypt_module.crypto_scrypt(masterPasswordRaw, masterKeySaltRaw, N, r, p, dkLen);
+        var secretKey = scrypt_module.crypto_scrypt(masterPasswordRaw, masterKeySalt, N, r, p, dkLen);
         
         //var secretKey = scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, progressFun); 
         
-        return this.do_convert_uint8_to_array( secretKey );        
+        return secretKey;        
         
     }
 
@@ -109,29 +103,33 @@ function MPW()
         data.set(siteNameRaw, i); i += siteNameRaw.length;
         dataView.setUint32(i, siteCounter, false/*big-endian*/); i += 4/*sizeof(uint32)*/;  
 
-        return this.do_convert_uint8_to_array(data);
+        return data;
     }
 
     this.mpw_core_compute_hmac = function (secretKey, siteSeed ) 
     {
-        if ( !(secretKey instanceof Array) || !(siteSeed instanceof Array) ) {            
-            throw new Error("Bad input data (mpw_core_compute_hmac): "  + typeof(secretKey) + "/" + (secretKey instanceof Array) + " " + (siteSeed instanceof Array)  );
+        if ( !(secretKey instanceof Uint8Array) || !(siteSeed instanceof Uint8Array) ) {            
+            throw new Error("Bad input data (mpw_core_compute_hmac): "  + typeof(secretKey) + "/" + (secretKey instanceof Uint8Array) + " " + (siteSeed instanceof Uint8Array)  );
         }
-
+        
         if ( secretKey.length != 64 ) {
             return "Error"; //TODO: Change to proper error.
         }
         
-        HMAC_SHA256_init(secretKey);
-        HMAC_SHA256_write(siteSeed);
+        //Hack since my SHA seems to onlyaccept Arrays and not Uint8Array.
+        var secretKeyArray = Array.apply([], secretKey);
+        var siteSeedArray = Array.apply([], siteSeed);
+        
+        HMAC_SHA256_init(secretKeyArray);
+        HMAC_SHA256_write(siteSeedArray);
         var siteKey = HMAC_SHA256_finalize();         
-        return this.do_convert_uint8_to_array( siteKey );
+        return new Uint8Array(siteKey); //Go back to uint8 arrays.
     }
     
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )
     {    
-        if ( typeof(siteTypeString) != "string" || !(sitePasswordSeed instanceof Array) ) {
-            throw new Error("Bad input data (mpw_core_convert_to_password): " + typeof(siteTypeString) + " " + (sitePasswordSeed instanceof Array) );
+        if ( typeof(siteTypeString) != "string" || !(sitePasswordSeed instanceof Uint8Array) ) {
+            throw new Error("Bad input data (mpw_core_convert_to_password): " + typeof(siteTypeString) + " " + (sitePasswordSeed instanceof Uint8Array) );
         }
 
         var template = this.templates[siteTypeString];

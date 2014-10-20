@@ -56,7 +56,7 @@ function Util()
             var v2 = this.charToInt(string[2*i+1]);
             h[i] = v1*16 + v2;
         }
-        return h;
+        return new Uint8Array(h);
     }       
 
 }
