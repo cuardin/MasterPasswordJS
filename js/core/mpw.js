@@ -8,6 +8,7 @@ function MPW()
     {       
         var masterKeySalt = this.mpw_core_calculate_master_key_salt( userName );
         var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                        
+                
         return masterKey;
     }
     
@@ -20,6 +21,11 @@ function MPW()
     }
         
     this.do_convert_uint8_to_array = function ( uint8_arr ) 
+    {
+        return Array.apply([], uint8_arr);
+    }
+    
+    this.do_convert_array_to_uint8 = function ( uint8_arr ) 
     {
         return Array.apply([], uint8_arr);
     }
@@ -63,14 +69,24 @@ function MPW()
             throw new Error("Bad input data (mpw_core_calculate_master_key): " + masterKeySalt instanceof Array + " masterPassword: " + typeof(masterPassword) );
         }
         
+        var encoder = new TextEncoder("utf-8");
+        var masterPasswordRaw = encoder.encode( masterPassword );
+        
+        var masterKeySaltRaw = Uint8Array( masterKeySalt );
+        
         var N = 32768;
         var r = 8;
         var p = 2;
         var dkLen = 64;
         
-        var secretKey = scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, progressFun); 
+        var SCRYPT_MEMORY = 512 * 1024 * 1024;
+        var scrypt_module = scrypt_module_factory(SCRYPT_MEMORY);        
+        var secretKey = scrypt_module.crypto_scrypt(masterPasswordRaw, masterKeySaltRaw, N, r, p, dkLen);
+        
+        //var secretKey = scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, progressFun); 
         
         return this.do_convert_uint8_to_array( secretKey );        
+        
     }
 
     this.mpw_core_calculate_site_seed = function ( siteName, siteCounter )
