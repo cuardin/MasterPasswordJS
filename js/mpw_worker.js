@@ -107,8 +107,10 @@ function MPWWorker() {
 
     this.createUser = function ( masterKey, userName, email )
     {
+        var masterKeyRaw = new Uint8Array(masterKey);
+        
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( masterKeyRaw, "long", webStorageSite, 1 );
 
         //Now use the password to create a user.
         var antiSpamKey = "UPP7fXLerV";
@@ -123,8 +125,10 @@ function MPWWorker() {
 
     this.saveSite = function ( masterKey, userName, site )
     {
+        var masterKeyRaw = new Uint8Array(masterKey);
+        
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( masterKeyRaw, "long", webStorageSite, 1 );
 
         this.db.dbSaveSite( userName, password, site.siteName, JSON.stringify(site) );
 
@@ -137,8 +141,10 @@ function MPWWorker() {
 
     this.deleteSite = function ( masterKey, userName, siteName  )
     {
+        var masterKeyRaw = new Uint8Array(masterKey);
+        
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( masterKeyRaw, "long", webStorageSite, 1 );
 
         this.db.dbDeleteSite( userName, password, siteName );
 
