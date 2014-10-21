@@ -3,8 +3,8 @@ QUnit.test( "testHMACSHA256", function( assert ) {
     
     //Arrange
 	var util = new Util();    
-    var key = util.convertBufferFromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b");
-    var data = util.convertBufferFromHex("4869205468657265");    
+    var key = Array.apply([], util.convertBufferFromHex("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b"));
+    var data = Array.apply([], util.convertBufferFromHex("4869205468657265"));    
     
 	//Act	  
     var res;

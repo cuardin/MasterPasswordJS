@@ -3,13 +3,13 @@ if ( typeof importScripts === 'function') {
     importScripts('core/encoding-indexes.js' + c );
     importScripts('core/encoding.js' + c );
 
-    importScripts('core/jssha256.js' + c);
-    importScripts('core/pbkdf2.js' + c);
-    importScripts('core/scrypt.js' + c);
+    importScripts('core/jssha256.js' + c);    
+    
+    importScripts('core/scrypt-asm.js' + c);
 
     importScripts('core/util.js' + c);
     importScripts('core/mpw.js' + c);
-    importScripts('database.js' + c);
+    importScripts('database.js' + c);    
 
     self.addEventListener('message', handleMessage);
 }
@@ -34,7 +34,7 @@ function handleMessage(event) {
             var returnValue = worker.computeMainKey( data.userName, data.masterPassword, postProgress );
             postMessage( JSON.stringify(returnValue) );
 
-        } else if ( data.command === "siteCompute" ) {
+        } else if ( data.command === "siteCompute" ) {            
             var returnValue = worker.computeSitePassword( data.masterKey, data.siteType, data.siteName, data.siteCounter );            
             postMessage( JSON.stringify(returnValue) );
 
@@ -89,15 +89,16 @@ function MPWWorker() {
 
         var returnValue = {};
         returnValue.type = "masterKey";
-        returnValue.data = masterKey;            
+        returnValue.data = Array.apply([], masterKey);            
         returnValue.siteList = siteList;
 
         return returnValue;
     };
     
     this.computeSitePassword = function ( masterKey, siteType, siteName, siteCounter )
-    {
-        var password = this.mpw.mpw_compute_site_password( masterKey, siteType, siteName, siteCounter );
+    {        
+        var masterKeyRaw = new Uint8Array(masterKey);
+        var password = this.mpw.mpw_compute_site_password( masterKeyRaw, siteType, siteName, siteCounter );
         var returnValue = {};
         returnValue.type = "sitePassword";
         returnValue.data = password;

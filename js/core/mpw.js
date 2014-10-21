@@ -104,7 +104,7 @@ function MPW()
         dataView.setUint32(i, siteCounter, false/*big-endian*/); i += 4/*sizeof(uint32)*/;  
 
         return data;
-    }
+    };
 
     this.mpw_core_compute_hmac = function (secretKey, siteSeed ) 
     {
@@ -112,8 +112,8 @@ function MPW()
             throw new Error("Bad input data (mpw_core_compute_hmac): "  + typeof(secretKey) + "/" + (secretKey instanceof Uint8Array) + " " + (siteSeed instanceof Uint8Array)  );
         }
         
-        if ( secretKey.length != 64 ) {
-            return "Error"; //TODO: Change to proper error.
+        if ( secretKey.length !== 64 ) {
+            throw new Error( "Secret key must be 64 bytes long" );
         }
         
         //Hack since my SHA seems to onlyaccept Arrays and not Uint8Array.
@@ -124,11 +124,11 @@ function MPW()
         HMAC_SHA256_write(siteSeedArray);
         var siteKey = HMAC_SHA256_finalize();         
         return new Uint8Array(siteKey); //Go back to uint8 arrays.
-    }
+    };
     
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )
     {    
-        if ( typeof(siteTypeString) != "string" || !(sitePasswordSeed instanceof Uint8Array) ) {
+        if ( typeof(siteTypeString) !== "string" || !(sitePasswordSeed instanceof Uint8Array) ) {
             throw new Error("Bad input data (mpw_core_convert_to_password): " + typeof(siteTypeString) + " " + (sitePasswordSeed instanceof Uint8Array) );
         }
 
@@ -141,7 +141,7 @@ function MPW()
             return chars[sitePasswordSeed[i + 1] % chars.length];
         }).join("");
 
-    }
+    };
 
     this.templates = {
         maximum: [
