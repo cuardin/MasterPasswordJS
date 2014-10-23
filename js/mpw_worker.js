@@ -66,16 +66,18 @@ function MPWWorker() {
     this.mpw = new MPW();
     this.db = new Database();
     
-    this.loadSiteList = function ( masterKey, userName )
+    this.loadSiteList = function ( masterKey, userName, postReturn )
     {    
         var password = this.mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
         var siteList = this.db.dbGetSiteList( userName, password );    
         if ( siteList === "badLogin" || siteList === "unvalidatedUser") {
-            return siteList;
+            postReturn( {type: siteList} );
+            return [];
         } else {
-            var siteList = this.unpackSiteList( siteList );    
+            siteList = this.unpackSiteList( siteList );                
             return siteList; 
         }
+        
     };
 
     this.computeMainKey = function ( data, postProgress, postReturn ) {
@@ -85,7 +87,7 @@ function MPWWorker() {
         
         //Do the thing.
         data.masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
-        var siteList = this.loadSiteList( data.masterKey, userName );
+        var siteList = this.loadSiteList( data.masterKey, userName, postReturn );
         data.masterKey = Array.apply( [], data.masterKey );
         
         //Package return values.

@@ -54,32 +54,37 @@ QUnit.test( "testLoadSiteList", function( assert ) {
 
 
 QUnit.test( "loadSiteListNonExistingUser", function( assert ) {    
+    QUnit.expect(2);
     
     //Arrange    
     //db.dbEradicateUser( userName, password, privateKey );
     worker.db.dbGetSiteList = function ( uName, pword ) { return "badLogin"; };
     
     //Act	  
-    var siteList = worker.loadSiteList( data.masterKey, data.userName );    
+    var siteList = worker.loadSiteList( data.masterKey, data.userName, function(rValue){        
+        //Assert    	
+        assert.equal( rValue.type, "badLogin");      
+    });    
     
     //Assert    	
-    assert.equal( siteList, "badLogin");    
+    assert.deepEqual( siteList, [] );    
         
 });
 
 
 QUnit.test( "loadSiteListUnvalidatedUser", function( assert ) {    
-    
+    QUnit.expect(2);
     //Arrange    
     //db.dbEradicateUser( userName, password, privateKey );
     worker.db.dbGetSiteList = function ( uName, pword ) { return "unvalidatedUser"; };
     
     //Act	  
-    var siteList = worker.loadSiteList( data.masterKey, data.userName );    
+    var rVal = worker.loadSiteList( data.masterKey, data.userName, function(rValue) {
+        //Assert    	
+        assert.equal( rValue.type, "unvalidatedUser");    
+    });    
     
-    //Assert    	
-    assert.equal( siteList, "unvalidatedUser");    
-        
+    assert.deepEqual( rVal, []);                
 });
 
 QUnit.test( "testComputeMainKey", function( assert ) {    
@@ -91,12 +96,45 @@ QUnit.test( "testComputeMainKey", function( assert ) {
             return data.masterKey;
         }
     };    
+    worker.db.dbGetSiteList = function ( uName, pword ) { 
+        if ( uName === data.userName && pword === data.password ) {
+            return {"site01.åäö":"{\\\"siteName\\\":\\\"site01.åäö\\\",\\\"siteCounter\\\":1,\\\"siteType\\\":\\\"long\\\"}"};
+        } else {
+            return "badLogin";
+        }
+    };
    
     //Act	  
     worker.computeMainKey( data, null, function(rValue) {
         //Assert    	
         assert.equal( rValue.type, "masterKey" );    
         assert.deepEqual( rValue.data.masterKey, data.masterKey );    
+    });            
+    
+    
+        
+});
+
+QUnit.test( "testComputeMainKeyOnexistingUser", function( assert ) {    
+    QUnit.expect( 2 );
+    
+    //Arrange        
+    worker.mpw.mpw_compute_secret_key = function(uName, mPassword, pProgress ) {
+        if ( uName === data.userName && mPassword === data.masterPassword ) {
+            return data.masterKey;
+        }
+    };    
+    worker.db.dbGetSiteList = function ( uName, pword ) {         
+        return "badLogin";        
+    };
+   
+    //Act	  
+    worker.computeMainKey( data, null, function(rValue) {
+        if ( rValue.type === "masterKey") {
+            assert.deepEqual( rValue.data.masterKey, data.masterKey );    
+        } else {
+            assert.equal( rValue.type, "badLogin" );
+        }                
     });            
     
     
