@@ -24,32 +24,29 @@ var postProgress = function ( i, p )
     postMessage( JSON.stringify(returnValue) );    
 };
 
+function postReturn(rValue) {
+    postMessage( JSON.stringify(rValue));    
+};
+
 function handleMessage(event) {    
     
-    var data = JSON.parse(event.data);                
+    var dataStr = event.data;
+    var data = JSON.parse(dataStr);                
+    data.masterKey = new Uint8Array( data.masterKey );
+    
     var worker = new MPWWorker();
     
     try {       
         if ( data.command === "mainCompute" ) {                                    
-            var returnValue = worker.computeMainKey( data.userName, data.masterPassword, postProgress );
-            postMessage( JSON.stringify(returnValue) );
-
+            worker.computeMainKey( data, postProgress, postReturn );            
         } else if ( data.command === "siteCompute" ) {            
-            var returnValue = worker.computeSitePassword( data.masterKey, data.siteType, data.siteName, data.siteCounter );            
-            postMessage( JSON.stringify(returnValue) );
-
+            worker.computeSitePassword( data, postReturn );                        
         } else if ( data.command === "createUser" ) {
-            var returnValue = worker.createUser( data.masterKey, data.userName, data.email );            
-            postMessage( JSON.stringify(returnValue) );
-
+            worker.createUser( data, postReturn );                        
         } else if ( data.command === "saveSite" ) {
-            var returnValue = worker.saveSite( data.masterKey, data.userName, data.site );     
-            postMessage( JSON.stringify(returnValue) );        
-
+            worker.saveSite( data, postReturn );                 
         } else if ( data.command === "deleteSite" ) {
-            var returnValue = worker.deleteSite( data.masterKey, data.userName, data.siteName );            
-            postMessage( JSON.stringify(returnValue) );        
-
+            worker.deleteSite( data, postReturn );                        
         } else {
             throw new Error("Unknown command: " + data.command );            
         }
@@ -59,13 +56,11 @@ function handleMessage(event) {
         returnValue.message = error.message;
         returnValue.fileName = error.fileName;
         returnValue.lineNumber = error.lineNumber;
-
-
+        
         postMessage(JSON.stringify(returnValue));
     };
 
 }
-
 
 function MPWWorker() {
     this.mpw = new MPW();
@@ -83,76 +78,82 @@ function MPWWorker() {
         }
     };
 
-    this.computeMainKey = function ( userName, masterPassword, postProgress ) {
-        var masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
-        var siteList = this.loadSiteList( masterKey, userName );
-
-        var returnValue = {};
+    this.computeMainKey = function ( data, postProgress, postReturn ) {
+        //Unpack arguments
+        var userName = data.userName;
+        var masterPassword = data.masterPassword;
+        
+        //Do the thing.
+        data.masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
+        var siteList = this.loadSiteList( data.masterKey, userName );
+        data.masterKey = Array.apply( [], data.masterKey );
+        
+        //Package return values.
+        var returnValue = {};        
         returnValue.type = "masterKey";
-        returnValue.data = Array.apply([], masterKey);            
+        returnValue.data = data;
         returnValue.siteList = siteList;
 
-        return returnValue;
+        postReturn(returnValue);
     };
     
-    this.computeSitePassword = function ( masterKey, siteType, siteName, siteCounter )
-    {        
-        var masterKeyRaw = new Uint8Array(masterKey);
-        var password = this.mpw.mpw_compute_site_password( masterKeyRaw, siteType, siteName, siteCounter );
+    this.computeSitePassword = function ( data, postReturn )
+    {                
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, data.siteType, data.siteName, data.siteCounter );
         var returnValue = {};
         returnValue.type = "sitePassword";
         returnValue.data = password;
-        return returnValue;
+        postReturn(returnValue);
     };
 
-    this.createUser = function ( masterKey, userName, email )
-    {
-        var masterKeyRaw = new Uint8Array(masterKey);
-        
+    this.createUser = function ( data, postReturn )
+    {                
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( masterKeyRaw, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
 
         //Now use the password to create a user.
         var antiSpamKey = "UPP7fXLerV";
-        var rValue = this.db.dbCreateUser( userName, password, email, antiSpamKey, false);            
+        var rValue = this.db.dbCreateUser( data.userName, password, data.email, antiSpamKey, false);            
 
         var returnValue = {};
         returnValue.type = "userSubmitted";
         returnValue.data = rValue;
 
-        return returnValue;
+        postReturn(returnValue);
     };
 
-    this.saveSite = function ( masterKey, userName, site )
-    {
-        var masterKeyRaw = new Uint8Array(masterKey);
-        
+    this.saveSite = function ( data, postReturn )
+    {                
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( masterKeyRaw, "long", webStorageSite, 1 );
-
-        this.db.dbSaveSite( userName, password, site.siteName, JSON.stringify(site) );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
+        
+        var site = {};
+        site.siteName = data.siteName;
+        site.siteCounter = data.siteCounter;
+        site.siteType = data.siteType;
+        
+        this.db.dbSaveSite( data.userName, password, data.siteName, JSON.stringify(site) );
 
         var returnValue = {};
         returnValue.type = "siteSaved";
         returnValue.data = site;
 
-        return returnValue;
+        postReturn(returnValue);
     };
 
-    this.deleteSite = function ( masterKey, userName, siteName  )
-    {
-        var masterKeyRaw = new Uint8Array(masterKey);
+    this.deleteSite = function ( data, postReturn )
+    {        
         
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( masterKeyRaw, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
 
-        this.db.dbDeleteSite( userName, password, siteName );
+        this.db.dbDeleteSite( data.userName, password, data.siteName );
 
         var returnValue = {};
         returnValue.type = "siteDeleted";
-        returnValue.data = siteName;
+        returnValue.data = data.siteName;
 
-        return returnValue;
+        postReturn(returnValue);
     };
 
     this.unpackSiteList = function ( siteList ) {

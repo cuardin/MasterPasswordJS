@@ -10,7 +10,7 @@ function MPW()
         var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                        
                 
         return masterKey;
-    }
+    };
     
     this.mpw_compute_site_password = function( masterKey, siteTypeString, siteName, siteCounter)
     {
@@ -18,26 +18,26 @@ function MPW()
         var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );                
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
         return password;
-    }
+    };
         
     this.do_convert_uint8_to_array = function ( uint8_arr ) 
     {
         return Array.apply([], uint8_arr);
-    }
+    };
         
     this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter, progressFun )
     {        
-        var masterKeySalt = this.mpw_core_calculate_master_key_salt(  userName )        
+        var masterKeySalt = this.mpw_core_calculate_master_key_salt(  userName );
         var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                
         var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                
         var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );                
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
         return password;
-    }
+    };
     
     this.mpw_core_calculate_master_key_salt = function ( userName ) 
     {	
-        if ( typeof(userName) != "string" ) {
+        if ( typeof(userName) !== "string" ) {
             throw new Error("Bad input data (mpw_core_calculate_master_key_salt): userName: " + typeof(userName) );
         }
         
@@ -56,12 +56,11 @@ function MPW()
         saltView.setUint32(i, userNameRaw.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
         salt.set(userNameRaw, i); i += userNameRaw.length;
         return salt;
-    }
+    };
     
     this.mpw_core_calculate_master_key = function( masterPassword, masterKeySalt, progressFun ) 
-    {        
-        console.log( masterKeySalt );
-        if ( !(masterKeySalt instanceof Uint8Array) || typeof(masterPassword) != "string" ) {
+    {                
+        if ( !(masterKeySalt instanceof Uint8Array) || typeof(masterPassword) !== "string" ) {
             throw new Error("Bad input data (mpw_core_calculate_master_key): " + typeof(masterKeySalt) + " masterPassword: " + typeof(masterPassword) );
         }
         
@@ -79,13 +78,12 @@ function MPW()
         
         //var secretKey = scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, progressFun); 
         
-        return secretKey;        
-        
-    }
+        return secretKey;                
+    };
 
     this.mpw_core_calculate_site_seed = function ( siteName, siteCounter )
     {
-        if ( typeof(siteName) != "string" || typeof(siteCounter) != "number" ) {
+        if ( typeof(siteName) !== "string" || typeof(siteCounter) !== "number" ) {
             throw new Error("Bad input data (mpw_core_calculate_site_seed): " + typeof(siteName) + " " + typeof(siteCounter) );
         }
         

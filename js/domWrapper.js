@@ -15,3 +15,17 @@ function setEventHandlerOnID( id, event, handler ) {
     document.getElementById(id).addEventListener(event, handler);   
 }
 
+function getAllInputsFromForm( masterKey ) {
+    if ( masterKey === undefined ) {
+        throw new Error( "Master Key may not be undefined.");
+    }
+    var data = {};
+    data.userName = $('#userName').val();
+    data.masterPassword = $('#masterPassword').val();
+    data.masterKey = masterKey;
+    data.siteName = $('#siteName').val();
+    data.siteCounter = parseInt($('#siteCounter').val());
+    data.siteType = $('#siteType').val();    
+    return data;
+}
+

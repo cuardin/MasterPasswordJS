@@ -1,8 +1,9 @@
-//***************************************
+//TODO: Make sure that unvalidated users is a separate return statement handle't accordingly.
+////***************************************
 // Declare all globals.
 var userName = null;
 var masterPassword = null;
-var masterKey = JSON.parse("[142,75,182,210,3,70,175,186,7,179,19,96,59,154,177,216,130,111,83,105,55,224,128,48,220,214,243,112,168,191,84,175,75,41,45,198,197,49,203,112,1,164,129,172,205,25,192,113,121,49,13,241,85,209,200,132,182,223,213,193,175,177,142,131]");
+var masterKey = new Array();
 var siteDataList = {};
 
 var w = null;
@@ -94,7 +95,7 @@ $(document).ready(function(){
         buttons: {
             "OK": function() {                
                 $(this).dialog("close");           
-            },             
+            }            
         }
     });
 
@@ -124,12 +125,8 @@ $(document).ready(function(){
 function deleteSite()
 {       
     //Create a job for the worker to submit the site to storage.
-    var data = {};
-    data.command = "deleteSite";    
-    data.masterKey = masterKey;        
-    data.userName = $("#userName").val();
-        
-    data.siteName = $("#siteName").val();
+    var data = getAllInputsFromForm(masterKey);
+    data.command = "deleteSite";        
         
     var jsonString = JSON.stringify(data);
     if ( w === null ) {
@@ -145,16 +142,9 @@ function deleteSite()
 function saveSite()
 {       
     //Create a job for the worker to submit the site to storage.
-    var data = {};
-    data.command = "saveSite";    
-    data.masterKey = masterKey;        
-    data.userName = $("#userName").val();
-        
-    data.site = {};
-    data.site.siteName = $("#siteName").val();
-    data.site.siteType = $("#siteType").val();
-    data.site.siteCounter = $("#siteCounter").val();
-        
+    var data = getAllInputsFromForm(masterKey);
+    data.command = "saveSite";                    
+    
     var jsonString = JSON.stringify(data);
     if ( w === null ) {
         //In case a seed has not been computed yet.
@@ -167,11 +157,8 @@ function saveSite()
 
 function submitUser()
 {                
-    var data = {};
+    var data = getAllInputsFromForm(masterKey);
     data.command = "createUser";    
-    data.masterKey = masterKey;        
-    data.userName = $("#userName").val();
-    data.email = $("#email").val();
         
     var jsonString = JSON.stringify(data);
     
@@ -210,7 +197,7 @@ function workerEventHandler(event) {
     console.log(data);
 
     if ( data.type === "masterKey" ) {
-        masterKey = data.data;        
+        masterKey = data.data.masterKey;        
         console.log( "Master Key:" );
         console.log ( JSON.stringify(masterKey) );
         $("#progress").attr("src", "blank.gif" );                
@@ -314,17 +301,13 @@ function startSiteWorker() {
     setDeleteButtonStatus();
 
     //Build a message from the form to send
-    var data = {};
-    data.masterKey = masterKey;
-    data.siteName = document.getElementById('siteName').value;
-    data.siteCounter = parseInt(document.getElementById('siteCounter').value);
+    var data = getAllInputsFromForm(masterKey);    
+    data.command = "siteCompute";    
     if ( isNaN(data.siteCounter) ) { 
         document.getElementById("sitePassword").value = "N/A";  
         return;
-    }
+    }    
 
-    data.siteType = document.getElementById('siteType').value;
-    data.command = "siteCompute";    
     var jsonString = JSON.stringify(data);
     
     if ( w === null ) {
@@ -341,7 +324,7 @@ function startSiteWorker() {
 
 function onMainInputChange() {
     document.getElementById("sitePassword").value = "";
-    masterKey = null; //Reset the masterKey.    
+    masterKey = new Array(); //Reset the masterKey.    
     
     //Terminate the worker if it isn't null
     if ( w !== null ) {
@@ -354,9 +337,7 @@ function onMainInputChange() {
     w.addEventListener( "message", workerEventHandler, false);
     
     //Build a message from the form to send
-    var data = {};
-    data.userName = document.getElementById('userName').value;
-    data.masterPassword = document.getElementById('masterPassword').value;
+    var data = getAllInputsFromForm(masterKey);    
     data.command = "mainCompute";    
     var jsonString = JSON.stringify(data);
         

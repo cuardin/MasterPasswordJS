@@ -1,12 +1,6 @@
-var userName = "user01åäö";
-var masterPassword = "MasterPass01";
-var password = "BopvPeln3~Rima"; //"MasterPass01", counter 1, type long, site: masterPasswordWebStorage
-var masterKey = new Uint8Array(JSON.parse("[145,36,81,10,63,247,78,149,181,68,118,134,247,23,197,43,213,246,179,150,118,5,68,114,191,139,168,58,114,205,105,114,183,144,98,157,229,68,217,77,30,95,16,93,140,116,162,73,16,217,68,9,156,244,32,77,171,22,172,15,234,187,23,176]"));
-var email = "daniel2@armyr.se";
-var antiSpamKey = "UPP7fXLerV";
-var siteName = "site01.åäö";
-var siteCounter = 1;
-var siteType = "long";
+var data = {};
+
+
 var db = new Database();
 var worker = {};
 
@@ -14,7 +8,15 @@ QUnit.module( "module", {
     setup: function( assert ) {
         //And make sure we have a worker object
         worker = new MPWWorker();
-        
+        data.userName = "user01åäö";
+        data.masterPassword = "MasterPass01";
+        data.password = "BopvPeln3~Rima"; //"MasterPass01", counter 1, type long, site: masterPasswordWebStorage
+        data.masterKey = new Uint8Array(JSON.parse("[145,36,81,10,63,247,78,149,181,68,118,134,247,23,197,43,213,246,179,150,118,5,68,114,191,139,168,58,114,205,105,114,183,144,98,157,229,68,217,77,30,95,16,93,140,116,162,73,16,217,68,9,156,244,32,77,171,22,172,15,234,187,23,176]"));
+        data.email = "daniel2@armyr.se";
+        data.antiSpamKey = "UPP7fXLerV";
+        data.siteName = "site01.åäö";
+        data.siteCounter = 1;
+        data.siteType = "long";        
     }, 
     teardown: function( assert ) {
         //And make sure we clean up our worker
@@ -28,12 +30,12 @@ QUnit.test( "testLoadSiteList", function( assert ) {
     //Arrange
     //And upload a file    
     worker.db.dbGetSiteList = function ( uName, pword ) {
-        if ( uName === userName && pword === password ) {
-            var site = { "siteName": siteName, 
-                "siteCounter": siteCounter,
-                "siteType": siteType};
+        if ( uName === data.userName && pword === data.password ) {
+            var site = { "siteName": data.siteName, 
+                "siteCounter": data.siteCounter,
+                "siteType": data.siteType};
             var rValue = {};
-            rValue[siteName] = JSON.stringify(site);
+            rValue[data.siteName] = JSON.stringify(site);
             return rValue;
         } else {
             throw Error("Error!");
@@ -41,12 +43,12 @@ QUnit.test( "testLoadSiteList", function( assert ) {
     };
             
     //Act
-    var siteList = worker.loadSiteList( masterKey, userName );    
+    var siteList = worker.loadSiteList( data.masterKey, data.userName );    
     
     //Assert
-    assert.equal(siteList[siteName].siteName, siteName );
-    assert.equal(siteList[siteName].siteCounter, siteCounter );
-    assert.equal(siteList[siteName].siteCounter, siteCounter );
+    assert.equal(siteList[data.siteName].siteName, data.siteName );
+    assert.equal(siteList[data.siteName].siteCounter, data.siteCounter );
+    assert.equal(siteList[data.siteName].siteCounter, data.siteCounter );
         
 });
 
@@ -58,7 +60,7 @@ QUnit.test( "loadSiteListNonExistingUser", function( assert ) {
     worker.db.dbGetSiteList = function ( uName, pword ) { return "badLogin"; };
     
     //Act	  
-    var siteList = worker.loadSiteList( masterKey, userName );    
+    var siteList = worker.loadSiteList( data.masterKey, data.userName );    
     
     //Assert    	
     assert.equal( siteList, "badLogin");    
@@ -73,7 +75,7 @@ QUnit.test( "loadSiteListUnvalidatedUser", function( assert ) {
     worker.db.dbGetSiteList = function ( uName, pword ) { return "unvalidatedUser"; };
     
     //Act	  
-    var siteList = worker.loadSiteList( masterKey, userName );    
+    var siteList = worker.loadSiteList( data.masterKey, data.userName );    
     
     //Assert    	
     assert.equal( siteList, "unvalidatedUser");    
@@ -81,39 +83,44 @@ QUnit.test( "loadSiteListUnvalidatedUser", function( assert ) {
 });
 
 QUnit.test( "testComputeMainKey", function( assert ) {    
+    QUnit.expect( 2 );
     
     //Arrange        
     worker.mpw.mpw_compute_secret_key = function(uName, mPassword, pProgress ) {
-        if ( uName === userName && mPassword === masterPassword ) {
-            return masterKey;
+        if ( uName === data.userName && mPassword === data.masterPassword ) {
+            return data.masterKey;
         }
-    };
-    var masterKeyArray =  Array.apply( [], masterKey);
+    };    
    
     //Act	  
-    var rValue = worker.computeMainKey( userName, masterPassword, null );        
+    worker.computeMainKey( data, null, function(rValue) {
+        //Assert    	
+        assert.equal( rValue.type, "masterKey" );    
+        assert.deepEqual( rValue.data.masterKey, data.masterKey );    
+    });            
     
     
-    //Assert    	
-    assert.equal( rValue.type, "masterKey" );    
-    assert.deepEqual( rValue.data, masterKeyArray );    
         
 });
 
 QUnit.test( "testComputeSitePassword", function( assert ) {    
+    QUnit.expect(2);
     
     //Arrange            
    
     //Act	  
-    var rValue = worker.computeSitePassword( masterKey, siteType, siteName, siteCounter);
+    worker.computeSitePassword( data, function(rValue) {
+        //Assert    	
+        assert.equal( rValue.type, "sitePassword" );    
+        assert.equal( rValue.data, "Gink2^LalqZuza" );    
+    });
     
-    //Assert    	
-    assert.equal( rValue.type, "sitePassword" );    
-    assert.equal( rValue.data, "Gink2^LalqZuza" );    
+    
         
 });
 
 QUnit.test( "testCreateUser", function( assert ) {    
+    QUnit.expect(2);
     
     //Arrange        
     //Mock the database connection
@@ -123,15 +130,15 @@ QUnit.test( "testCreateUser", function( assert ) {
     };
    
     //Act	  
-    var rValue = worker.createUser( masterKey, userName, email );
-    
-    //Assert    	
-    assert.equal( rValue.type, "userSubmitted" );    
-    assert.equal( rValue.data, userName + password + email + antiSpamKey + false );    
-        
+    worker.createUser( data, function(rValue) {
+        //Assert    	
+        assert.equal( rValue.type, "userSubmitted" );    
+        assert.equal( rValue.data, data.userName + data.password + data.email + data.antiSpamKey + false );    
+    });                
 });
 
 QUnit.test( "testCreateDuplicateUser", function( assert ) {    
+    QUnit.expect(2);
     
     //Arrange        
     //Mock the database connection that returns duplicate user.
@@ -141,52 +148,58 @@ QUnit.test( "testCreateDuplicateUser", function( assert ) {
     };
    
     //Act	  
-    var rValue = worker.createUser( masterKey, userName, email );
-    
-    //Assert    	
-    assert.equal( rValue.type, "userSubmitted" );            
-    assert.equal( rValue.data, "DUPLICATE_USER" );            
-        
+    worker.createUser( data, function(rValue) {
+        //Assert    	
+        assert.equal( rValue.type, "userSubmitted" );            
+        assert.equal( rValue.data, "DUPLICATE_USER" );            
+    });                
 });
 
 
 QUnit.test("testSaveSite", function( assert ) {    
-    var site = { "siteName": siteName, "siteType": siteType, "siteCounter": siteCounter };
+    QUnit.expect(2);
+    
+    //Arrange
+    var site = { "siteName": data.siteName, "siteCounter": data.siteCounter, "siteType": data.siteType };
     
     worker.db.dbSaveSite = function ( uName, dbPass, key, value )
     {
-        if ( uName === userName && dbPass === password && key === siteName && value === JSON.stringify(site) ) {
+        if ( uName === data.userName && dbPass === data.password && key === data.siteName && value === JSON.stringify(site) ) {
             return "OK";
         } else {            
             throw new Error("Error: ");
         }
     };
     
-    var rValue = worker.saveSite( masterKey, userName, site );
-    
-    //Assert    
-    assert.equal( rValue.type, "siteSaved" );    
-    assert.equal( rValue.data, site );    
-    
+    //Act
+    worker.saveSite( data, function(rValue) {
+        //Assert    
+        assert.equal( rValue.type, "siteSaved" );    
+        assert.deepEqual( rValue.data, site );    
+    });            
 });
 
 QUnit.test("testDeleteSite", function( assert ) {    
+    QUnit.expect(2);
     
-    
+    //Arrange
     worker.db.dbDeleteSite = function ( uName, dbPass, sName )
     {
-        if ( uName === userName && dbPass === password && sName === siteName  ) {
+        if ( uName === data.userName && dbPass === data.password && sName === data.siteName  ) {
             return "OK";
         } else {            
             throw new Error("Error: ");
         }
     };
     
-    var rValue = worker.deleteSite( masterKey, userName, siteName );
+    //Act
+    worker.deleteSite( data, function(rValue) {
+        //Assert    
+        assert.equal( rValue.type, "siteDeleted" );    
+        assert.equal( rValue.data, data.siteName );    
+    });
     
-    //Assert    
-    assert.equal( rValue.type, "siteDeleted" );    
-    assert.equal( rValue.data, siteName );    
+    
     
 });
 
