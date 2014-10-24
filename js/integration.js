@@ -1,4 +1,6 @@
-//TODO: Make sure that unvalidated users is a separate return statement handle't accordingly.
+//TODO: Save button isn't properly disabled in all cases.
+//TODO: Local cache of sites isn't cleared when the username/pw is changed.
+
 ////***************************************
 // Declare all globals.
 var userName = null;

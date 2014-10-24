@@ -1,6 +1,6 @@
 function Database() {
-    this.rootAdress = "https://192.168.56.101/php_scripts/";
-    //this.rootAdress = "https://masterpassword.armyr.se/php_scripts/";
+    //this.rootAdress = "https://192.168.56.101/php_scripts/";
+    this.rootAdress = "https://masterpassword.armyr.se/php_scripts/";
     
     this.dbEradicateUser = function ( uName, dbPass, privateKey ) 
     {
