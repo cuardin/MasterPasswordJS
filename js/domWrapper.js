@@ -22,6 +22,7 @@ function getAllInputsFromForm( masterKey ) {
     var data = {};
     data.userName = $('#userName').val();
     data.masterPassword = $('#masterPassword').val();
+    data.email = $('#email').val();    
     data.masterKey = masterKey;
     data.siteName = $('#siteName').val();
     data.siteCounter = parseInt($('#siteCounter').val());
