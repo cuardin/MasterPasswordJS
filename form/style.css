@@ -14,12 +14,13 @@
     clear: both;
 }
 
-#compute { 
+#progress {
+    width: 150px;
+    display: block;
     float: left;
-    width: 250px;    
 }
 
-img#progress {               
+#createUser {               
     float: right;    
 }
 

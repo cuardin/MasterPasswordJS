@@ -69,6 +69,11 @@ $(document).ready(function(){
         disabled: true,
         label: "-"       
     });
+    
+    $( "#createUser").button( {
+        disabled: true,
+        label: "Create User"       
+    });
 
     setEventHandlerOnID( "siteName", "input", function ( event ) {siteNameListInput();} );
     
@@ -103,6 +108,11 @@ $(document).ready(function(){
     $("#saveSite").click( saveSite );
 
     $("#deleteSite").click( deleteSite );
+    
+    $("#createUser").click( function( ) {
+        $("#createUserDialog").dialog("open");
+    });           
+    
     
     //Add validation checks to create user dialog
     document.getElementById("userName2").addEventListener( "input", function( event ) {
@@ -223,6 +233,7 @@ function workerEventHandler(event) {
             $("#infoDialog").dialog("open");
         }
         $( "#progress" ).progressbar( "value", 100 );
+        $( "#createUser").button("disable");
     } else if ( data.type === "siteSaved" ) {
         console.log( "Site saved:" );
         console.log( data.data );            
@@ -240,12 +251,13 @@ function workerEventHandler(event) {
         setDeleteButtonStatus();
         $( "#progress" ).progressbar( "value", 100 );
     } else if ( data.type === "badLogin" ) {
-        $("#createUserDialog").dialog("open");
+        $( "#createUser").button("enable");        
         currentLoginStatus = false;
         setAddButtonStatus();
         setDeleteButtonStatus();
     } else if ( data.type === "goodLogin" ) {        
         currentLoginStatus = true;
+        $( "#createUser").button("disable");
         setAddButtonStatus();
         setDeleteButtonStatus();
     } else if ( data.type === "unvalidatedUser" ) {
@@ -330,7 +342,8 @@ function startSiteWorker() {
 
 
 function onMainInputChange() {
-    document.getElementById("sitePassword").value = "";
+    document.getElementById("sitePassword").value = "";    
+    
     $( "#progress" ).progressbar( "value", false );
     masterKey = new Array(); //Reset the masterKey.    
     
