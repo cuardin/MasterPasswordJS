@@ -15,17 +15,23 @@
 
     <div class="mainDiv" id="mainDiv">        
         <h1>MasterPassword</h1>
-        <p style="color: red">WARNING: This page uses unverified java&shy;script and may leak data. Do not enter any of your real passwords.</p>
+        <p style="color: red">WARNING: This page uses unverified java&shy;script that may leak data and does not hide your master password. Do not enter any of your real passwords.</p>
         <form class="form"> 
 
             <div class="entry"> 
                 <label for="userName">Username</label> 
-                <input type="text" id="userName" class="mainInput box ui-widget ui-widget-content ui-corner-all" value="user02åäö"/>             
+                <input type="text" id="userName" 
+                       class="mainInput box ui-widget ui-widget-content ui-corner-all" 
+                       value="user02åäö"
+                       title="Enter your standard user name. This is used to generate passwords and need not be the actual user name you use on any given site."/>   
             </div> 
 
             <div class="entry"> 
                 <label for="masterPassword">Master Password</label> 
-                <input type="text" id="masterPassword" class="mainInput box ui-widget ui-widget-content ui-corner-all" value="MasterPass01"/>             
+                <input type="text" id="masterPassword" 
+                       class="mainInput box ui-widget ui-widget-content ui-corner-all" 
+                       value="MasterPass01"
+                       title="Enter your master password. All your other passwords can be found from this one, so make it good and keep it safe."/>             
             </div> 
             
             <div class="entry"> 
@@ -34,17 +40,21 @@
             
             <div class="entry"> 
                 <label for="siteName">Site</label>                                                 
-                <input id="siteName" class="box ui-widget ui-widget-content ui-corner-all" value="site01.åäö"/>
+                <input id="siteName" value="site01.åäö"
+                       class="box ui-widget ui-widget-content ui-corner-all" 
+                       title="Enter the name of the site for which you want a password. But it need not be a real site as any string will do." />
             </div> 
 
             <div class="entry"> 
                 <label for="siteCounter">Site Counter</label> 
-                <input id="siteCounter" min="1" value="1" class="box siteInput"/>             
+                <input id="siteCounter" min="1" value="1" class="box siteInput"
+                       title="If a site informs you that you need to change your password due to a database leak, increase this number by one to get a completely fresh password for that site."/>             
             </div> 
             
             <div class="entry"> 
                 <label for="siteType">Site Type</label> 
-                <select id="siteType" class="box">
+                <select id="siteType" class="box"
+                        title="Choose the type of password you need for this site.">
                     <option value="maximum">Maximum</option>
                     <option value="long" selected>Long</option>
                     <option value="medium">Medium</option>
@@ -56,9 +66,12 @@
 
             <div class="entry"> 
                 <label for="sitePassword">Site Password</label> 
-                <input type="text"  id="sitePassword" class="box output ui-widget ui-widget-content ui-corner-all" readonly value="Expect: JacmYipw8,Nuji"/>                
-                <button id="saveSite" type="button" title="Save this site">+</button>
-                <button id="deleteSite" type="button" title="Delete this site">-</button>
+                <input type="text"  id="sitePassword" 
+                       class="box output ui-widget ui-widget-content ui-corner-all" 
+                       readonly value="Expect: JacmYipw8,Nuji"
+                       title="This is the password you can use for this site."/>                
+                <button id="saveSite" type="button" title="Save this site. Requires an account.">+</button>
+                <button id="deleteSite" type="button" title="Delete this site. Requires an account.">-</button>
                 
             </div>             
         </form>

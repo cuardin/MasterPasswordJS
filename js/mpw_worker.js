@@ -1,15 +1,14 @@
-if ( typeof importScripts === 'function') {
-    var c = '?a=7';
-    importScripts('core/encoding-indexes.js' + c );
-    importScripts('core/encoding.js' + c );
+if ( typeof importScripts === 'function') {    
+    importScripts('core/encoding-indexes.js' );
+    importScripts('core/encoding.js' );
 
-    importScripts('core/jssha256.js' + c);    
+    importScripts('core/jssha256.js' );    
     
-    importScripts('core/scrypt-asm.js' + c);
+    importScripts('core/scrypt-asm.js' );
 
-    importScripts('core/util.js' + c);
-    importScripts('core/mpw.js' + c);
-    importScripts('database.js' + c);    
+    importScripts('core/util.js' );
+    importScripts('core/mpw.js' );
+    importScripts('database.js' );    
 
     self.addEventListener('message', handleMessage);
 }

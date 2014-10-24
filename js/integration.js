@@ -249,14 +249,13 @@ function workerEventHandler(event) {
         setAddButtonStatus();
         setDeleteButtonStatus();
     } else if ( data.type === "unvalidatedUser" ) {
-        $("#infoDialog").dialog("option", "title", "User not validated");
-        $("#infoDialog").dialog("open");                    
+        popupDialog( "Error", "<p>User not validated</p>" );        
         currentLoginStatus = false;
         setAddButtonStatus();
         setDeleteButtonStatus();
-    } else {
-       document.getElementById("sitePassword").value = "Error: " + data.data;
-       $( "#progress" ).progressbar( "value", 100 );
+    } else {        
+        $("#progress" ).progressbar( "value", 100 );
+        popupDialog( "Unexpected Error", data.message );         
     }    
 };
 
@@ -341,7 +340,7 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = new Worker("../js/mpw_worker.js?a=8");
+    w = new Worker("../js/mpw_worker.js");
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);
     

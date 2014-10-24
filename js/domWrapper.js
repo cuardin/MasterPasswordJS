@@ -29,3 +29,8 @@ function getAllInputsFromForm( masterKey ) {
     return data;
 }
 
+function popupDialog( title, message ){
+    $("#infoDialog").dialog("option", "title", title);
+    $("#infoDialog").html( "<p>" + message + "</p>" );
+    $("#infoDialog").dialog("open");
+}
