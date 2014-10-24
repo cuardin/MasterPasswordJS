@@ -74,6 +74,7 @@ function MPWWorker() {
             postReturn( {type: siteList} );
             return [];
         } else {
+            postReturn( {type: "goodLogin"} );
             siteList = this.unpackSiteList( siteList );                
             return siteList; 
         }

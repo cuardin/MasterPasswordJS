@@ -26,6 +26,7 @@ QUnit.module( "module", {
 
 
 QUnit.test( "testLoadSiteList", function( assert ) {    
+    QUnit.expect(4);
     
     //Arrange
     //And upload a file    
@@ -43,7 +44,10 @@ QUnit.test( "testLoadSiteList", function( assert ) {
     };
             
     //Act
-    var siteList = worker.loadSiteList( data.masterKey, data.userName );    
+    var siteList = worker.loadSiteList( data.masterKey, data.userName, function(rValue){        
+        //Assert    	
+        assert.equal( rValue.type, "goodLogin");      
+    });     
     
     //Assert
     assert.equal(siteList[data.siteName].siteName, data.siteName );
@@ -107,8 +111,11 @@ QUnit.test( "testComputeMainKey", function( assert ) {
     //Act	  
     worker.computeMainKey( data, null, function(rValue) {
         //Assert    	
-        assert.equal( rValue.type, "masterKey" );    
-        assert.deepEqual( rValue.data.masterKey, data.masterKey );    
+        if ( rValue.type === "masterKey") {
+            assert.deepEqual( rValue.data.masterKey, data.masterKey );    
+        } else {
+            assert.equal( rValue.type, "goodLogin" );
+        }                        
     });            
     
     

@@ -5,6 +5,7 @@ var userName = null;
 var masterPassword = null;
 var masterKey = new Array();
 var siteDataList = {};
+var currentLoginStatus = false;
 
 var w = null;
 
@@ -22,8 +23,8 @@ $(document).ready(function(){
     setEventHandlerOnClass( "mainInput", "input", onMainInputChange );           
 
     //Create the progress bar
-    $( "#compute" ).progressbar({
-        value: 100
+    $( "#progress" ).progressbar({
+        value: 0
     });
 
     //Create the site counter
@@ -199,23 +200,21 @@ function workerEventHandler(event) {
     if ( data.type === "masterKey" ) {
         masterKey = data.data.masterKey;        
         console.log( "Master Key:" );
-        console.log ( JSON.stringify(masterKey) );
-        $("#progress").attr("src", "blank.gif" );                
-        updateSiteList( data.siteList );
-        $( "#compute" ).progressbar( "value", 100 );
-        startSiteWorker();        
-
+        console.log ( JSON.stringify(masterKey) );        
+        updateSiteList( data.siteList );        
+        $( "#progress" ).progressbar( "value", 100 );
+        startSiteWorker();                
     } else if ( data.type === "sitePassword" ) {                   
-        $("#sitePassword").val( data.data );  
-        $("#progress").attr( "src", "blank.gif");
-        $( "#compute" ).progressbar( "value", 100 );
+        $("#sitePassword").val( data.data );          
+        $( "#progress" ).progressbar( "value", 100 );
 
     } else  if ( data.type === "progress" ) {                
-        $( "#compute" ).progressbar( "value", data.data );
+        //Do nothing right now.
+        //$( "#compute" ).progressbar( "value", data.data );
 
     } else if ( data.type === "userSubmitted" ) {
         console.log( "User submitted" );
-        console.log( data.data );
+        console.log( data.data );        
         //TODO: Whenever we close the user creation dialog, we should clear all values.
         $("#createUserDialog").dialog("close");
         if ( data.data === "DUPLICATE_USER" ) {
@@ -223,7 +222,7 @@ function workerEventHandler(event) {
             $("#infoDialog").dialog("option", "title", "User allready exists");
             $("#infoDialog").dialog("open");
         }
-    
+        $( "#progress" ).progressbar( "value", 100 );
     } else if ( data.type === "siteSaved" ) {
         console.log( "Site saved:" );
         console.log( data.data );            
@@ -231,6 +230,7 @@ function workerEventHandler(event) {
         siteDataList[siteName] = data.data;
         setAddButtonStatus();
         setDeleteButtonStatus();
+        $( "#progress" ).progressbar( "value", 100 );
     } else if ( data.type === "siteDeleted" ) {
         console.log( "Site deleted:" );
         console.log( data.data );            
@@ -238,15 +238,32 @@ function workerEventHandler(event) {
         delete siteDataList[siteName];
         setAddButtonStatus();
         setDeleteButtonStatus();
+        $( "#progress" ).progressbar( "value", 100 );
+    } else if ( data.type === "badLogin" ) {
+        $("#createUserDialog").dialog("open");
+        currentLoginStatus = false;
+        setAddButtonStatus();
+        setDeleteButtonStatus();
+    } else if ( data.type === "goodLogin" ) {        
+        currentLoginStatus = true;
+        setAddButtonStatus();
+        setDeleteButtonStatus();
+    } else if ( data.type === "unvalidatedUser" ) {
+        $("#infoDialog").dialog("option", "title", "User not validated");
+        $("#infoDialog").dialog("open");                    
+        currentLoginStatus = false;
+        setAddButtonStatus();
+        setDeleteButtonStatus();
     } else {
        document.getElementById("sitePassword").value = "Error: " + data.data;
+       $( "#progress" ).progressbar( "value", 100 );
     }    
 };
 
 function setDeleteButtonStatus() 
 {    
     var siteName = $("#siteName").val();    
-    if ( siteDataList[siteName] !== undefined ) {
+    if ( siteDataList[siteName] !== undefined && currentLoginStatus ) {
         $("#deleteSite").button("enable");
     } else {
         $("#deleteSite").button("disable");
@@ -266,26 +283,17 @@ function setAddButtonStatus()
     } else {
         matchExists = (closestMatch.siteCounter === siteCounter && closestMatch.siteType === siteType);
     }    
-    if ( matchExists ) {
-        $("#saveSite").button("disable");
-    } else {
+    if ( !matchExists && currentLoginStatus ) {
         $("#saveSite").button("enable");
+    } else {
+        $("#saveSite").button("disable");        
     }    
 }
 
 function updateSiteList( sList ) {    
     siteDataList.length = 0;     
 
-    console.log( sList );
-    
-    if ( sList === "badLogin" ) {                
-        $("#createUserDialog").dialog("open");        
-        return;    
-    } else if ( sList === "unvalidatedUser" ) {
-        $("#infoDialog").dialog("option", "title", "User not validated");
-        $("#infoDialog").dialog("open");        
-        return;
-    }
+    console.log( sList );        
 
     //Add the site names to their list.
     keys = Object.keys(sList);
@@ -300,6 +308,8 @@ function startSiteWorker() {
     setAddButtonStatus();
     setDeleteButtonStatus();
 
+    $( "#progress" ).progressbar( "value", false );
+    
     //Build a message from the form to send
     var data = getAllInputsFromForm(masterKey);    
     data.command = "siteCompute";    
@@ -316,14 +326,13 @@ function startSiteWorker() {
     }
 
     //Send a message to start the process.    
-    w.postMessage(jsonString);                      
-
-    document.getElementById("progress").src = "ajax-loader.gif";                                      
+    w.postMessage(jsonString);                          
 }
 
 
 function onMainInputChange() {
     document.getElementById("sitePassword").value = "";
+    $( "#progress" ).progressbar( "value", false );
     masterKey = new Array(); //Reset the masterKey.    
     
     //Terminate the worker if it isn't null
@@ -340,11 +349,7 @@ function onMainInputChange() {
     var data = getAllInputsFromForm(masterKey);    
     data.command = "mainCompute";    
     var jsonString = JSON.stringify(data);
-        
-    //Start the progress tickers.
-    document.getElementById("progress").src = "ajax-loader.gif";               
-    document.getElementById("compute").value = 0;    
-    
+                    
     //Send a message to start the process.
     w.postMessage(jsonString);                      
 }
