@@ -1,12 +1,11 @@
 function Database() {
-    //this.rootAdress = "https://192.168.56.101/php_scripts/";
-    this.rootAdress = "https://masterpassword.armyr.se/php_scripts/";
+    
     
     this.dbEradicateUser = function ( uName, dbPass, privateKey ) 
     {
         var xmlhttp = new XMLHttpRequest();
         var arguments = "username=" + uName + "&password=" + dbPass + "&privateKey=" + privateKey;
-        var completeAddress = this.rootAdress + "eradicateUser.php?" + arguments;    
+        var completeAddress = getRootAddress() + "eradicateUser.php?" + arguments;    
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();
@@ -24,7 +23,7 @@ function Database() {
         var xmlhttp = new XMLHttpRequest();
         var arguments = "username=" + uName + "&email=" + email + 
                 "&privateKey=" + privateKey;            
-        var completeAddress = this.rootAdress + "verifyEmail.php?" + arguments;    
+        var completeAddress = getRootAddress() + "verifyEmail.php?" + arguments;    
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();
@@ -46,7 +45,7 @@ function Database() {
         if ( isTest ) {
             arguments = arguments + "&test=true";
         }
-        var completeAddress = this.rootAdress + "createUser.php?" + arguments;    
+        var completeAddress = getRootAddress() + "createUser.php?" + arguments;    
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();
@@ -67,7 +66,7 @@ function Database() {
                 "&password=" + dbPass +
                 "&fileName=" + key + 
                 "&fileContents=" + value;
-        var completeAddress = this.rootAdress + "uploadFile.php?" + arguments;    
+        var completeAddress = getRootAddress() + "uploadFile.php?" + arguments;    
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();
@@ -84,7 +83,7 @@ function Database() {
     {
         var xmlhttp = new XMLHttpRequest();
         var arguments = "username=" + uName + "&password=" + dbPass;	
-        var completeAddress = this.rootAdress + "listFiles.php?" + arguments; 
+        var completeAddress = getRootAddress() + "listFiles.php?" + arguments; 
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();
@@ -93,7 +92,7 @@ function Database() {
             if ( rValue === "FAIL: BAD_LOGIN" ) {
                 return "badLogin";
             } else if ( rValue === "FAIL: UNVALIDATED_USER" ) {
-                return "unvalidatedUser"
+                return "unvalidatedUser";
             } else {
                 return "badData";
             }
@@ -111,7 +110,7 @@ function Database() {
     {
         var xmlhttp = new XMLHttpRequest();
         var arguments = "username=" + uName + "&password=" + dbPass + "&fileName=" + siteName;
-        var completeAddress = this.rootAdress + "deleteFile.php?" + arguments;    
+        var completeAddress = getRootAddress() + "deleteFile.php?" + arguments;    
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
         xmlhttp.send();

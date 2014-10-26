@@ -11,7 +11,7 @@ QUnit.module( "module", {
     setup: function( assert ) {
         //Clean slate
         try {
-            db.dbEradicateUser( userName, password, privateKey );
+            db.dbEradicateUser( userName, password, getPrivateKey() );
         } catch ( e ) {            
         }        
         
@@ -19,7 +19,7 @@ QUnit.module( "module", {
         db.dbCreateUser( userName, password, email, antiSpamKey, true );
         
         //And validate that user
-        db.dbForceValidateUser( userName, privateKey );
+        db.dbForceValidateUser( userName, getPrivateKey() );
         
     }, 
     teardown: function( assert ) {
@@ -94,7 +94,7 @@ QUnit.test( "testUploadAndGetFileListExistingUser", function( assert ) {
 QUnit.test( "testGetFileListNonExistingUser", function( assert ) {    
     
     //Arrange    
-    db.dbEradicateUser( userName, password, privateKey );
+    db.dbEradicateUser( userName, password, getPrivateKey() );
    
     //Act	  
     var siteList = db.dbGetSiteList( userName, password );        
@@ -119,7 +119,7 @@ QUnit.test( "testGetFileListBadPassword", function( assert ) {
 QUnit.test( "testGetFileListUnvalidatedUser", function( assert ) {    
     
     //Arrange: Delete and recreate user without validation.
-    db.dbEradicateUser( userName, password, privateKey );
+    db.dbEradicateUser( userName, password, getPrivateKey() );
     db.dbCreateUser( userName, password, email, antiSpamKey, true );
     
     //Act	  
