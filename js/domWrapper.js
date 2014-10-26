@@ -27,6 +27,8 @@ function getAllInputsFromForm( masterKey ) {
     data.siteName = $('#siteName').val();
     data.siteCounter = parseInt($('#siteCounter').val());
     data.siteType = $('#siteType').val();    
+    data.recaptcha = $("#recaptcha_response_field").val();
+    data.recaptchaChallenge = $("#recaptcha_challenge_field").val();
     return data;
 }
 

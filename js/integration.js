@@ -1,3 +1,4 @@
+//Account for recaptcha: mpw.jscript@gmail.com
 //TODO: Save button isn't properly disabled in all cases.
 //TODO: Local cache of sites isn't cleared when the username/pw is changed.
 
@@ -81,8 +82,9 @@ $(document).ready(function(){
     
     //Create the create new user popup
     $("#createUserDialog").dialog({
-        autoOpen: false,
+        autoOpen: true,
         modal: true,
+        width: 370,
         //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
         buttons: {
             "Cancel": function() {                
@@ -123,15 +125,15 @@ $(document).ready(function(){
     document.getElementById("masterPassword2").addEventListener( "input", function( event ) {
         validateTwoFieldsSame( "#masterPassword", "#masterPassword2" );    
     });        
-    document.getElementById("email2").addEventListener( "input", function( event ) {
+    /*document.getElementById("email2").addEventListener( "input", function( event ) {
         validateTwoFieldsSame( "#email", "#email2" );    
-    });            
+    });*/            
     document.getElementById("email").addEventListener( "input", function( event ) {
         validateEmail( "#email" );  
-        //Revalidate the second if it is not empty.
+        /*//Revalidate the second if it is not empty.
         if ( $("#email2").val().length !== 0 ) {
             validateTwoFieldsSame( "#email", "#email2" );      
-        }
+        }*/
     });            
 });
 
