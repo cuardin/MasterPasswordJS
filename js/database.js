@@ -36,12 +36,15 @@ function Database() {
         }
     };
 
-    this.dbCreateUser = function ( uName, password, email, userCreationKey, isTest ) 
+    this.dbCreateUser = function ( uName, password, email, userCreationKey, 
+        response, challenge, isTest ) 
     {
         var xmlhttp = new XMLHttpRequest();
         var arguments = "username=" + uName + "&email=" + email + 
             "&userCreationKey=" + userCreationKey +
-            "&password=" + password;
+            "&password=" + password + 
+            "&recaptcha_response_field=" + response +
+            "&recaptcha_challenge_field=" + challenge;
         if ( isTest ) {
             arguments = arguments + "&test=true";
         }
@@ -90,11 +93,9 @@ function Database() {
         var rValue = xmlhttp.responseText;
         if ( rValue.substring(0,4) === "FAIL") {
             if ( rValue === "FAIL: BAD_LOGIN" ) {
-                return "badLogin";
-            } else if ( rValue === "FAIL: UNVALIDATED_USER" ) {
-                return "unvalidatedUser";
+                return "badLogin";            
             } else {
-                return "badData";
+               throw new Error("Error: " + rValue);   
             }
         }
         try {

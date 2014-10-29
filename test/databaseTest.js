@@ -17,10 +17,7 @@ QUnit.module( "module", {
         
         //Now create a user
         db.dbCreateUser( userName, password, email, antiSpamKey, true );
-        
-        //And validate that user
-        db.dbForceValidateUser( userName, getPrivateKey() );
-        
+                
     }, 
     teardown: function( assert ) {
         //Clean slate
@@ -113,20 +110,6 @@ QUnit.test( "testGetFileListBadPassword", function( assert ) {
     
     //Assert    	
     assert.equal( siteList, "badLogin");    
-        
-});
-
-QUnit.test( "testGetFileListUnvalidatedUser", function( assert ) {    
-    
-    //Arrange: Delete and recreate user without validation.
-    db.dbEradicateUser( userName, password, getPrivateKey() );
-    db.dbCreateUser( userName, password, email, antiSpamKey, true );
-    
-    //Act	  
-    var siteList = db.dbGetSiteList( userName, password);
-    
-    //Assert    	
-    assert.equal( siteList, "unvalidatedUser");    
         
 });
 

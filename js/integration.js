@@ -1,12 +1,11 @@
 //Account for recaptcha: mpw.jscript@gmail.com
-//TODO: Save button isn't properly disabled in all cases.
-//TODO: Local cache of sites isn't cleared when the username/pw is changed.
+
 
 ////***************************************
 // Declare all globals.
-var userName = null;
-var masterPassword = null;
-var masterKey = new Array();
+//var userName = null;
+//var masterPassword = null;
+//var masterKey = new Array();
 var siteDataList = {};
 var currentLoginStatus = false;
 
@@ -82,7 +81,7 @@ $(document).ready(function(){
     
     //Create the create new user popup
     $("#createUserDialog").dialog({
-        autoOpen: true,
+        autoOpen: false,
         modal: true,
         width: 370,
         //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
@@ -140,14 +139,14 @@ $(document).ready(function(){
 function deleteSite()
 {       
     //Create a job for the worker to submit the site to storage.
-    var data = getAllInputsFromForm(masterKey);
+    var data = getAllInputsFromForm();
     data.command = "deleteSite";        
         
     var jsonString = JSON.stringify(data);
     if ( w === null ) {
         //In case a seed has not been computed yet.
         onMainInputChange();
-    }
+    }    
     
     //Send a message to start the process.
     w.postMessage(jsonString);                          
@@ -157,12 +156,11 @@ function deleteSite()
 function saveSite()
 {       
     //Create a job for the worker to submit the site to storage.
-    var data = getAllInputsFromForm(masterKey);
+    var data = getAllInputsFromForm();
     data.command = "saveSite";                    
     
     var jsonString = JSON.stringify(data);
     if ( w === null ) {
-        //In case a seed has not been computed yet.
         onMainInputChange();
     }
     
@@ -172,10 +170,14 @@ function saveSite()
 
 function submitUser()
 {                
-    var data = getAllInputsFromForm(masterKey);
+    var data = getAllInputsFromForm();
     data.command = "createUser";    
         
     var jsonString = JSON.stringify(data);
+    if ( w === null ) {
+        onMainInputChange();
+    }
+
     
     //Send a message to start the process.
     w.postMessage(jsonString);                      
@@ -211,10 +213,7 @@ function workerEventHandler(event) {
     var data = JSON.parse(event.data);    
     console.log(data);
 
-    if ( data.type === "masterKey" ) {
-        masterKey = data.data.masterKey;        
-        console.log( "Master Key:" );
-        console.log ( JSON.stringify(masterKey) );        
+    if ( data.type === "masterKey" ) {               
         updateSiteList( data.siteList );        
         $( "#progress" ).progressbar( "value", 100 );
         startSiteWorker();                
@@ -288,7 +287,7 @@ function setDeleteButtonStatus()
 function setAddButtonStatus() 
 {    
     var siteName = $("#siteName").val();
-    var siteCounter = $("#siteCounter").val();
+    var siteCounter = parseInt($("#siteCounter").val());
     var siteType = $("#siteType").val();
 
     var closestMatch = siteDataList[siteName];
@@ -326,7 +325,7 @@ function startSiteWorker() {
     $( "#progress" ).progressbar( "value", false );
     
     //Build a message from the form to send
-    var data = getAllInputsFromForm(masterKey);    
+    var data = getAllInputsFromForm();    
     data.command = "siteCompute";    
     if ( isNaN(data.siteCounter) ) { 
         document.getElementById("sitePassword").value = "N/A";  
@@ -347,9 +346,10 @@ function startSiteWorker() {
 
 function onMainInputChange() {
     document.getElementById("sitePassword").value = "";    
+    //Clear the local cache
+    siteDataList = {};
     
-    $( "#progress" ).progressbar( "value", false );
-    masterKey = new Array(); //Reset the masterKey.    
+    $( "#progress" ).progressbar( "value", false );    
     
     //Terminate the worker if it isn't null
     if ( w !== null ) {
@@ -362,7 +362,7 @@ function onMainInputChange() {
     w.addEventListener( "message", workerEventHandler, false);
     
     //Build a message from the form to send
-    var data = getAllInputsFromForm(masterKey);    
+    var data = getAllInputsFromForm();    
     data.command = "mainCompute";    
     var jsonString = JSON.stringify(data);
                     
@@ -391,5 +391,7 @@ function siteNameListInput( )
         $("#siteType").val(siteData.siteType);        
         $("#siteType").selectmenu("refresh");    
     }
+    setAddButtonStatus();
+    setDeleteButtonStatus();
     startSiteWorker();
 }

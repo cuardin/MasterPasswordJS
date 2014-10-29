@@ -9,11 +9,13 @@ if ( typeof importScripts === 'function') {
     importScripts('core/util.js' );
     importScripts('core/mpw.js' );
     importScripts('database.js' );    
+    importScripts('../test/networkSecrets.js' );    
 
     self.addEventListener('message', handleMessage);
 }
 
 var webStorageSite = 'masterPasswordWebStorage';
+var masterKey = new Uint8Array();
 
 var postProgress = function ( i, p )
 {
@@ -31,7 +33,7 @@ function handleMessage(event) {
     
     var dataStr = event.data;
     var data = JSON.parse(dataStr);                
-    data.masterKey = new Uint8Array( data.masterKey );
+    data.masterKey = masterKey;
     
     var worker = new MPWWorker();
     
@@ -69,8 +71,8 @@ function MPWWorker() {
     {    
         var password = this.mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
         var siteList = this.db.dbGetSiteList( userName, password );    
-        if ( siteList === "badLogin" || siteList === "unvalidatedUser") {
-            postReturn( {type: siteList} );
+        if ( siteList === "badLogin") {
+            postReturn( {type: "badLogin"} );
             return [];
         } else {
             postReturn( {type: "goodLogin"} );
@@ -86,17 +88,17 @@ function MPWWorker() {
         var masterPassword = data.masterPassword;
         
         //Do the thing.
-        data.masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
-        var siteList = this.loadSiteList( data.masterKey, userName, postReturn );
-        data.masterKey = Array.apply( [], data.masterKey );
+        masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
+        var siteList = this.loadSiteList( masterKey, userName, postReturn );
+        
         
         //Package return values.
         var returnValue = {};        
         returnValue.type = "masterKey";
         returnValue.data = data;
-        returnValue.siteList = siteList;
-
-        postReturn(returnValue);
+        returnValue.siteList = siteList;        
+        
+        postReturn(returnValue);        
     };
     
     this.computeSitePassword = function ( data, postReturn )
@@ -108,14 +110,14 @@ function MPWWorker() {
         postReturn(returnValue);
     };
 
-    this.createUser = function ( data, postReturn )
+    this.createUser = function ( data, postReturn, antiSpamKey )
     {                
         //Compute the password to be used to identify this user.
         var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
 
-        //Now use the password to create a user.
-        var antiSpamKey = "UPP7fXLerV";
-        var rValue = this.db.dbCreateUser( data.userName, password, data.email, antiSpamKey, false);            
+        //Now use the password to create a user.        
+        var rValue = this.db.dbCreateUser( data.userName, password, data.email, 
+            antiSpamKey, data.recaptcha, data.recaptchaChallenge, false);            
 
         var returnValue = {};
         returnValue.type = "userSubmitted";
