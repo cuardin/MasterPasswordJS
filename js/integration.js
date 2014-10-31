@@ -80,7 +80,7 @@ $(document).ready(function(){
     
     //Create the create new user popup
     $("#createUserDialog").dialog({
-        autoOpen: true,
+        autoOpen: false,
         modal: true,
         width: 370,
         //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
@@ -134,6 +134,14 @@ $(document).ready(function(){
     $("#email").on( "change keyup paste mouseup", updateCreateUserDialogStatus );            
 });
 
+function setLoginStatus( status ) {
+    currentLoginStatus = status;
+    if ( status === true ) {
+        $( "#createUser").button("disable");        
+    } else {
+        $( "#createUser").button("enable");
+    }
+}
 function updateCreateUserDialogStatus()
 {
     validateTwoFieldsSame( "#userName", "#userName2" );    
@@ -250,7 +258,7 @@ function workerEventHandler(event) {
             popupDialog( "Duplicate users", "A user with the same username or email allready exists in the database." );        
         }
         $( "#progress" ).progressbar( "value", 100 );
-        $( "#createUser").button("disable");
+        setLoginStatus(true);
     } else if ( data.type === "siteSaved" ) {
         console.log( "Site saved:" );
         console.log( data.data );            
@@ -267,21 +275,14 @@ function workerEventHandler(event) {
         setAddButtonStatus();
         setDeleteButtonStatus();
         $( "#progress" ).progressbar( "value", 100 );
-    } else if ( data.type === "badLogin" ) {
-        $( "#createUser").button("enable");                
-        currentLoginStatus = false;
+    } else if ( data.type === "badLogin" ) {        
+        setLoginStatus(false);     
         setAddButtonStatus();
         setDeleteButtonStatus();
-    } else if ( data.type === "goodLogin" ) {        
-        currentLoginStatus = true;
-        $( "#createUser").button("disable");        
+    } else if ( data.type === "goodLogin" ) {                
+        setLoginStatus(true);
         setAddButtonStatus();
-        setDeleteButtonStatus();
-    } else if ( data.type === "unvalidatedUser" ) {
-        popupDialog( "Error", "This should never happen" );        
-        currentLoginStatus = false;
-        setAddButtonStatus();
-        setDeleteButtonStatus();
+        setDeleteButtonStatus();    
     } else {        
         $("#progress" ).progressbar( "value", 100 );
         popupDialog( "Unexpected Error", data.message );         
@@ -326,8 +327,9 @@ function updateSiteList( sList ) {
     //Add the site names to their list.
     keys = Object.keys(sList);
     for ( var i = 0; i < keys.length; i++ ) {        
-        var siteName = keys[i];
+        var siteName = keys[i];        
         siteDataList[siteName] = sList[siteName]; 
+        
     }
 }
 
