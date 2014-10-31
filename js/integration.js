@@ -135,11 +135,15 @@ $(document).ready(function(){
 });
 
 function setLoginStatus( status ) {
+    //TODO: Have the enclosing createUser button and login ok alternate.
     currentLoginStatus = status;
-    if ( status === true ) {
-        $( "#createUser").button("disable");        
+    if ( status === true ) {        
+        $("#createUser").attr( "style", "display: none;" );
+        $("#loginOK").attr( "style", "" );        
     } else {
-        $( "#createUser").button("enable");
+        $( "#createUser").button("enable");        
+        $("#createUser").attr( "style", "" );
+        $("#loginOK").attr( "style", "display: none;" );
     }
 }
 function updateCreateUserDialogStatus()
@@ -362,6 +366,8 @@ function startSiteWorker() {
 
 function onMainInputChange() {
     $("#sitePassword").val( "" );    
+    $( "#createUser").button("disable");        
+    
     //Clear the local cache
     siteDataList = {};
     

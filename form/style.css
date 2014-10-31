@@ -17,11 +17,18 @@
 #progress {
     width: 150px;
     display: block;
-    float: left;
+    float: left;    
 }
 
 #createUser {               
     float: right;    
+    
+}
+
+#loginOK {
+    float: right;
+    background-color: green;
+    font-size: 20pt;        
 }
 
 #sitePassword {     

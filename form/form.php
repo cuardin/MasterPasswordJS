@@ -36,8 +36,9 @@
             
             <div class="entry"> 
                 <div id="progress" class="box"></div>                                
-                <div>
-                <button id="createUser" type="button" title="Create a user so you can store sites online.">Create User</button>
+                <div id="loginStatus">
+                <button id="createUser" type="button" title="Create a user so you can store sites online." style="display: none;">Create User</button>
+                <div id="loginOK" style="display: none;">Login OK</div>
                 </div>
             </div> 
             
