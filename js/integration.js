@@ -1,11 +1,7 @@
 //Account for recaptcha: mpw.jscript@gmail.com
 
-
 ////***************************************
 // Declare all globals.
-//var userName = null;
-//var masterPassword = null;
-//var masterKey = new Array();
 var siteDataList = {};
 var currentLoginStatus = false;
 
@@ -90,7 +86,7 @@ $(document).ready(function(){
         //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
         buttons: {
             "Cancel": function() {                
-                $(this).dialog("close");           
+                $(this).dialog("close");                           
             }, 
             "Submit": function() {
                 //SubmitUser starts a worker in the background that submits the user and then closes the dialog.
@@ -98,7 +94,17 @@ $(document).ready(function(){
                 submitUser();                
                 Recaptcha.reload();
             }
+        },
+        open: function()
+        {            
+            updateCreateUserDialogStatus();
+            
+        },
+        close: function() 
+        { 
+            Recaptcha.reload(); 
         }
+        
     });
 
     //Create the create new user popup
@@ -121,18 +127,30 @@ $(document).ready(function(){
     });           
         
     //Add validation checks to create user dialog
-    $("#userName2").on( "change keyup paste mouseup", function() {
-        validateTwoFieldsSame( "#userName", "#userName2" );    
-    });            
+    $("#userName2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
 
-    $("#masterPassword2").on( "change keyup paste mouseup", function() {
-        validateTwoFieldsSame( "#masterPassword", "#masterPassword2" );    
-    });        
+    $("#masterPassword2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
     
-    $("#email").on( "change keyup paste mouseup", function( ) {
-        validateEmail( "#email" );          
-    });            
+    $("#email").on( "change keyup paste mouseup", updateCreateUserDialogStatus );            
 });
+
+function updateCreateUserDialogStatus()
+{
+    validateTwoFieldsSame( "#userName", "#userName2" );    
+    validateTwoFieldsSame( "#masterPassword", "#masterPassword2" );    
+    validateEmail( "#email" );          
+    
+    var uNameBad = $("#userName2").hasClass("ui-state-error");
+    var passBad = $("#masterPassword2").hasClass("ui-state-error");
+    var emailBad = $("#email").hasClass("ui-state-error");    
+    
+    if ( !uNameBad && !passBad && !emailBad ) {
+        $(".ui-dialog-buttonpane button:contains('Submit')").button('enable');
+    } else {
+        $(".ui-dialog-buttonpane button:contains('Submit')").button('disable');
+    }
+    
+}
 
 function deleteSite()
 {       
@@ -185,9 +203,9 @@ function submitUser()
 function validateTwoFieldsSame( field01, field02 ) 
 {
     //TODO: Change the variable names here.
-    var userName = $(field01).val();
-    var userName2 = $(field02).val();
-    if ( userName !== userName2 ) {
+    var field01Val = $(field01).val();
+    var field02Val = $(field02).val();
+    if ( field01Val !== field02Val ) {
         $(field02).addClass("ui-state-error");
     } else {
         $(field02).removeClass("ui-state-error");
@@ -229,9 +247,7 @@ function workerEventHandler(event) {
         //TODO: Whenever we close the user creation dialog, we should clear all values.
         $("#createUserDialog").dialog("close");
         if ( data.data === "DUPLICATE_USER" ) {
-            console.log( "Opening duplicate user dialog" );
-            $("#infoDialog").dialog("option", "title", "User allready exists");
-            $("#infoDialog").dialog("open");
+            popupDialog( "Duplicate users", "A user with the same username or email allready exists in the database." );        
         }
         $( "#progress" ).progressbar( "value", 100 );
         $( "#createUser").button("disable");
@@ -252,17 +268,17 @@ function workerEventHandler(event) {
         setDeleteButtonStatus();
         $( "#progress" ).progressbar( "value", 100 );
     } else if ( data.type === "badLogin" ) {
-        $( "#createUser").button("enable");        
+        $( "#createUser").button("enable");                
         currentLoginStatus = false;
         setAddButtonStatus();
         setDeleteButtonStatus();
     } else if ( data.type === "goodLogin" ) {        
         currentLoginStatus = true;
-        $( "#createUser").button("disable");
+        $( "#createUser").button("disable");        
         setAddButtonStatus();
         setDeleteButtonStatus();
     } else if ( data.type === "unvalidatedUser" ) {
-        popupDialog( "Error", "<p>User not validated</p>" );        
+        popupDialog( "Error", "This should never happen" );        
         currentLoginStatus = false;
         setAddButtonStatus();
         setDeleteButtonStatus();

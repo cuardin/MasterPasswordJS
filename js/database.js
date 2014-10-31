@@ -43,8 +43,8 @@ function Database() {
         var arguments = "username=" + uName + "&email=" + email + 
             "&userEditKey=" + userCreationKey +
             "&password=" + password + 
-            "&recaptcha_response_field=" + response +
-            "&recaptcha_challenge_field=" + challenge;
+            "&recapcha_response_field=" + response +
+            "&recapcha_challenge_field=" + challenge;
         if ( isTest ) {
             arguments = arguments + "&test=true";
         }
