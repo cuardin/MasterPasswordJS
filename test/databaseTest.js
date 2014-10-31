@@ -1,7 +1,8 @@
 var userName = "user01åäö";
 var password = "BopvPeln3~Rima"; //"MasterPass01", counter 1, type long, site: masterPasswordWebStorage
 var email = "daniel2@armyr.se";
-var antiSpamKey = "UPP7fXLerV";
+var capchaResponse = "capcha_response";
+var capchaChallenge = "capcha_challenge";
 var siteName = "site01.åäö";
 var siteCounter = 1;
 var siteType = "long";
@@ -11,12 +12,12 @@ QUnit.module( "module", {
     setup: function( assert ) {
         //Clean slate
         try {
-            db.dbEradicateUser( userName, password, getPrivateKey() );
+            db.dbEradicateUser( userName, password, getUserCreationKey() );
         } catch ( e ) {            
         }        
         
         //Now create a user
-        db.dbCreateUser( userName, password, email, antiSpamKey, true );
+        db.dbCreateUser( userName, password, email, getUserCreationKey(), capchaResponse, capchaChallenge, true );
                 
     }, 
     teardown: function( assert ) {
@@ -33,7 +34,7 @@ QUnit.test( "testCreateDuplicateEmail", function( assert ) {
     
     //Act
     try {
-        var result = db.dbCreateUser( userName02, password, email, antiSpamKey, true );
+        var result = db.dbCreateUser( userName02, password, email, getUserCreationKey(), capchaResponse, capchaChallenge, true );
         assert.equal( result, "DUPLICATE_USER" );
     } catch ( e ) {
        assert.ok(false, "An exception was unexpectedly thrown.");
@@ -51,7 +52,7 @@ QUnit.test( "testCreateDuplicateUserName", function( assert ) {
     
     //Act
     try {
-        var result = db.dbCreateUser( userName, password, email02, antiSpamKey, true );
+        var result = db.dbCreateUser( userName, password, email02, getUserCreationKey(), capchaResponse, capchaChallenge, true );
         assert.equal( result, "DUPLICATE_USER" );
     } catch ( e ) {
        assert.ok(false, "An exception was unexpectedly thrown.");
@@ -91,7 +92,7 @@ QUnit.test( "testUploadAndGetFileListExistingUser", function( assert ) {
 QUnit.test( "testGetFileListNonExistingUser", function( assert ) {    
     
     //Arrange    
-    db.dbEradicateUser( userName, password, getPrivateKey() );
+    db.dbEradicateUser( userName, password, getUserCreationKey() );
    
     //Act	  
     var siteList = db.dbGetSiteList( userName, password );        

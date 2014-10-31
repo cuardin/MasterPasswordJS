@@ -117,7 +117,7 @@ function MPWWorker() {
 
         //Now use the password to create a user.        
         var rValue = this.db.dbCreateUser( data.userName, password, data.email, 
-            antiSpamKey, data.recaptcha, data.recaptchaChallenge, false);            
+            antiSpamKey, data.capchaResponse, data.capchaChallenge, false);            
 
         var returnValue = {};
         returnValue.type = "userSubmitted";

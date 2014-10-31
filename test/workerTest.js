@@ -1,6 +1,5 @@
 var data = {};
 
-
 var db = new Database();
 var worker = {};
 
@@ -13,6 +12,8 @@ QUnit.module( "module", {
         data.password = "BopvPeln3~Rima"; //"MasterPass01", counter 1, type long, site: masterPasswordWebStorage
         data.masterKey = new Uint8Array(JSON.parse("[145,36,81,10,63,247,78,149,181,68,118,134,247,23,197,43,213,246,179,150,118,5,68,114,191,139,168,58,114,205,105,114,183,144,98,157,229,68,217,77,30,95,16,93,140,116,162,73,16,217,68,9,156,244,32,77,171,22,172,15,234,187,23,176]"));
         data.email = "daniel2@armyr.se";        
+        data.capchaResponse = "capcha_response";        
+        data.capchaChallenge = "capcha_challenge";        
         data.siteName = "site01.åäö";
         data.siteCounter = 1;
         data.siteType = "long";        
@@ -153,17 +154,18 @@ QUnit.test( "testCreateUser", function( assert ) {
     
     //Arrange        
     //Mock the database connection
-    worker.db.dbCreateUser = function dbCreateUser( userName, password, email, antiSpamKey, fun )
+    worker.db.dbCreateUser = function dbCreateUser( userName, password, email, userCreationKey, capcha_response, capcha_challenge, fun )
     {
-        return userName + password + email + antiSpamKey + fun;
-    };
-   
+        return userName + password + email + userCreationKey + capcha_response + capcha_challenge + fun;
+    };   
+    var userCreationKey = getUserCreationKey();
+    
     //Act	  
     worker.createUser( data, function(rValue) {
         //Assert    	
         assert.equal( rValue.type, "userSubmitted" );    
-        assert.equal( rValue.data, data.userName + data.password + data.email + antiSpamKey + false );    
-    }, antiSpamKey );                
+        assert.equal( rValue.data, data.userName + data.password + data.email + userCreationKey + data.capchaResponse + data.capchaChallenge + false );    
+    }, userCreationKey );                
 });
 
 QUnit.test( "testCreateDuplicateUser", function( assert ) {    

@@ -23,8 +23,8 @@ function getAllInputsFromForm(  ) {
     data.siteName = $('#siteName').val();
     data.siteCounter = parseInt($('#siteCounter').val());
     data.siteType = $('#siteType').val();    
-    data.recaptcha = $("#recaptcha_response_field").val();
-    data.recaptchaChallenge = $("#recaptcha_challenge_field").val();
+    data.capchaResponse = $("#recaptcha_response_field").val();
+    data.capchaChallenge = $("#recaptcha_challenge_field").val();
     return data;
 }
 
