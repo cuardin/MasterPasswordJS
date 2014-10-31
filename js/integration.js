@@ -36,8 +36,9 @@ $(document).ready(function(){
         change: startSiteWorker,
         stop: startSiteWorker
     });
+    
     //We need to add this one as well to handle text input.
-    setEventHandlerOnID( "siteCounter", "input", onInputNumberChange );    
+    $("#siteCounter").on( "change keyup paste mouseup", onInputNumberChange );    
 
     //Create the site type menu
     $( "#siteType" ).selectmenu({    
@@ -77,11 +78,13 @@ $(document).ready(function(){
         label: "Create User"       
     });
 
-    setEventHandlerOnID( "siteName", "input", function ( event ) {siteNameListInput();} );
+    $("#siteName").on( "change keyup paste mouseup", function () { 
+        siteNameListInput(); 
+    });
     
     //Create the create new user popup
     $("#createUserDialog").dialog({
-        autoOpen: false,
+        autoOpen: true,
         modal: true,
         width: 370,
         //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
@@ -116,24 +119,18 @@ $(document).ready(function(){
     $("#createUser").click( function( ) {
         $("#createUserDialog").dialog("open");
     });           
-    
-    
+        
     //Add validation checks to create user dialog
-    document.getElementById("userName2").addEventListener( "input", function( event ) {
+    $("#userName2").on( "change keyup paste mouseup", function() {
         validateTwoFieldsSame( "#userName", "#userName2" );    
     });            
-    document.getElementById("masterPassword2").addEventListener( "input", function( event ) {
+
+    $("#masterPassword2").on( "change keyup paste mouseup", function() {
         validateTwoFieldsSame( "#masterPassword", "#masterPassword2" );    
     });        
-    /*document.getElementById("email2").addEventListener( "input", function( event ) {
-        validateTwoFieldsSame( "#email", "#email2" );    
-    });*/            
-    document.getElementById("email").addEventListener( "input", function( event ) {
-        validateEmail( "#email" );  
-        /*//Revalidate the second if it is not empty.
-        if ( $("#email2").val().length !== 0 ) {
-            validateTwoFieldsSame( "#email", "#email2" );      
-        }*/
+    
+    $("#email").on( "change keyup paste mouseup", function( ) {
+        validateEmail( "#email" );          
     });            
 });
 
@@ -318,12 +315,10 @@ function updateSiteList( sList ) {
     }
 }
 
-function startSiteWorker() {        
+function startSiteWorker() {            
     //Make sure the save and delete buttons are correct.
     setAddButtonStatus();
-    setDeleteButtonStatus();
-
-    $( "#progress" ).progressbar( "value", false );
+    setDeleteButtonStatus();    
     
     //Build a message from the form to send
     var data = getAllInputsFromForm();    
@@ -332,6 +327,8 @@ function startSiteWorker() {
         document.getElementById("sitePassword").value = "N/A";  
         return;
     }    
+    
+    $( "#progress" ).progressbar( "value", false );
 
     var jsonString = JSON.stringify(data);
     
@@ -377,8 +374,8 @@ function onInputNumberChange() {
     if ( isNaN(value) ) {
         siteCounter.style="box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px; -moz-box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px; -webkit-box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px;";
     } else {
-        siteCounter.style="";
-    }
+        siteCounter.style="";        
+    }   
     startSiteWorker();
 }
 

@@ -11,10 +11,6 @@ function setEventHandlerOnClass( cls, event, handler ) {
     }
 }
 
-function setEventHandlerOnID( id, event, handler ) {
-    document.getElementById(id).addEventListener(event, handler);   
-}
-
 function getAllInputsFromForm(  ) {    
     var data = {};
     data.userName = $('#userName').val();
