@@ -1,10 +1,10 @@
 function Database() {
     
     
-    this.dbEradicateUser = function ( uName, dbPass, privateKey ) 
+    this.dbEradicateUser = function ( uName, dbPass, userEditKey ) 
     {
         var xmlhttp = new XMLHttpRequest();
-        var arguments = "username=" + uName + "&password=" + dbPass + "&privateKey=" + privateKey;
+        var arguments = "username=" + uName + "&password=" + dbPass + "&userEditKey=" + userEditKey;
         var completeAddress = getRootAddress() + "eradicateUser.php?" + arguments;    
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
@@ -18,11 +18,11 @@ function Database() {
         }
     };
 
-    this.dbForceValidateUser = function( uName, privateKey ) 
+    this.dbForceValidateUser = function( uName, userEditKey ) 
     {
         var xmlhttp = new XMLHttpRequest();
         var arguments = "username=" + uName + "&email=" + email + 
-                "&privateKey=" + privateKey;            
+                "&userEditKey=" + userEditKey;            
         var completeAddress = getRootAddress() + "verifyEmail.php?" + arguments;    
         //console.log( completeAddress );
         xmlhttp.open("GET",completeAddress,false);
@@ -41,7 +41,7 @@ function Database() {
     {
         var xmlhttp = new XMLHttpRequest();
         var arguments = "username=" + uName + "&email=" + email + 
-            "&userCreationKey=" + userCreationKey +
+            "&userEditKey=" + userCreationKey +
             "&password=" + password + 
             "&recaptcha_response_field=" + response +
             "&recaptcha_challenge_field=" + challenge;
