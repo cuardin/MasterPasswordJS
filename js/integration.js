@@ -343,7 +343,7 @@ function startSiteWorker() {
 
 
 function onMainInputChange() {
-    document.getElementById("sitePassword").value = "";    
+    $("#sitePassword").val( "" );    
     //Clear the local cache
     siteDataList = {};
     
@@ -368,20 +368,20 @@ function onMainInputChange() {
     w.postMessage(jsonString);                      
 }
 
-function onInputNumberChange() {
-    var siteCounter = document.getElementById("siteCounter");
-    var value = parseInt(siteCounter.value);
+function onInputNumberChange() {    
+    var siteCounter = $("#siteCounter");
+    var value = parseInt(siteCounter.val());
     if ( isNaN(value) ) {
-        siteCounter.style="box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px; -moz-box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px; -webkit-box-shadow: rgba(256,0,0, 0.5) 0px 0px 8px;";
+        siteCounter.addClass("ui-state-error");    
     } else {
-        siteCounter.style="";        
-    }   
+        siteCounter.removeClass("ui-state-error");        
+    }    
     startSiteWorker();
 }
 
 function siteNameListInput( )  
 {
-    var siteName = document.getElementById("siteName").value;
+    var siteName = $("#siteName").val();
     console.log( siteName );
     var siteData = siteDataList[siteName];    
     if ( siteData !== undefined && siteData !== null ) {
