@@ -80,7 +80,7 @@
             <a href="../test/runAll.html">Validate algorithm</a>
         </small>
     </div>
-    <div id="createUserDialog" title="Create new user">                
+    <div id="createUserDialog" title="Create new user" style="display: none;">                
         <label for="userName2">User Name again</label>
         <input id="userName2" class="popBox ui-widget ui-widget-content ui-corner-all"/>
         
@@ -91,13 +91,15 @@
         <input id="email" type="email" class="popBox ui-widget ui-widget-content ui-corner-all"/>
                
         <?php    
-        require_once( dirname(__FILE__).'/utilitiesSecret.php' );
+        echo "<script>\n";
+        require_once( dirname(__FILE__).'/../js/utilitiesSecret.php' );
+        echo "</script>\n";
         $publicKey = getCAPCHAPublicKey();        
         echo "<script type='text/javascript' src='https://www.google.com/recaptcha/api/challenge?k=$publicKey'></script>"
         ?>
 
     </div>
-    <div id="infoDialog">                        
+    <div id="infoDialog" style="display: none;">                        
     </div>
 </body>
 

@@ -93,6 +93,7 @@ $(document).ready(function(){
                 //SubmitUser starts a worker in the background that submits the user and then closes the dialog.
                 //TODO: Add a spinner to the button when submiting.
                 submitUser();                
+                Recaptcha.reload();
             }
         }
     });

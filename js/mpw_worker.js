@@ -9,7 +9,7 @@ if ( typeof importScripts === 'function') {
     importScripts('core/util.js' );
     importScripts('core/mpw.js' );
     importScripts('database.js' );    
-    importScripts('../test/networkSecrets.js' );    
+    importScripts('../js/utilitiesSecret.php' );    
 
     self.addEventListener('message', handleMessage);
 }
