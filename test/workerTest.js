@@ -4,13 +4,13 @@
 var data = {};
 
 
-var db = new Database();
 var worker = {};
 
 QUnit.module( "module", {
     setup: function( assert ) {
         //And make sure we have a worker object
         worker = new MPWWorker();
+        worker.db = {}; //We want to mock db completely.
         data.userName = "user01åäö";
         data.masterPassword = "MasterPass01";
         data.password = "BopvPeln3~Rima"; //"MasterPass01", counter 1, type long, site: masterPasswordWebStorage
