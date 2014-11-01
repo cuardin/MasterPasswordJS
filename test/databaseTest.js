@@ -170,3 +170,14 @@ QUnit.test( "testUploadAndOverwriteFileListExistingUser", function( assert ) {
     assert.equal( siteData.siteType, 'pin' );
         
 });
+
+
+QUnit.test( "testUploadAndOverwriteFileListExistingUser", function( assert ) {    
+   //Arrange
+   
+   //Act
+   var globalSeed = db.dbGetGlobalSeed();
+   
+   //Assert
+   assert.equal( globalSeed, 1);
+});

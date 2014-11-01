@@ -1,4 +1,8 @@
+//TODO: Make all tests pass with mocked call to getGlobalSiteSeed();
+//TODO: Set the database object to an empty object to make sure all database calls are mocked.
+
 var data = {};
+
 
 var db = new Database();
 var worker = {};
@@ -17,6 +21,13 @@ QUnit.module( "module", {
         data.siteName = "site01.åäö";
         data.siteCounter = 1;
         data.siteType = "long";        
+        
+        //Allways mock the getGlobalSeed.
+        worker.db.dbGetGlobalSeed = function ( ) { 
+            assert.ok( true ); //Just want to check that we were called.
+            return data.siteCounter;
+        };
+
     }, 
     teardown: function( assert ) {
         //And make sure we clean up our worker
@@ -26,7 +37,7 @@ QUnit.module( "module", {
 
 
 QUnit.test( "testLoadSiteList", function( assert ) {    
-    QUnit.expect(4);
+    QUnit.expect(5);
     
     //Arrange
     //And upload a file    
@@ -42,7 +53,12 @@ QUnit.test( "testLoadSiteList", function( assert ) {
             throw Error("Error!");
         }
     };
-            
+    
+    worker.db.dbGetGlobalSeed = function ( ) { 
+        assert.ok( true ); //Just want to check that we were called.
+        return data.siteCounter;
+    };
+               
     //Act
     var siteList = worker.loadSiteList( data.masterKey, data.userName, function(rValue){        
         //Assert    	
@@ -58,17 +74,23 @@ QUnit.test( "testLoadSiteList", function( assert ) {
 
 
 QUnit.test( "loadSiteListNonExistingUser", function( assert ) {    
-    QUnit.expect(2);
+    QUnit.expect(3);
     
     //Arrange    
     //db.dbEradicateUser( userName, password, privateKey );
     worker.db.dbGetSiteList = function ( uName, pword ) { return "badLogin"; };
     
+    worker.db.dbGetGlobalSeed = function ( ) { 
+        assert.ok( true ); //Just want to check that we were called.
+        return data.siteCounter;
+    };
+
     //Act	  
     var siteList = worker.loadSiteList( data.masterKey, data.userName, function(rValue){        
         //Assert    	
         assert.equal( rValue.type, "badLogin");      
     });    
+    
     
     //Assert    	
     assert.deepEqual( siteList, [] );    
@@ -77,7 +99,7 @@ QUnit.test( "loadSiteListNonExistingUser", function( assert ) {
 
 
 QUnit.test( "testComputeMainKey", function( assert ) {    
-    QUnit.expect( 2 );
+    QUnit.expect( 3 );
     
     //Arrange        
     worker.mpw.mpw_compute_secret_key = function(uName, mPassword, pProgress ) {
@@ -92,7 +114,7 @@ QUnit.test( "testComputeMainKey", function( assert ) {
             return "badLogin";
         }
     };
-   
+    
     //Act	  
     worker.computeMainKey( data, null, function(rValue) {
         //Assert    	
@@ -108,7 +130,7 @@ QUnit.test( "testComputeMainKey", function( assert ) {
 });
 
 QUnit.test( "testComputeMainKeyOnexistingUser", function( assert ) {    
-    QUnit.expect( 2 );
+    QUnit.expect( 3 );
     
     //Arrange        
     worker.mpw.mpw_compute_secret_key = function(uName, mPassword, pProgress ) {
@@ -150,7 +172,7 @@ QUnit.test( "testComputeSitePassword", function( assert ) {
 });
 
 QUnit.test( "testCreateUser", function( assert ) {    
-    QUnit.expect(2);
+    QUnit.expect(3);
     
     //Arrange        
     //Mock the database connection
@@ -158,6 +180,12 @@ QUnit.test( "testCreateUser", function( assert ) {
     {
         return userName + password + email + userCreationKey + capcha_response + capcha_challenge + fun;
     };   
+    
+    worker.db.dbGetGlobalSeed = function ( ) { 
+        assert.ok( true ); //Just want to check that we were called.
+        return data.siteCounter;
+    };
+
     var userCreationKey = getUserCreationKey();
     
     //Act	  
@@ -169,7 +197,7 @@ QUnit.test( "testCreateUser", function( assert ) {
 });
 
 QUnit.test( "testCreateDuplicateUser", function( assert ) {    
-    QUnit.expect(2);
+    QUnit.expect(3);
     
     //Arrange        
     //Mock the database connection that returns duplicate user.
@@ -177,7 +205,12 @@ QUnit.test( "testCreateDuplicateUser", function( assert ) {
     {        
         return "DUPLICATE_USER";
     };
-   
+    
+    worker.db.dbGetGlobalSeed = function ( ) { 
+        assert.ok( true ); //Just want to check that we were called.
+        return data.siteCounter;
+    };
+
     //Act	  
     worker.createUser( data, function(rValue) {
         //Assert    	
@@ -188,12 +221,12 @@ QUnit.test( "testCreateDuplicateUser", function( assert ) {
 
 
 QUnit.test("testSaveSite", function( assert ) {    
-    QUnit.expect(2);
+    QUnit.expect(3);
     
     //Arrange
     var site = { "siteName": data.siteName, "siteCounter": data.siteCounter, "siteType": data.siteType };
     
-    worker.db.dbSaveSite = function ( uName, dbPass, key, value )
+    worker.db.dbSaveSite = function ( uName, dbPass, key, value )    
     {
         if ( uName === data.userName && dbPass === data.password && key === data.siteName && value === JSON.stringify(site) ) {
             return "OK";
@@ -202,6 +235,11 @@ QUnit.test("testSaveSite", function( assert ) {
         }
     };
     
+    worker.db.dbGetGlobalSeed = function ( ) { 
+        assert.ok( true ); //Just want to check that we were called.
+        return data.siteCounter;
+    };
+
     //Act
     worker.saveSite( data, function(rValue) {
         //Assert    
@@ -211,7 +249,7 @@ QUnit.test("testSaveSite", function( assert ) {
 });
 
 QUnit.test("testDeleteSite", function( assert ) {    
-    QUnit.expect(2);
+    QUnit.expect(3);
     
     //Arrange
     worker.db.dbDeleteSite = function ( uName, dbPass, sName )

@@ -69,7 +69,7 @@ function MPWWorker() {
     
     this.loadSiteList = function ( masterKey, userName, postReturn )
     {    
-        var password = this.mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, this.db.dbGetGlobalSeed() );
         var siteList = this.db.dbGetSiteList( userName, password );    
         if ( siteList === "badLogin") {
             postReturn( {type: "badLogin"} );
@@ -113,7 +113,7 @@ function MPWWorker() {
     this.createUser = function ( data, postReturn, antiSpamKey )
     {                
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, this.db.dbGetGlobalSeed() );
 
         //Now use the password to create a user.        
         var rValue = this.db.dbCreateUser( data.userName, password, data.email, 
@@ -129,7 +129,7 @@ function MPWWorker() {
     this.saveSite = function ( data, postReturn )
     {                
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, this.db.dbGetGlobalSeed() );
         
         var site = {};
         site.siteName = data.siteName;
@@ -149,7 +149,7 @@ function MPWWorker() {
     {        
         
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, 1 );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, this.db.dbGetGlobalSeed() );
 
         this.db.dbDeleteSite( data.userName, password, data.siteName );
 
