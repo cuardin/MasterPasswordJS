@@ -19,19 +19,24 @@ function MPW()
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
         return password;
     };
-        
-    this.do_convert_uint8_to_array = function ( uint8_arr ) 
-    {
-        return Array.apply([], uint8_arr);
-    };
-        
+            
     this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter, progressFun )
     {        
-        var masterKeySalt = this.mpw_core_calculate_master_key_salt(  userName );
+        var util = new Util();
+        
+        var masterKeySalt = this.mpw_core_calculate_master_key_salt(  userName );        
+        
         var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                
-        var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                
-        var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );                
+        
+        //Hack that I need for some reason. No idea why.....
+        masterKey = util.convertBufferFromHex(util.convertBufferToHex(masterKey));          
+
+        var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                        
+        
+        var passwordSeed = this.mpw_core_compute_hmac( masterKey, siteSeed );                        
+
         var password = this.mpw_core_convert_to_password( siteTypeString, passwordSeed );        
+        
         return password;
     };
     
@@ -64,19 +69,7 @@ function MPW()
             throw new Error("Bad input data (mpw_core_calculate_master_key): " + typeof(masterKeySalt) + " masterPassword: " + typeof(masterPassword) );
         }
         
-        var encoder = new TextEncoder("utf-8");
-        var masterPasswordRaw = encoder.encode( masterPassword );                
-        
-        var N = 32768;
-        var r = 8;
-        var p = 2;
-        var dkLen = 64;
-        
-        var SCRYPT_MEMORY = 512 * 1024 * 1024 / 8;
-        var scrypt_module = scrypt_module_factory(SCRYPT_MEMORY);        
-        var secretKey = scrypt_module.crypto_scrypt(masterPasswordRaw, masterKeySalt, N, r, p, dkLen);
-        
-        //var secretKey = scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, progressFun); 
+        var secretKey = scrypt_crypt(masterPassword, masterKeySalt);            
         
         return secretKey;                
     };
@@ -113,15 +106,9 @@ function MPW()
         if ( secretKey.length !== 64 ) {
             throw new Error( "Secret key must be 64 bytes long" );
         }
-        
-        //Hack since my SHA seems to onlyaccept Arrays and not Uint8Array.
-        var secretKeyArray = Array.apply([], secretKey);
-        var siteSeedArray = Array.apply([], siteSeed);
-        
-        HMAC_SHA256_init(secretKeyArray);
-        HMAC_SHA256_write(siteSeedArray);
-        var siteKey = HMAC_SHA256_finalize();         
-        return new Uint8Array(siteKey); //Go back to uint8 arrays.
+                
+        var siteKey = sha256Hash ( secretKey, siteSeed );         
+        return siteKey;
     };
     
     this.mpw_core_convert_to_password = function (siteTypeString, sitePasswordSeed )

@@ -1,3 +1,5 @@
+QUnit.module( "module", undefined );
+
 QUnit.test( "testGenerateMainSalt", function( assert ) {
 	//Arrange	
 	var userName = "user01åäö";

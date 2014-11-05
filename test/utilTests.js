@@ -1,3 +1,5 @@
+QUnit.module( "module", undefined );
+
 QUnit.test( "testConvertToHexFromUint8Array", function( assert ) {
 	//Arrange
 	var rawBytes = [3, 156, 54];	
