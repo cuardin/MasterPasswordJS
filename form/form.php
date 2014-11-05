@@ -38,7 +38,7 @@
                 <div id="progress" class="box"></div>                                
                 <div id="loginStatus">
                 <button id="createUser" type="button" title="Create a user so you can store sites online." style="display: none;">Create User</button>
-                <div id="loginOK" style="display: none;">Login OK</div>
+                <div id="loginOK" style="display: none;"><img src="Ok-icon.png" width="32px"></div>
                 </div>
             </div> 
             

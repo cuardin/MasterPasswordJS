@@ -26,9 +26,8 @@
 }
 
 #loginOK {
-    float: right;
-    background-color: green;
-    font-size: 20pt;        
+    float: right;    
+    width: 32px;
 }
 
 #sitePassword {     
