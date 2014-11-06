@@ -1,10 +1,9 @@
 if ( typeof importScripts === 'function') {    
     importScripts('core/encoding-indexes.js' );
     importScripts('core/encoding.js' );
-
-    importScripts('core/jssha256.js' );    
-    
+       
     importScripts('core/scrypt-asm.js' );
+    importScripts('core/scrypt-wrapper.js' );    
 
     importScripts('core/util.js' );
     importScripts('core/mpw.js' );
@@ -89,8 +88,7 @@ function MPWWorker() {
         
         //Do the thing.
         masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
-        var siteList = this.loadSiteList( masterKey, userName, postReturn );
-        
+        var siteList = this.loadSiteList( masterKey, userName, postReturn );                
         
         //Package return values.
         var returnValue = {};        
@@ -103,7 +101,8 @@ function MPWWorker() {
     
     this.computeSitePassword = function ( data, postReturn )
     {                
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, data.siteType, data.siteName, data.siteCounter );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, data.siteType, data.siteName, data.siteCounter );                        
+
         var returnValue = {};
         returnValue.type = "sitePassword";
         returnValue.data = password;
