@@ -1,8 +1,36 @@
-//var PBKDF = require("./pbkdf2");
-//var hexer = require("./sjcl").codec.hex;
-//var crypto = require("crypto");
-//var util = require("util");
 var MAX_VALUE = 2147483647;
+
+function convertArrayToUint8Array( data ) 
+{
+    var rValue = new Uint8Array( data.length );
+    for ( var i = 0; i < data.length; i++ ) {
+        rValue[i] = data[i];
+    }
+    return rValue;
+}
+
+function sha256Hash ( key, data ) 
+{
+    key = Array.apply([], key );
+    data = Array.apply([], data );
+        
+    HMAC_SHA256_init(key);
+    HMAC_SHA256_write(data);
+    var hash = HMAC_SHA256_finalize();
+    
+    hash = convertArrayToUint8Array( hash );
+    return hash;
+}
+
+function scrypt_crypt ( masterPassword, masterKeySalt )
+{
+    var N = 32768;
+    var r = 8;
+    var p = 2;
+    var dkLen = 64;
+    return scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, null );
+}
+
 //function scrypt(byte[] passwd, byte[] salt, int N, int r, int p, int dkLen)
 /*
  * N = Cpu cost

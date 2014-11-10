@@ -2,8 +2,12 @@ if ( typeof importScripts === 'function') {
     importScripts('core/encoding-indexes.js' );
     importScripts('core/encoding.js' );
        
-    importScripts('core/scrypt-asm.js' );
-    importScripts('core/scrypt-wrapper.js' );    
+    //This is the compiles non-auditable version.
+    //importScripts('core/scrypt-asm.js' );
+    //importScripts('core/scrypt-wrapper.js' );    
+    
+    //Use the auditable scrypt version.
+    importScripts('core/scrypt.js' );
 
     importScripts('core/util.js' );
     importScripts('core/mpw.js' );
