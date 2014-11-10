@@ -1,14 +1,13 @@
-MasterPasswordJS
-================
+# MasterPasswordJS
+
 Released under GPL v3: http://www.gnu.org/copyleft/gpl.html
 
 Uses code from the following projects (License terms below)
-MasterPassword  (https://github.com/Lyndir/MasterPassword): GPLv3
-node-scrypt-js  (https://github.com/cheongwy/node-scrypt-js)
-encodings.js    (https://github.com/inexorabletash/text-encoding)
+- MasterPassword  (https://github.com/Lyndir/MasterPassword): GPLv3
+- node-scrypt-js  (https://github.com/cheongwy/node-scrypt-js)
+- encodings.js    (https://github.com/inexorabletash/text-encoding)
 
-**********************************************************************
-encodings.js:
+## encodings.js:
 
 Copyright 2014 Joshua Bell. All rights reserved.
 
@@ -24,8 +23,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-**********************************************************************
-jsha256.js:
+## jsha256.js:
 
 jssha256 version 0.1 - Copyright 2006 B. Poettering
 
@@ -44,8 +42,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 02111-1307 USA
 
-**********************************************************************
-node-scrypt-js:
+## node-scrypt-js:
 
 Copyright (c) 2010-2011 Intalio Pte, All Rights Reserved
 Permission is hereby granted, free of charge, to any person obtaining a copy
