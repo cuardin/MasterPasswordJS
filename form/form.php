@@ -1,3 +1,11 @@
+<?php
+    //Redirect if we get called on http.    
+    if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
+        $redirect = "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        header("Location: $redirect");        
+    }   
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -9,13 +17,16 @@
         .ui-dialog-titlebar-close {
             display: none;
         }        
-    </style>
+    </style>    
 </head>
 <body onbeforeunload="">    
-
-    <div class="mainDiv" id="mainDiv">        
-        <h1>MasterPassword</h1>
-        <p style="color: red">WARNING: This page uses unverified java&shy;script that may leak data and does not hide your master password. Do not enter any of your real passwords.</p>
+    <div id="loaderDiv" class="mainDiv" style="text-align: center;">
+        <h1>Loading page</h1>
+        <img src="ajax-loader.gif">
+    </div>
+    
+    <div class="mainDiv" id="mainDiv" style="display: none;">        
+        <h1>MasterPassword</h1>        
         <form class="form"> 
 
             <div class="entry"> 
@@ -28,7 +39,7 @@
 
             <div class="entry"> 
                 <label for="masterPassword">Master Password</label> 
-                <input type="text" id="masterPassword" 
+                <input type="password" id="masterPassword" 
                        class="mainInput box ui-widget ui-widget-content ui-corner-all" 
                        value="MasterPass01"
                        title="Enter your master password. All your other passwords can be found from this one, so make it good and keep it safe."/>             
@@ -80,15 +91,15 @@
             </div>             
         </form>
         <small class="validate">
-            <a href="../test/mpwTest.html">Validate algorithm</a>
+            [<a href="http://www.gnu.org/copyleft/gpl.html">GPLv3</a>] [<a href="../test/mpwTest.html">Validate algorithm</a>]
         </small>
     </div>
     <div id="createUserDialog" title="Create new user" style="display: none;">                
         <label for="userName2">User Name again</label>
-        <input id="userName2" class="popBox ui-widget ui-widget-content ui-corner-all"/>
+        <input id="userName2" type="text" class="popBox ui-widget ui-widget-content ui-corner-all"/>
         
         <label for="masterPassword2">Master Password again</label>
-        <input id="masterPassword2" class="popBox ui-widget ui-widget-content ui-corner-all"/>
+        <input id="masterPassword2" type="password" class="popBox ui-widget ui-widget-content ui-corner-all"/>
         
         <label for="email">Email</label>
         <input id="email" type="email" class="popBox ui-widget ui-widget-content ui-corner-all"/>

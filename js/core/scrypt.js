@@ -304,12 +304,10 @@ function arraycopy32(src, srcPos, dest, destPos, length) {
     }
 }
 
-//var crypto = require("crypto");
-//var sha256 = require("./jssha256");
 /**
  * Implementation of PBKDF2 (RFC2898).
  *
- * @param secret_key
+ * @param passwd
  * Secret key to initialise MAC function.
  * @param S
  * Salt.

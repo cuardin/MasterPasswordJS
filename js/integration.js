@@ -103,7 +103,7 @@ $(document).ready(function(){
         close: function() 
         { 
             Recaptcha.reload(); 
-        }
+        }                
         
     });
 
@@ -132,6 +132,10 @@ $(document).ready(function(){
     $("#masterPassword2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
     
     $("#email").on( "change keyup paste mouseup", updateCreateUserDialogStatus );            
+    
+    //Finally, we swap out the loading code and swap in the real content.
+    $("#loaderDiv").attr( "style", "display: none;" );
+    $("#mainDiv").attr( "style", "" );
 });
 
 function setLoginStatus( status ) {
@@ -367,6 +371,7 @@ function startSiteWorker() {
 function onMainInputChange() {
     $("#sitePassword").val( "" );    
     $( "#createUser").button("disable");        
+    $( "#loginOK").attr("style", "display: none;");        
     
     //Clear the local cache
     siteDataList = {};
