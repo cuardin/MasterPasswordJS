@@ -1,3 +1,5 @@
+//TODO: Make it split into sub-parts that can be called separately.
+
 var MAX_VALUE = 2147483647;
 
 function convertArrayToUint8Array( data ) 

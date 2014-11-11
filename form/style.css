@@ -78,13 +78,11 @@ a:visited {
     float: left;    
 }
 
-#createUser {               
-    float: right;    
-    
+#loginStatus {
+    float: right;
 }
 
 #loginOK {
-    float: right;    
     width: 32px;
 }
 

@@ -28,48 +28,49 @@ var postProgress = function ( i, p )
     postMessage( JSON.stringify(returnValue) );    
 };
 
-function postReturn(rValue) {
-    postMessage( JSON.stringify(rValue));    
-};
-
-function handleMessage(event) {    
-    
-    var dataStr = event.data;
-    var data = JSON.parse(dataStr);                
-    data.masterKey = masterKey;
-    
+function handleMessage( event ) 
+{
     var worker = new MPWWorker();
-    
-    try {       
-        if ( data.command === "mainCompute" ) {                                    
-            worker.computeMainKey( data, postProgress, postReturn );            
-        } else if ( data.command === "siteCompute" ) {            
-            worker.computeSitePassword( data, postReturn );                        
-        } else if ( data.command === "createUser" ) {
-            worker.createUser( data, postReturn );                        
-        } else if ( data.command === "saveSite" ) {
-            worker.saveSite( data, postReturn );                 
-        } else if ( data.command === "deleteSite" ) {
-            worker.deleteSite( data, postReturn );                        
-        } else {
-            throw new Error("Unknown command: " + data.command );            
-        }
-    } catch ( error ) {
-        var returnValue = {};
-        returnValue.type = "error";        
-        returnValue.message = error.message;
-        returnValue.fileName = error.fileName;
-        returnValue.lineNumber = error.lineNumber;
-        
-        postMessage(JSON.stringify(returnValue));
-    };
-
+    worker.handleMessage(event, function (rValue) {
+        postMessage( JSON.stringify(rValue));    
+    });
 }
 
 function MPWWorker() {
     this.mpw = new MPW();
     this.db = new Database();
-    
+
+    this.handleMessage = function(event, postReturn) {    
+
+        var dataStr = event.data;
+        var data = JSON.parse(dataStr);                
+        data.masterKey = masterKey;       
+
+        try {       
+            if ( data.command === "mainCompute" ) {                                    
+                this.computeMainKey( data, postProgress, postReturn );            
+            } else if ( data.command === "siteCompute" ) {            
+                this.computeSitePassword( data, postReturn );                        
+            } else if ( data.command === "createUser" ) {
+                this.createUser( data, postReturn );                        
+            } else if ( data.command === "saveSite" ) {
+                this.saveSite( data, postReturn );                 
+            } else if ( data.command === "deleteSite" ) {
+                this.deleteSite( data, postReturn );                        
+            } else {
+                throw new Error("Unknown command: " + data.command );            
+            }
+        } catch ( error ) {
+            var returnValue = {};
+            returnValue.type = "error";        
+            returnValue.message = error.message;
+            returnValue.fileName = error.fileName;
+            returnValue.lineNumber = error.lineNumber;
+
+            postReturn(JSON.stringify(returnValue));
+        };
+    }
+
     this.loadSiteList = function ( masterKey, userName, postReturn )
     {    
         var password = this.mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, this.db.dbGetGlobalSeed() );
@@ -91,7 +92,7 @@ function MPWWorker() {
         var masterPassword = data.masterPassword;
         
         //Do the thing.
-        masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );              
+        masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );                      
         var siteList = this.loadSiteList( masterKey, userName, postReturn );                
         
         //Package return values.

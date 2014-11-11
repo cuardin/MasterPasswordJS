@@ -113,11 +113,11 @@
     </div>
     <div id="infoDialog" style="display: none;">                        
     </div>
-</body>
 
-<script src="external/jquery/jquery.js"></script>
-<script src="jquery-ui.js"></script>
-<script src="../js/domWrapper.js"></script>
-<script src="../js/integration.js"></script>
+    <script src="external/jquery/jquery.js"></script>
+    <script src="jquery-ui.js"></script>
+    <script src="../js/domWrapper.js"></script>
+    <script src="../js/integration.js"></script>
+</body>
 </html>
 
