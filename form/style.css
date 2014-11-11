@@ -29,6 +29,14 @@ body {
     text-align:         center;
 }
 
+a:link {
+    color: #DDD;
+}
+
+a:visited {
+    color: #999;
+}
+
 .ui-widget {
     text-align: center;
 }
