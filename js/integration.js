@@ -82,7 +82,7 @@ $(document).ready(function(){
     $("#createUserDialog").dialog({
         autoOpen: false,
         modal: true,
-        width: 370,
+        width: 350,
         //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
         buttons: {
             "Cancel": function() {                
@@ -247,11 +247,11 @@ function workerEventHandler(event) {
 
     if ( data.type === "masterKey" ) {               
         updateSiteList( data.siteList );        
-        $( "#progress" ).progressbar( "value", 100 );
+        $( "#progress" ).progressbar( "value", 0 );
         startSiteWorker();                
     } else if ( data.type === "sitePassword" ) {                   
         $("#sitePassword").val( data.data );          
-        $( "#progress" ).progressbar( "value", 100 );
+        $( "#progress" ).progressbar( "value", 0 );
 
     } else  if ( data.type === "progress" ) {                
         //Do nothing right now.
@@ -265,7 +265,7 @@ function workerEventHandler(event) {
         if ( data.data === "DUPLICATE_USER" ) {
             popupDialog( "Duplicate users", "A user with the same username or email allready exists in the database." );        
         }
-        $( "#progress" ).progressbar( "value", 100 );
+        $( "#progress" ).progressbar( "value", 0 );
         setLoginStatus(true);
     } else if ( data.type === "siteSaved" ) {
         console.log( "Site saved:" );
@@ -274,7 +274,7 @@ function workerEventHandler(event) {
         siteDataList[siteName] = data.data;
         setAddButtonStatus();
         setDeleteButtonStatus();
-        $( "#progress" ).progressbar( "value", 100 );
+        $( "#progress" ).progressbar( "value", 0 );
     } else if ( data.type === "siteDeleted" ) {
         console.log( "Site deleted:" );
         console.log( data.data );            
@@ -282,7 +282,7 @@ function workerEventHandler(event) {
         delete siteDataList[siteName];
         setAddButtonStatus();
         setDeleteButtonStatus();
-        $( "#progress" ).progressbar( "value", 100 );
+        $( "#progress" ).progressbar( "value", 0 );
     } else if ( data.type === "badLogin" ) {        
         setLoginStatus(false);     
         setAddButtonStatus();
@@ -292,7 +292,7 @@ function workerEventHandler(event) {
         setAddButtonStatus();
         setDeleteButtonStatus();    
     } else {        
-        $("#progress" ).progressbar( "value", 100 );
+        $("#progress" ).progressbar( "value", 0 );
         popupDialog( "Unexpected Error", data.message );         
     }    
 };
@@ -372,8 +372,11 @@ function onMainInputChange() {
     $("#sitePassword").val( "" );    
     $( "#createUser").button("disable");        
     $( "#loginOK").attr("style", "display: none;");        
+    $("#saveSite").button("disable");
+    $("#deleteSite").button("disable");            
     
-    //Clear the local cache
+    //Clear the local cache and login status
+    currentLoginStatus = false;
     siteDataList = {};
     
     $( "#progress" ).progressbar( "value", false );    

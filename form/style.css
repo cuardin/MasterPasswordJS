@@ -1,5 +1,51 @@
+html {
+    background:         radial-gradient(black 15%, transparent 16%) 0 0,
+                        radial-gradient(black 15%, transparent 16%) 8px 8px,
+                        radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 0 1px,
+                        radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 8px 9px;
+    background-color:   #161616;
+    background-size:    16px 16px;
 
+    width:              100%;
+    height:             100%;
+    padding:            0;
+    margin:             0;
+}
 
+body {
+    background:         radial-gradient(transparent 16%, black);
+
+    width:              100%;
+    min-height:         100%;
+    padding:            0;
+    margin:             0;
+    clear:              both;
+    
+    font-family:        'Exo 2',
+                        "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica,
+                        Arial, "Lucida Grande", sans-serif; 
+    font-weight:        300;
+    color:              #DDD;
+    text-align:         center;
+}
+
+.ui-widget {
+    text-align: center;
+}
+
+#progress {
+    background: rgba( 20, 20, 20, 0.5 );    
+    margin: 0px 0px 20px 0px;    
+}
+
+#userName2, #masterPassword2, #email {
+    width: 315px;
+}
+
+#recaptcha_response_field {
+    height:             1em;
+    margin:             0 0;
+}
 .popBox {
     display: block;     
 }
@@ -38,10 +84,6 @@
     width: 300px;    
 }
 
-body {
-    background: #FFF;
-}
-
 .mainDiv {    
  
     width: 305px;
@@ -62,12 +104,6 @@ body {
     width: 305px;
 }
 
-
-
-div.progress {
-    margin: 20px 0px 0px 0px;    
-}
-
 #siteCounter {
     width: 273px;
 }
@@ -76,4 +112,8 @@ div.progress {
     margin: 20px 0px;
     clear: both;
     float: right;
+}
+
+small {
+    font-size: 0.6em;
 }

@@ -22,9 +22,10 @@
     </div>
     
     <div class="mainDiv" id="mainDiv" style="display: none;">        
-        <h1>MasterPassword</h1>        
+        <small><p>BETA - This site may not yet work on your browser.</p>
+            <p>Passwords are generated locally, your master password is not sent to any server. See the <a href="https://github.com/cuardin/MasterPasswordJS">source</a>.</p></small>
+        <h1>MasterPassword</h1>                
         <form class="form"> 
-
             <div class="entry"> 
                 <label for="userName">Username</label> 
                 <input type="text" id="userName" 
@@ -45,7 +46,7 @@
                 <div id="progress" class="box"></div>                                
                 <div id="loginStatus">
                 <button id="createUser" type="button" title="Create a user so you can store sites online." style="display: none;">Create User</button>
-                <div id="loginOK" style="display: none;"><img src="Ok-icon.png" width="32px"></div>
+                <div id="loginOK" style="display: none;"><img src="Ok-icon.png" width="32px" title="You are logged in. Although no passwords are sent to any server, you can now save sites with their settings to the central server to be accessed from anywhere."></div>
                 </div>
             </div> 
             
@@ -99,7 +100,8 @@
         
         <label for="email">Email</label>
         <input id="email" type="email" class="popBox ui-widget ui-widget-content ui-corner-all"/>
-               
+        
+        <p></p>
         <?php    
         echo "<script>\n";
         require_once( dirname(__FILE__).'/../js/utilitiesSecret.php' );
