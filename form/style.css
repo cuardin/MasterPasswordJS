@@ -14,6 +14,10 @@
     clear: both;
 }
 
+.ui-dialog-titlebar-close {
+    display: none;
+}        
+
 #progress {
     width: 150px;
     display: block;

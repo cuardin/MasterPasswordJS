@@ -12,12 +12,8 @@
     <meta charset="utf-8">
     <title>MasterPassword</title>
     <link href="jquery-ui.css" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">    	
-    <style>
-        .ui-dialog-titlebar-close {
-            display: none;
-        }        
-    </style>    
+    <link href="style.css" rel="stylesheet">    	            
+    <meta name="apple-itunes-app" content="app-id=510296984" />
 </head>
 <body onbeforeunload="">    
     <div id="loaderDiv" class="mainDiv" style="text-align: center;">
