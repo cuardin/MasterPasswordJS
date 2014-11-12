@@ -4,7 +4,7 @@
 // Declare all globals.
 var siteDataList = {};
 var currentLoginStatus = false;
-
+var dbPassword = "";
 var w = null;
 
 //Wrap all initializatio
@@ -182,6 +182,7 @@ function deleteSite()
 {       
     //Create a job for the worker to submit the site to storage.
     var data = getAllInputsFromForm();
+    data.dbPassword = dbPassword;
     data.command = "deleteSite";        
         
     var jsonString = JSON.stringify(data);
@@ -199,6 +200,7 @@ function saveSite()
 {       
     //Create a job for the worker to submit the site to storage.
     var data = getAllInputsFromForm();
+    data.dbPassword = dbPassword;
     data.command = "saveSite";                    
     
     var jsonString = JSON.stringify(data);
@@ -213,6 +215,7 @@ function saveSite()
 function submitUser()
 {                
     var data = getAllInputsFromForm();
+    data.dbPassword = dbPassword;
     data.command = "createUser";    
         
     var jsonString = JSON.stringify(data);
@@ -261,7 +264,8 @@ function workerEventHandler(event) {
         getDbPassword();
     } else if ( data.type === "dbPassword" ) {        
         $( "#progress" ).progressbar( "value", 0 );
-        requestSiteList(data.data);                
+        dbPassword = data.data;
+        requestSiteList();                
     } else if ( data.type === "siteList" ) {
         $( "#progress" ).progressbar( "value", 0 );
         updateSiteList( data.siteList );                
@@ -299,10 +303,11 @@ function workerEventHandler(event) {
         setDeleteButtonStatus();
         $( "#progress" ).progressbar( "value", 0 );
     } else if ( data.type === "badLogin" ) {        
+        $( "#progress" ).progressbar( "value", 0 );
         setLoginStatus(false);     
         setAddButtonStatus();
         setDeleteButtonStatus();
-    } else if ( data.type === "goodLogin" ) {                
+    } else if ( data.type === "goodLogin" ) {                        
         setLoginStatus(true);
         setAddButtonStatus();
         setDeleteButtonStatus();    
@@ -351,9 +356,12 @@ function updateSiteList( sList ) {
     keys = Object.keys(sList);
     for ( var i = 0; i < keys.length; i++ ) {        
         var siteName = keys[i];        
-        siteDataList[siteName] = sList[siteName]; 
-        
+        siteDataList[siteName] = sList[siteName];         
     }
+    
+    //Make sure the save and delete buttons are correct.
+    setAddButtonStatus();
+    setDeleteButtonStatus();    
 }
 function getDbPassword() {
     $( "#progress" ).progressbar( "value", false );
@@ -371,12 +379,12 @@ function getDbPassword() {
     }
 }
 
-function requestSiteList( dbPass )
+function requestSiteList( )
 {
     $( "#progress" ).progressbar( "value", false );
     //Build a message from the form to send
     var data = getAllInputsFromForm();    
-    data.dbPassword = dbPass;
+    data.dbPassword = dbPassword;
     data.command = "getSiteList";
     
     var jsonString = JSON.stringify(data);

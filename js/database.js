@@ -13,7 +13,7 @@ function Database() {
         } else {
             return parseInt( rValue );            
         }
-    }
+    };
     
     this.dbEradicateUser = function ( uName, dbPass, userEditKey ) 
     {

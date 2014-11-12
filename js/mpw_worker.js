@@ -106,10 +106,10 @@ function MPWWorker() {
     this.createUser = function ( data, postReturn, antiSpamKey )
     {                
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
+        //var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
 
         //Now use the password to create a user.        
-        var rValue = this.db.dbCreateUser( data.userName, password, data.email, 
+        var rValue = this.db.dbCreateUser( data.userName, data.dbPassword, data.email, 
             antiSpamKey, data.capchaResponse, data.capchaChallenge, false);            
 
         var returnValue = {};
@@ -122,14 +122,14 @@ function MPWWorker() {
     this.saveSite = function ( data, postReturn )
     {                
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
+        //var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
         
         var site = {};
         site.siteName = data.siteName;
         site.siteCounter = data.siteCounter;
         site.siteType = data.siteType;
         
-        this.db.dbSaveSite( data.userName, password, data.siteName, JSON.stringify(site) );
+        this.db.dbSaveSite( data.userName, data.dbPassword, data.siteName, JSON.stringify(site) );
 
         var returnValue = {};
         returnValue.type = "siteSaved";
@@ -142,9 +142,9 @@ function MPWWorker() {
     {        
         
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
+        //var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
 
-        this.db.dbDeleteSite( data.userName, password, data.siteName );
+        this.db.dbDeleteSite( data.userName, data.dbPassword, data.siteName );
 
         var returnValue = {};
         returnValue.type = "siteDeleted";
