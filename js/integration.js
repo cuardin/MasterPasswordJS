@@ -138,6 +138,16 @@ $(document).ready(function(){
     $("#mainDiv").attr( "style", "" );
 });
 
+function createWorker() {
+    var base_url = window.location.href.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
+    var array = ['var base_url = "' + base_url + '/";' + $('#mpw_worker').html()];
+    var blob = new Blob(array, {type: "text/javascript"});
+    var url = window.URL.createObjectURL(blob);    
+    console.log( url );
+    var worker = new Worker(url);
+    return worker;
+}
+
 function setLoginStatus( status ) {
     //TODO: Have the enclosing createUser button and login ok alternate.
     currentLoginStatus = status;
@@ -387,7 +397,8 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = new Worker("../js/worker_wrapper.js");
+    w = createWorker();
+    
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);
     

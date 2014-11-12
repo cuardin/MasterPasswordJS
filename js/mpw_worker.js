@@ -5,6 +5,14 @@ function MPWWorker() {
 
     this.mpw = new MPW();
     this.db = new Database();
+    
+    this.postProgress = function ( i, p )
+    {
+        var returnValue = {};
+        returnValue.type = "progress";
+        returnValue.data = 100.0*i/p;
+        postMessage( JSON.stringify(returnValue) );    
+    };
 
     this.handleMessage = function(event, postReturn) {    
 
@@ -14,7 +22,7 @@ function MPWWorker() {
 
         try {       
             if ( data.command === "mainCompute" ) {                                    
-                this.computeMainKey( data, postProgress, postReturn );            
+                this.computeMainKey( data, this.postProgress, postReturn );            
             } else if ( data.command === "siteCompute" ) {            
                 this.computeSitePassword( data, postReturn );                        
             } else if ( data.command === "createUser" ) {

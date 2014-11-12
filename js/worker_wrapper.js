@@ -1,33 +1,20 @@
-if ( typeof importScripts === 'function') {    
-    importScripts('core/encoding-indexes.js' );
-    importScripts('core/encoding.js' );
-       
-    //This is the compiles non-auditable version.
-    //importScripts('core/scrypt-asm.js' );
-    //importScripts('core/scrypt-wrapper.js' );    
-    
-    //Use the auditable scrypt version.
-    importScripts('core/scrypt.js' );
+importScripts('core/encoding-indexes.js' );
+importScripts('core/encoding.js' );
 
-    importScripts('core/util.js' );
-    importScripts('core/mpw.js' );
-    importScripts('database.js' );    
-    importScripts('mpw_worker.js' );    
-    importScripts('../js/utilitiesSecret.php' );    
+//This is the compiles non-auditable version.
+//importScripts('core/scrypt-asm.js' );
+//importScripts('core/scrypt-wrapper.js' );    
 
-    self.addEventListener('message', handleMessage);
-}
+//Use the auditable scrypt version.
+importScripts('core/scrypt.js' );
 
-var webStorageSite = 'masterPasswordWebStorage';
-var masterKey = new Uint8Array();
+importScripts('core/util.js' );
+importScripts('core/mpw.js' );
+importScripts('database.js' );    
+importScripts('mpw_worker.js' );    
+importScripts('../js/utilitiesSecret.php' );    
 
-var postProgress = function ( i, p )
-{
-    var returnValue = {};
-    returnValue.type = "progress";
-    returnValue.data = 100.0*i/p;
-    postMessage( JSON.stringify(returnValue) );    
-};
+self.addEventListener('message', handleMessage);
 
 function handleMessage( event ) 
 {
