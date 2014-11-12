@@ -23,6 +23,8 @@ function MPWWorker() {
         try {       
             if ( data.command === "mainCompute" ) {                                    
                 this.computeMainKey( data, this.postProgress, postReturn );            
+            } else if ( data.command === "getSiteList" ) {
+                this.loadSiteList( data, postReturn );
             } else if ( data.command === "siteCompute" ) {            
                 this.computeSitePassword( data, postReturn );                        
             } else if ( data.command === "createUser" ) {
@@ -43,19 +45,22 @@ function MPWWorker() {
 
             postReturn(JSON.stringify(returnValue));
         };
-    }
+    };
 
-    this.loadSiteList = function ( masterKey, userName, postReturn )
-    {    
-        var password = this.mpw.mpw_compute_site_password( masterKey, 'long', this.webStorageSite, this.db.dbGetGlobalSeed() );
-        var siteList = this.db.dbGetSiteList( userName, password );    
+    this.loadSiteList = function ( data, postReturn )
+    {            
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, 'long', this.webStorageSite, this.db.dbGetGlobalSeed() );
+        var siteList = this.db.dbGetSiteList( data.userName, password );    
         if ( siteList === "badLogin") {
             postReturn( {type: "badLogin"} );
-            return [];
         } else {
             postReturn( {type: "goodLogin"} );
             siteList = this.unpackSiteList( siteList );                
-            return siteList; 
+            
+            var returnValue = {};        
+            returnValue.type = "siteList";
+            returnValue.siteList = siteList;        
+            postReturn( returnValue );
         }
         
     };
@@ -66,15 +71,13 @@ function MPWWorker() {
         var masterPassword = data.masterPassword;
         
         //Do the thing.
-        this.masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );                      
-        var siteList = this.loadSiteList( this.masterKey, userName, postReturn );                
+        this.masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );                              
         
         //Package return values.
         var returnValue = {};        
         returnValue.type = "masterKey";
         returnValue.data = data;
-        returnValue.siteList = siteList;        
-        
+                
         postReturn(returnValue);        
     };
     

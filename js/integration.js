@@ -255,14 +255,16 @@ function workerEventHandler(event) {
     var data = JSON.parse(event.data);    
     console.log(data);
 
-    if ( data.type === "masterKey" ) {               
-        updateSiteList( data.siteList );        
+    if ( data.type === "masterKey" ) {                       
         $( "#progress" ).progressbar( "value", 0 );
-        startSiteWorker();                
+        startSiteWorker();
+        requestSiteList();
+    } else if ( data.type === "siteList" ) {
+        updateSiteList( data.siteList );
+        $( "#progress" ).progressbar( "value", 0 );
     } else if ( data.type === "sitePassword" ) {                   
         $("#sitePassword").val( data.data );          
         $( "#progress" ).progressbar( "value", 0 );
-
     } else  if ( data.type === "progress" ) {                
         //Do nothing right now.
         //$( "#compute" ).progressbar( "value", data.data );
@@ -349,6 +351,24 @@ function updateSiteList( sList ) {
         siteDataList[siteName] = sList[siteName]; 
         
     }
+}
+
+function requestSiteList()
+{
+    $( "#progress" ).progressbar( "value", false );
+    //Build a message from the form to send
+    var data = getAllInputsFromForm();    
+    data.command = "getSiteList";
+    
+    var jsonString = JSON.stringify(data);
+    
+    if ( w === null ) {
+        //If we don't have a worker, we need to compute the masterSeed first.
+        onMainInputChange();
+    }
+
+    //Send a message to start the process.    
+    w.postMessage(jsonString);                          
 }
 
 function startSiteWorker() {            
