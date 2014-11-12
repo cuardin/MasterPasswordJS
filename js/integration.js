@@ -387,7 +387,7 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = new Worker("../js/mpw_worker.js");
+    w = new Worker("../js/worker_wrapper.js");
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);
     

@@ -1,0 +1,33 @@
+<body>
+    <button>Start</button>
+    <div id="output"></div>
+    <script src="jquery-1.10.2.js"></script>
+    <script id="worker_1" type="text/js-worker">
+        importScripts(base_url + '/worker_lib2.js');
+        console.log( "Testing the log" );
+        function run(event) {
+            var msg = event.data;
+            setTimeout( function() { this.postMessage({ answer: hello(event.data.name)}) }, 1000 );
+        }
+
+        this.addEventListener('message', run, false);
+    </script>
+
+    <script>
+        var base_url = window.location.href.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
+        var array = ['var base_url = "' + base_url + '";' + $('#worker_1').html()];
+        var blob = new Blob(array, {type: "text/javascript"});
+
+        $('button').click(function() {
+            var url = window.URL.createObjectURL(blob);
+            console.log(url);
+            var worker = new Worker(url);
+            worker.addEventListener('message', function(event) {
+                $('#output').html(event.data.answer);
+            }, false);
+            worker.postMessage({
+                name: 'Yannis'
+            });
+        });
+    </script>
+</body>

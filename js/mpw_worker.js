@@ -1,42 +1,8 @@
-if ( typeof importScripts === 'function') {    
-    importScripts('core/encoding-indexes.js' );
-    importScripts('core/encoding.js' );
-       
-    //This is the compiles non-auditable version.
-    //importScripts('core/scrypt-asm.js' );
-    //importScripts('core/scrypt-wrapper.js' );    
-    
-    //Use the auditable scrypt version.
-    importScripts('core/scrypt.js' );
-
-    importScripts('core/util.js' );
-    importScripts('core/mpw.js' );
-    importScripts('database.js' );    
-    importScripts('../js/utilitiesSecret.php' );    
-
-    self.addEventListener('message', handleMessage);
-}
-
-var webStorageSite = 'masterPasswordWebStorage';
-var masterKey = new Uint8Array();
-
-var postProgress = function ( i, p )
-{
-    var returnValue = {};
-    returnValue.type = "progress";
-    returnValue.data = 100.0*i/p;
-    postMessage( JSON.stringify(returnValue) );    
-};
-
-function handleMessage( event ) 
-{
-    var worker = new MPWWorker();
-    worker.handleMessage(event, function (rValue) {
-        postMessage( JSON.stringify(rValue));    
-    });
-}
 
 function MPWWorker() {
+    this.webStorageSite = 'masterPasswordWebStorage';
+    this.masterKey = new Uint8Array();
+
     this.mpw = new MPW();
     this.db = new Database();
 
@@ -44,7 +10,7 @@ function MPWWorker() {
 
         var dataStr = event.data;
         var data = JSON.parse(dataStr);                
-        data.masterKey = masterKey;       
+        data.masterKey = this.masterKey;       
 
         try {       
             if ( data.command === "mainCompute" ) {                                    
@@ -73,7 +39,7 @@ function MPWWorker() {
 
     this.loadSiteList = function ( masterKey, userName, postReturn )
     {    
-        var password = this.mpw.mpw_compute_site_password( masterKey, 'long', webStorageSite, this.db.dbGetGlobalSeed() );
+        var password = this.mpw.mpw_compute_site_password( masterKey, 'long', this.webStorageSite, this.db.dbGetGlobalSeed() );
         var siteList = this.db.dbGetSiteList( userName, password );    
         if ( siteList === "badLogin") {
             postReturn( {type: "badLogin"} );
@@ -92,8 +58,8 @@ function MPWWorker() {
         var masterPassword = data.masterPassword;
         
         //Do the thing.
-        masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );                      
-        var siteList = this.loadSiteList( masterKey, userName, postReturn );                
+        this.masterKey = this.mpw.mpw_compute_secret_key( userName, masterPassword, postProgress );                      
+        var siteList = this.loadSiteList( this.masterKey, userName, postReturn );                
         
         //Package return values.
         var returnValue = {};        
@@ -117,7 +83,7 @@ function MPWWorker() {
     this.createUser = function ( data, postReturn, antiSpamKey )
     {                
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, this.db.dbGetGlobalSeed() );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
 
         //Now use the password to create a user.        
         var rValue = this.db.dbCreateUser( data.userName, password, data.email, 
@@ -133,7 +99,7 @@ function MPWWorker() {
     this.saveSite = function ( data, postReturn )
     {                
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, this.db.dbGetGlobalSeed() );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
         
         var site = {};
         site.siteName = data.siteName;
@@ -153,7 +119,7 @@ function MPWWorker() {
     {        
         
         //Compute the password to be used to identify this user.
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", webStorageSite, this.db.dbGetGlobalSeed() );
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );
 
         this.db.dbDeleteSite( data.userName, password, data.siteName );
 
