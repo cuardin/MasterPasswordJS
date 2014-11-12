@@ -25,6 +25,8 @@ function MPWWorker() {
                 this.computeMainKey( data, this.postProgress, postReturn );            
             } else if ( data.command === "getSiteList" ) {
                 this.loadSiteList( data, postReturn );
+            } else if ( data.command === "getDbPassword" ) {                            
+                this.computeDbPassword( data, postReturn );
             } else if ( data.command === "siteCompute" ) {            
                 this.computeSitePassword( data, postReturn );                        
             } else if ( data.command === "createUser" ) {
@@ -49,8 +51,8 @@ function MPWWorker() {
 
     this.loadSiteList = function ( data, postReturn )
     {            
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, 'long', this.webStorageSite, this.db.dbGetGlobalSeed() );
-        var siteList = this.db.dbGetSiteList( data.userName, password );    
+        //var password = this.mpw.mpw_compute_site_password( data.masterKey, 'long', this.webStorageSite, this.db.dbGetGlobalSeed() );
+        var siteList = this.db.dbGetSiteList( data.userName, data.dbPassword );    
         if ( siteList === "badLogin") {
             postReturn( {type: "badLogin"} );
         } else {
@@ -76,9 +78,19 @@ function MPWWorker() {
         //Package return values.
         var returnValue = {};        
         returnValue.type = "masterKey";
-        returnValue.data = data;
+        //returnValue.data = data;
                 
         postReturn(returnValue);        
+    };
+    
+    this.computeDbPassword = function ( data, postReturn )
+    {                
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );                        
+
+        var returnValue = {};
+        returnValue.type = "dbPassword";
+        returnValue.data = password;
+        postReturn(returnValue);
     };
     
     this.computeSitePassword = function ( data, postReturn )

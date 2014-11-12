@@ -258,10 +258,13 @@ function workerEventHandler(event) {
     if ( data.type === "masterKey" ) {                       
         $( "#progress" ).progressbar( "value", 0 );
         startSiteWorker();
-        requestSiteList();
-    } else if ( data.type === "siteList" ) {
-        updateSiteList( data.siteList );
+        getDbPassword();
+    } else if ( data.type === "dbPassword" ) {        
         $( "#progress" ).progressbar( "value", 0 );
+        requestSiteList(data.data);                
+    } else if ( data.type === "siteList" ) {
+        $( "#progress" ).progressbar( "value", 0 );
+        updateSiteList( data.siteList );                
     } else if ( data.type === "sitePassword" ) {                   
         $("#sitePassword").val( data.data );          
         $( "#progress" ).progressbar( "value", 0 );
@@ -352,12 +355,28 @@ function updateSiteList( sList ) {
         
     }
 }
+function getDbPassword() {
+    $( "#progress" ).progressbar( "value", false );
+    //Build a message from the form to send
+    var data = getAllInputsFromForm();        
+    data.command = "getDbPassword";
+    var jsonString = JSON.stringify(data);
+    
+    if ( w === null ) {
+        //If we don't have a worker, we need to compute the masterSeed first.
+        onMainInputChange();
+    } else {
+        //Send a message to start the process.    
+        w.postMessage(jsonString);                          
+    }
+}
 
-function requestSiteList()
+function requestSiteList( dbPass )
 {
     $( "#progress" ).progressbar( "value", false );
     //Build a message from the form to send
     var data = getAllInputsFromForm();    
+    data.dbPassword = dbPass;
     data.command = "getSiteList";
     
     var jsonString = JSON.stringify(data);
@@ -365,10 +384,10 @@ function requestSiteList()
     if ( w === null ) {
         //If we don't have a worker, we need to compute the masterSeed first.
         onMainInputChange();
+    } else {
+        //Send a message to start the process.    
+        w.postMessage(jsonString);                          
     }
-
-    //Send a message to start the process.    
-    w.postMessage(jsonString);                          
 }
 
 function startSiteWorker() {            
