@@ -1,5 +1,4 @@
-function Database() {
-    this.storage = window.localStorage;
+function Database() {    
     
     this.dbGetGlobalSeed = function()
     {
@@ -21,28 +20,31 @@ function Database() {
 
     this.dbSaveSite = function ( uName, dbPass, key, value )
     {             
-        data = JSON.parse(this.getFromLocalStorage( uName+dbPass ));        
+        /*data = JSON.parse(this.getFromLocalStorage( uName+dbPass ));        
         data[key] = value;
-        this.storage.setItem( uName+dbPass, JSON.stringify(data) );
+        localStorage.setItem( uName+dbPass, JSON.stringify(data) );*/
     };
 
     this.dbGetSiteList = function ( uName, dbPass ) 
     {     
-        return JSON.parse( this.getFromLocalStorage( uName+dbPass ));                
+        //return JSON.parse( this.getFromLocalStorage( uName+dbPass ));                
+        return {};
     };
 
     this.dbDeleteSite = function ( uName, dbPass, siteName ) 
     {     
-        data = JSON.parse(this.getFromLocalStorage(uName+dbPass));        
+        /*data = JSON.parse(this.getFromLocalStorage(uName+dbPass));        
         data[siteName] = undefined;
-        this.storage.setItem( uName+dbPass, JSON.stringify(data) );
+        localStorage.setItem( uName+dbPass, JSON.stringify(data) );*/
     };
     
+    /*
     this.getFromLocalStorage = function ( key ) {
-        var value = this.storage.getItem(key);
+        var value = localStorage.getItem(key);
         if ( value === null ) {
             value = "{}";
         }
         return value;
     };
+    */
 }
