@@ -1,4 +1,3 @@
-<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -118,6 +117,27 @@
         }
 
     </script>
+    
+    <script id="database_worker" type="text/js-worker">
+        //We need to create the worker inside this file to be able to run it off-line.        
+        importScripts(base_url + '../js/core/util.js' );
+        importScripts(base_url + '../js/database.js' );            
+        importScripts(base_url + '../js/database_worker.js' );    
+        //importScripts(base_url + '../js/utilitiesSecret.php' );    
+
+        self.addEventListener('message', handleMessage);
+        
+        var dbWorker = new DbWorker();
+        
+        function handleMessage( event ) 
+        {            
+            dbWorker.handleMessage(event, function (rValue) {
+                postMessage( JSON.stringify(rValue));    
+            });
+        }
+
+    </script>
+
     
     <script src="external/jquery/jquery.js"></script>
     <script src="jquery-ui.js"></script>
