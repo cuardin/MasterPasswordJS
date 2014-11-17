@@ -37,7 +37,7 @@ function MPWWorker() {
             returnValue.fileName = error.fileName;
             returnValue.lineNumber = error.lineNumber;
 
-            postReturn(JSON.stringify(returnValue));
+            postReturn(returnValue);
         };
     };
 

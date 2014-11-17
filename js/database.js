@@ -32,30 +32,12 @@ function Database() {
         }
     };
 
-    this.dbForceValidateUser = function( uName, userEditKey ) 
-    {
-        var xmlhttp = new XMLHttpRequest();
-        var arguments = "username=" + uName + "&email=" + email + 
-                "&userEditKey=" + userEditKey;            
-        var completeAddress = getRootAddress() + "verifyEmail.php?" + arguments;    
-        //console.log( completeAddress );
-        xmlhttp.open("GET",completeAddress,false);
-        xmlhttp.send();
-        var rValue = xmlhttp.responseText;
-        //console.log( rValue );    
-        if ( rValue.substr(0,2) === "OK" ) {
-            return "OK";
-        } else {
-            throw new Error("Error: " + rValue);            
-        }
-    };
-
     this.dbCreateUser = function ( uName, password, email, userCreationKey, 
         response, challenge, isTest ) 
     {
         var xmlhttp = new XMLHttpRequest();
-        var arguments = "username=" + uName + "&email=" + email + 
-            "&userEditKey=" + userCreationKey +
+        var arguments = "username=" + uName + "&email=" + email +             
+            "&userEditKey=" + userCreationKey +  //For the unit tests as an alternative to capcha.
             "&password=" + password + 
             "&recapcha_response_field=" + response +
             "&recapcha_challenge_field=" + challenge;
