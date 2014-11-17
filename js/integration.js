@@ -6,6 +6,8 @@ var siteDataList = {};
 var currentLoginStatus = false;
 var dbPassword = "";
 var w = null;
+var dbWorker = new Worker( "../js/database_worker.js" );
+dbWorker.addEventListener( "message", workerEventHandler, false);
 
 //Wrap all initializatio
 $(document).ready(function(){
@@ -192,7 +194,7 @@ function deleteSite()
     }    
     
     //Send a message to start the process.
-    w.postMessage(jsonString);                          
+    dbWorker.postMessage(jsonString);                          
 }
 
 
@@ -209,7 +211,7 @@ function saveSite()
     }
     
     //Send a message to start the process.
-    w.postMessage(jsonString);                          
+    dbWorker.postMessage(jsonString);                          
 }
 
 function submitUser()
@@ -225,7 +227,7 @@ function submitUser()
 
     
     //Send a message to start the process.
-    w.postMessage(jsonString);                      
+    dbWorker.postMessage(jsonString);                      
     
 }
 
@@ -394,7 +396,7 @@ function requestSiteList( )
         onMainInputChange();
     } else {
         //Send a message to start the process.    
-        w.postMessage(jsonString);                          
+        dbWorker.postMessage(jsonString);                          
     }
 }
 
