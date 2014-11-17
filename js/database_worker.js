@@ -3,18 +3,17 @@ function DbWorker() {
     
     this.handleMessage  = function (event, postReturn) {    
         var dataStr = event.data;
-        var data = JSON.parse(dataStr);                
-        data.masterKey = this.masterKey;       
+        var data = JSON.parse(dataStr);                        
 
         try {       
             if ( data.command === "getSiteList" ) {
-                loadSiteList( data, postReturn );
+                this.loadSiteList( data, postReturn );
             } else if ( data.command === "createUser" ) {
-                createUser( data, postReturn );                        
+                this.createUser( data, postReturn );                        
             } else if ( data.command === "saveSite" ) {
-                saveSite( data, postReturn );                 
+                this.saveSite( data, postReturn );                 
             } else if ( data.command === "deleteSite" ) {
-                deleteSite( data, postReturn );                        
+                this.deleteSite( data, postReturn );                        
             } else {
                 throw new Error("Unknown command: " + data.command );            
             }

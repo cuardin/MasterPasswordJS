@@ -127,7 +127,7 @@
 
         importScripts(base_url + '../js/core/util.js' );
         importScripts(base_url + '../js/core/mpw.js' );
-        importScripts(base_url + '../js/database.js' );    
+        importScripts(base_url + '../js/database.js' );            
         importScripts(base_url + '../js/mpw_worker.js' );    
         importScripts(base_url + '../js/utilitiesSecret.php' );    
 
@@ -138,6 +138,26 @@
         function handleMessage( event ) 
         {            
             worker.handleMessage(event, function (rValue) {
+                postMessage( JSON.stringify(rValue));    
+            });
+        }
+
+    </script>
+    
+    <script id="database_worker" type="text/js-worker">
+        //We need to create the worker inside this file to be able to run it off-line.        
+        importScripts(base_url + '../js/core/util.js' );
+        importScripts(base_url + '../js/database.js' );            
+        importScripts(base_url + '../js/database_worker.js' );    
+        importScripts(base_url + '../js/utilitiesSecret.php' );    
+
+        self.addEventListener('message', handleMessage);
+        
+        var dbWorker = new DbWorker();
+        
+        function handleMessage( event ) 
+        {            
+            dbWorker.handleMessage(event, function (rValue) {
                 postMessage( JSON.stringify(rValue));    
             });
         }

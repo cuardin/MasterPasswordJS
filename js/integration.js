@@ -6,7 +6,7 @@ var siteDataList = {};
 var currentLoginStatus = false;
 var dbPassword = "";
 var w = null;
-var dbWorker = new Worker( "../js/database_worker.js" );
+var dbWorker = createWorker('#database_worker');
 dbWorker.addEventListener( "message", workerEventHandler, false);
 
 //Wrap all initializatio
@@ -47,6 +47,7 @@ $(document).ready(function(){
     $( "#siteName" ).autocomplete({            
         source: function(request,response) { 
             var keys = Object.keys(siteDataList);            
+            keys.sort();
             keys = keys.filter( function(val) { 
                 var r = val.match(request.term); 
                 return r !== null;
@@ -140,9 +141,9 @@ $(document).ready(function(){
     $("#mainDiv").attr( "style", "" );
 });
 
-function createWorker() {
+function createWorker(tagName) {
     var base_url = window.location.href.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
-    var array = ['var base_url = "' + base_url + '/";' + $('#mpw_worker').html()];
+    var array = ['var base_url = "' + base_url + '/";' + $(tagName).html()];
     var blob = new Blob(array, {type: "text/javascript"});
     var url = window.URL.createObjectURL(blob);    
     console.log( url );
@@ -446,7 +447,7 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = createWorker();
+    w = createWorker('#mpw_worker');    
     
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);
