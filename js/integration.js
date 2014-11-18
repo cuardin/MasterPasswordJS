@@ -278,10 +278,8 @@ function workerEventHandler(event) {
     } else if ( data.type === "sitePassword" ) {                   
         $("#sitePassword").val( data.data );          
         $( "#progress" ).progressbar( "value", 0 );
-    } else  if ( data.type === "progress" ) {                
-        //Do nothing right now.
-        //$( "#compute" ).progressbar( "value", data.data );
-
+    } else  if ( data.type === "progress" ) {                        
+        $( "#progress" ).progressbar( "value", data.data );
     } else if ( data.type === "userSubmitted" ) {
         console.log( "User submitted" );
         console.log( data.data );        
@@ -441,13 +439,13 @@ function onMainInputChange() {
     //Clear the local cache and login status
     currentLoginStatus = false;
     siteDataList = {};
-    
-    $( "#progress" ).progressbar( "value", false );    
-    
+            
     //Terminate the worker if it isn't null
     if ( w !== null ) {
         w.terminate();
     }
+    
+    $( "#progress" ).progressbar( "value", 0 );    
     
     //Start the worker.
     w = createWorker('mpw_worker_wrapper');    

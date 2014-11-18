@@ -74,7 +74,7 @@ function MPW()
             throw new Error("Bad input data (mpw_core_calculate_master_key): " + typeof(masterKeySalt) + " masterPassword: " + typeof(masterPassword) );
         }
         
-        var secretKey = scrypt_crypt(masterPassword, masterKeySalt);            
+        var secretKey = scrypt_crypt(masterPassword, masterKeySalt, progressFun );            
         
         return secretKey;                
     };
