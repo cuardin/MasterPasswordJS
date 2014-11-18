@@ -24,13 +24,13 @@ function sha256Hash ( key, data )
     return hash;
 }
 
-function scrypt_crypt ( masterPassword, masterKeySalt )
+function scrypt_crypt ( masterPassword, masterKeySalt, progressFun )
 {
     var N = 32768;
     var r = 8;
     var p = 2;
     var dkLen = 64;
-    return scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, null );
+    return scrypt( masterPassword, masterKeySalt, N, r, p, dkLen, progressFun );
 }
 
 //function scrypt(byte[] passwd, byte[] salt, int N, int r, int p, int dkLen)
@@ -50,17 +50,14 @@ function scrypt(passwd, salt, N, r, p, dkLen, progressFun) {
     var V = []; //new Array(128 * r * N);
     var i;
     pbkdf2(passwd, new Uint8Array(salt), 1, B, p * 128 * r);
-    for (i = 0; i < p; i++) {
-        if (progressFun != undefined) {
-            progressFun(i, p);
-        }
-        smix(B, i * 128 * r, r, N, V, XY);
+    for (i = 0; i < p; i++) {        
+        smix(B, i * 128 * r, r, N, V, XY, i/p, progressFun);
     }
     pbkdf2(passwd, B, 1, DK, dkLen);
     return new Uint8Array(DK);
 }
 
-function smix(B, Bi, r, N, V, XY) {
+function smix(B, Bi, r, N, V, XY, chunkProgress, progressFun) {
     var Xi = 0;
     var Yi = 128 * r;
     var i;
@@ -68,11 +65,17 @@ function smix(B, Bi, r, N, V, XY) {
     for (i = 0; i < N; i++) {
         arraycopy(XY, Xi, V, i * Yi, Yi);
         blockmix_salsa8(XY, Xi, Yi, r);
+        if ( progressFun !== undefined && i % 1024 === 0 ) {
+            progressFun( chunkProgress + i/N/4 );
+        }
     }
     for (i = 0; i < N; i++) {
         var j = integerify(XY, Xi, r) & (N - 1);
         blockxor(V, j * Yi, XY, Xi, Yi);
         blockmix_salsa8(XY, Xi, Yi, r);
+        if ( progressFun !== undefined && i % 1024 === 0 ) {
+            progressFun( chunkProgress + 1/4 + i/N/4 );
+        }
     }
     arraycopy(XY, Xi, B, Bi, Yi);
 }

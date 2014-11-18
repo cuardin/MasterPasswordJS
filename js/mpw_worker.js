@@ -5,11 +5,11 @@ function MPWWorker() {
 
     this.mpw = new MPW();    
     
-    this.postProgress = function ( i, p )
+    this.postProgress = function ( i )
     {
         var returnValue = {};
         returnValue.type = "progress";
-        returnValue.data = 100.0*i/p;
+        returnValue.data = 100*i;
         postMessage( JSON.stringify(returnValue) );    
     };
 

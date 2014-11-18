@@ -38,16 +38,16 @@ QUnit.test( "testGenerateSecretKey", function( assert ) {
 	//Arrange
     var mpw = new MPW();
     var util = new Util();
-    var masterPassword = "MasterPass01"   
-	var masterKeySalt =  util.convertBufferFromHex("636f6d2e6c796e6469722e6d617374657270617373776f72640000000c757365723031c3a5c3a4c3b6");
-    	
-	//Act
-	var masterKey = mpw.mpw_core_calculate_master_key(masterPassword, masterKeySalt);
-  	
-  	//Assert
-  	var stringKey = util.convertBufferToHex(masterKey);
-        assert.ok( masterKeySalt instanceof Uint8Array );
-  	assert.equal( stringKey, "9124510a3ff74e95b5447686f717c52bd5f6b39676054472bf8ba83a72cd6972b790629de544d94d1e5f105d8c74a24910d944099cf4204dab16ac0feabb17b0" );
+    var masterPassword = "MasterPass01";  
+    var masterKeySalt =  util.convertBufferFromHex("636f6d2e6c796e6469722e6d617374657270617373776f72640000000c757365723031c3a5c3a4c3b6");
+
+    //Act
+    var masterKey = mpw.mpw_core_calculate_master_key(masterPassword, masterKeySalt, function(i) { console.log(i); } );
+
+    //Assert
+    var stringKey = util.convertBufferToHex(masterKey);
+    assert.ok( masterKeySalt instanceof Uint8Array );
+    assert.equal( stringKey, "9124510a3ff74e95b5447686f717c52bd5f6b39676054472bf8ba83a72cd6972b790629de544d94d1e5f105d8c74a24910d944099cf4204dab16ac0feabb17b0" );
     assert.equal( masterKey.length, 64 );
 });
 
