@@ -16,13 +16,13 @@
     <meta name="apple-itunes-app" content="app-id=510296984" />
 </head>
 <body onbeforeunload="">    
-    <div id="loaderDiv" class="mainDiv" style="text-align: center;">
-        <h1>Loading page</h1>
-        <img src="ajax-loader.gif">
+    <div id="loaderDiv" class="mainDiv" style="text-align: center;">       
+        <h1>Loading page</h1>        
+        <img src="ajax-loader.gif">        
     </div>
     
     <div class="mainDiv" id="mainDiv" style="display: none;">        
-        <small><p>BETA - This site may not yet work on your browser.</p>
+        <small><p>BETA - This site is only tested in IE11, Firefox 33, and Chrome 38.</p>
             <p>Passwords are generated locally, your master password is not sent to any server. See the <a href="https://github.com/cuardin/MasterPasswordJS">source</a>.</p></small>
         <h1>MasterPassword</h1>                
         <form class="form"> 

@@ -10,8 +10,8 @@ var dbWorker = createWorker('database_worker_wrapper');
 dbWorker.addEventListener( "message", workerEventHandler, false);
 
 //Wrap all initializatio
-$(document).ready(function(){
-
+$(document).ready(function(){            
+    
     //Check if we should even be here.
     if(!window.Worker) { 
         //TODO: Check that this works.
