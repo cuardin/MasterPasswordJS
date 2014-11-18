@@ -20,7 +20,7 @@ function DbWorker() {
         } catch ( error ) {
             var returnValue = {};
             returnValue.type = "error";        
-            returnValue.message = error.message;
+            returnValue.message = "DBW: " + error.message;
             returnValue.fileName = error.fileName;
             returnValue.lineNumber = error.lineNumber;
 
@@ -31,7 +31,14 @@ function DbWorker() {
     this.loadSiteList = function ( data, postReturn )
     {            
         //var password = this.mpw.mpw_compute_site_password( data.masterKey, 'long', this.webStorageSite, this.db.dbGetGlobalSeed() );
-        var siteList = this.db.dbGetSiteList( data.userName, data.dbPassword );    
+        try {
+            var siteList = this.db.dbGetSiteList( data.userName, data.dbPassword );    
+        } catch ( e ) {
+            //TODO: Fix this!!!!!
+            postReturn( "DB Error detected." );
+            return;
+        }
+        
         if ( siteList === "badLogin") {
             postReturn( {type: "badLogin"} );
         } else {

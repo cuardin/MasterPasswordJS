@@ -113,61 +113,18 @@
     </div>
     <div id="infoDialog" style="display: none;">                        
     </div>
-    <script id="mpw_worker" type="text/js-worker">
-        //We need to create the worker inside this file to be able to run it off-line.
-        importScripts(base_url + '../js/core/encoding-indexes.js' );
-        importScripts(base_url + '../js/core/encoding.js' );
-
-        //This is the compiles non-auditable version.
-        //importScripts('core/scrypt-asm.js' );
-        //importScripts('core/scrypt-wrapper.js' );    
-
-        //Use the auditable scrypt version.
-        importScripts(base_url + '../js/core/scrypt.js' );
-
-        importScripts(base_url + '../js/core/util.js' );
-        importScripts(base_url + '../js/core/mpw.js' );
-        importScripts(base_url + '../js/database.js' );            
-        importScripts(base_url + '../js/mpw_worker.js' );    
-        importScripts(base_url + '../js/utilitiesSecret.php' );    
-
-        self.addEventListener('message', handleMessage);
-        
-        var worker = new MPWWorker();
-        
-        function handleMessage( event ) 
-        {            
-            worker.handleMessage(event, function (rValue) {
-                postMessage( JSON.stringify(rValue));    
-            });
-        }
-
+    
+    <!-- //For off-line mode, fill in these tags with the worker wrapper code.
+    <script id="mpw_worker_wrapper" type="text/js-worker">       
     </script>
     
-    <script id="database_worker" type="text/js-worker">
-        //We need to create the worker inside this file to be able to run it off-line.        
-        importScripts(base_url + '../js/core/util.js' );
-        importScripts(base_url + '../js/database.js' );            
-        importScripts(base_url + '../js/database_worker.js' );    
-        importScripts(base_url + '../js/utilitiesSecret.php' );    
-
-        self.addEventListener('message', handleMessage);
-        
-        var dbWorker = new DbWorker();
-        
-        function handleMessage( event ) 
-        {            
-            dbWorker.handleMessage(event, function (rValue) {
-                postMessage( JSON.stringify(rValue));    
-            });
-        }
-
-    </script>
+    <script id="database_worker_wrapper" type="text/js-worker">     
+    </script>-->
     
     <script src="external/jquery/jquery.js"></script>
     <script src="jquery-ui.js"></script>
     <script src="../js/domWrapper.js"></script>
-    <script src="../js/integration.js"></script>
+    <script src="../js/integration.js"></script>    
     <script src="../js/mpw_worker.js"></script> <!-- Maybe this helps with the reload -->
 </body>
 </html>

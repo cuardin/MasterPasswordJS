@@ -6,7 +6,7 @@ var siteDataList = {};
 var currentLoginStatus = false;
 var dbPassword = "";
 var w = null;
-var dbWorker = createWorker('#database_worker');
+var dbWorker = createWorker('database_worker_wrapper');
 dbWorker.addEventListener( "message", workerEventHandler, false);
 
 //Wrap all initializatio
@@ -142,11 +142,14 @@ $(document).ready(function(){
 });
 
 function createWorker(tagName) {
+    /*tagName = "#" + tagName;
     var base_url = window.location.href.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
     var array = ['var base_url = "' + base_url + '/";' + $(tagName).html()];
     var blob = new Blob(array, {type: "text/javascript"});
     var url = window.URL.createObjectURL(blob);    
-    console.log( url );
+    console.log( url );*/
+    
+    var url = "../js/" + tagName + ".js";
     var worker = new Worker(url);
     return worker;
 }
@@ -447,7 +450,7 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = createWorker('#mpw_worker');    
+    w = createWorker('mpw_worker_wrapper');    
     
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script id="worker" type="text/js-worker">
+
+</script>
+
+<script>
+    /*
+    var blob = new Blob([document.getElementById('worker').innerHTML]);
+    var url = window.URL.createObjectURL(blob, {type: "text/javascript"});
+    var worker = new Worker(url);*/
+    var worker = new Worker("worker.js");
+    
+    worker.addEventListener('message', 
+    function(event) {
+        console.log( event.data );
+        document.getElementById('answer').innerHTML = event.data;
+    }, false);
+    
+    worker.postMessage("hello");
+</script>
+</head>
+<body>
+    <div id="answer"></div>
+</body>
+</html>

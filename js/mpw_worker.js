@@ -3,8 +3,7 @@ function MPWWorker() {
     this.webStorageSite = 'masterPasswordWebStorage';
     this.masterKey = new Uint8Array();
 
-    this.mpw = new MPW();
-    this.db = new Database();
+    this.mpw = new MPW();    
     
     this.postProgress = function ( i, p )
     {
@@ -33,7 +32,7 @@ function MPWWorker() {
         } catch ( error ) {
             var returnValue = {};
             returnValue.type = "error";        
-            returnValue.message = error.message;
+            returnValue.message = "MPW: " + error.message;
             returnValue.fileName = error.fileName;
             returnValue.lineNumber = error.lineNumber;
 
@@ -59,7 +58,7 @@ function MPWWorker() {
     
     this.computeDbPassword = function ( data, postReturn )
     {                
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.db.dbGetGlobalSeed() );                        
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, 1 );                        
 
         var returnValue = {};
         returnValue.type = "dbPassword";
