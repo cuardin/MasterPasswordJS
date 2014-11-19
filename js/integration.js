@@ -9,7 +9,8 @@ var w = null;
 var dbWorker = createWorker('database_worker_wrapper');
 dbWorker.addEventListener( "message", workerEventHandler, false);
 
-//Wrap all initializatio
+//************************************************
+//Wrap all initialization
 $(document).ready(function(){            
     
     //Check if we should even be here.
@@ -31,11 +32,9 @@ $(document).ready(function(){
     $( "#siteCounter" ).spinner({ 
         min: 1, 
         numberFormat: "n",
-        change: startSiteWorker,
-        stop: startSiteWorker
-    });
-    
-    //We need to add this one as well to handle text input.
+        change: onInputNumberChange,
+        stop: onInputNumberChange
+    });        
     $("#siteCounter").on( "change keyup paste mouseup", onInputNumberChange );    
 
     //Create the site type menu
@@ -55,62 +54,71 @@ $(document).ready(function(){
             response(keys);
         },
         autoFocus: true,        
-        close: function(event,ui){ siteNameListInput(); },
-        messages: {
-            noResults: "",
-            results: function() {}
-        }        
+        close: siteNameListInput               
+    });
+    $("#siteName").on( "change keyup paste mouseup", function () { 
+        siteNameListInput(); 
     });
 
+    //Save, delete and create user buttons.
     $( "#saveSite").button( {
         disabled: true,
         label: "+"     
     });
+    $("#saveSite").click( saveSite );
 
     $( "#deleteSite").button( {
         disabled: true,
         label: "-"       
     });
+    $("#deleteSite").click( deleteSite );
     
     $( "#createUser").button( {
         disabled: true,
         label: "Create User"       
     });
-
-    $("#siteName").on( "change keyup paste mouseup", function () { 
-        siteNameListInput(); 
-    });
+    $("#createUser").click( function( ) {
+        $("#createUserDialog").dialog("open");
+    });           
     
     //Create the create new user popup
     $("#createUserDialog").dialog({
         autoOpen: false,
         modal: true,
-        width: 350,
-        //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
+        width: 350,        
         buttons: {
             "Cancel": function() {                
                 $(this).dialog("close");                           
             }, 
             "Submit": function() {
-                //SubmitUser starts a worker in the background that submits the user and then closes the dialog.
-                //TODO: Add a spinner to the button when submiting.
+                //SubmitUser starts a worker in the background that submits the user and then closes the dialog.                
+                $("#createUserSpinner").attr( "style", "" );
                 submitUser();                
                 Recaptcha.reload();
             }
         },
         open: function()
         {            
-            updateCreateUserDialogStatus();
-            
+            $("#userName2").val( "" );
+            $("#masterPassword2").val( "" );
+            $("#email").val( "" );
+            $("#createUserSpinner").attr( "style", "display: none;" );
+            Recaptcha.reload(); 
+            updateCreateUserDialogStatus();            
         },
         close: function() 
         { 
-            Recaptcha.reload(); 
+            //We used to have the recapcha reload here. If it works to have it above, then delete this stub.
         }                
         
     });
+        
+    //Add validation checks to create user dialog
+    $("#userName2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
+    $("#masterPassword2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );        
+    $("#email").on( "change keyup paste mouseup", updateCreateUserDialogStatus );            
 
-    //Create the create new user popup
+    //Create the info dialog popup. Used mostly for error messages.
     $("#infoDialog").dialog({
         autoOpen: false,
         modal: true,        
@@ -119,23 +127,8 @@ $(document).ready(function(){
                 $(this).dialog("close");           
             }            
         }
-    });
+    });       
 
-    $("#saveSite").click( saveSite );
-
-    $("#deleteSite").click( deleteSite );
-    
-    $("#createUser").click( function( ) {
-        $("#createUserDialog").dialog("open");
-    });           
-        
-    //Add validation checks to create user dialog
-    $("#userName2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
-
-    $("#masterPassword2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
-    
-    $("#email").on( "change keyup paste mouseup", updateCreateUserDialogStatus );            
-    
     //Finally, we swap out the loading code and swap in the real content.
     $("#loaderDiv").attr( "style", "display: none;" );
     $("#mainDiv").attr( "style", "" );
@@ -154,8 +147,7 @@ function createWorker(tagName) {
     return worker;
 }
 
-function setLoginStatus( status ) {
-    //TODO: Have the enclosing createUser button and login ok alternate.
+function setLoginStatus( status ) {    
     currentLoginStatus = status;
     if ( status === true ) {        
         $("#createUser").attr( "style", "display: none;" );
@@ -166,6 +158,7 @@ function setLoginStatus( status ) {
         $("#loginOK").attr( "style", "display: none;" );
     }
 }
+
 function updateCreateUserDialogStatus()
 {
     validateTwoFieldsSame( "#userName", "#userName2" );    
@@ -184,60 +177,46 @@ function updateCreateUserDialogStatus()
     
 }
 
+function requestSiteList( )
+{
+    $( "#progress" ).progressbar( "value", false );    
+    var data = getAllInputsFromForm();    
+    data.dbPassword = dbPassword;
+    data.command = "getSiteList";    
+    dbWorker.postMessage(JSON.stringify(data));
+}
+
 function deleteSite()
-{       
-    //Create a job for the worker to submit the site to storage.
+{           
+    $( "#progress" ).progressbar( "value", false );    
     var data = getAllInputsFromForm();
     data.dbPassword = dbPassword;
-    data.command = "deleteSite";        
-        
-    var jsonString = JSON.stringify(data);
-    if ( w === null ) {
-        //In case a seed has not been computed yet.
-        onMainInputChange();
-    }    
-    
-    //Send a message to start the process.
-    dbWorker.postMessage(jsonString);                          
+    data.command = "deleteSite";                        
+    dbWorker.postMessage(JSON.stringify(data));                          
 }
 
 
 function saveSite()
-{       
-    //Create a job for the worker to submit the site to storage.
+{           
+    $( "#progress" ).progressbar( "value", false );    
     var data = getAllInputsFromForm();
     data.dbPassword = dbPassword;
-    data.command = "saveSite";                    
-    
-    var jsonString = JSON.stringify(data);
-    if ( w === null ) {
-        onMainInputChange();
-    }
-    
-    //Send a message to start the process.
-    dbWorker.postMessage(jsonString);                          
+    data.command = "saveSite";                                    
+    dbWorker.postMessage(JSON.stringify(data));                          
 }
 
 function submitUser()
 {                
+    $( "#progress" ).progressbar( "value", false );        
     var data = getAllInputsFromForm();
     data.dbPassword = dbPassword;
-    data.command = "createUser";    
-        
-    var jsonString = JSON.stringify(data);
-    if ( w === null ) {
-        onMainInputChange();
-    }
-
-    
-    //Send a message to start the process.
-    dbWorker.postMessage(jsonString);                      
+    data.command = "createUser";                    
+    dbWorker.postMessage(JSON.stringify(data));                      
     
 }
 
 function validateTwoFieldsSame( field01, field02 ) 
-{
-    //TODO: Change the variable names here.
+{    
     var field01Val = $(field01).val();
     var field02Val = $(field02).val();
     if ( field01Val !== field02Val ) {
@@ -245,7 +224,6 @@ function validateTwoFieldsSame( field01, field02 )
     } else {
         $(field02).removeClass("ui-state-error");
     }
-
 }
 
 function validateEmail(field) { 
@@ -268,63 +246,70 @@ function workerEventHandler(event) {
         $( "#progress" ).progressbar( "value", 0 );
         startSiteWorker();
         getDbPassword();
+        
     } else if ( data.type === "dbPassword" ) {        
         $( "#progress" ).progressbar( "value", 0 );
         dbPassword = data.data;
         requestSiteList();                
+        
     } else if ( data.type === "siteList" ) {
         $( "#progress" ).progressbar( "value", 0 );
         updateSiteList( data.siteList );                
+        
     } else if ( data.type === "sitePassword" ) {                   
-        $("#sitePassword").val( data.data );          
         $( "#progress" ).progressbar( "value", 0 );
+        $("#sitePassword").val( data.data );          
+        
     } else  if ( data.type === "progress" ) {                        
         $( "#progress" ).progressbar( "value", data.data );
-    } else if ( data.type === "userSubmitted" ) {
-        console.log( "User submitted" );
-        console.log( data.data );        
-        //TODO: Whenever we close the user creation dialog, we should clear all values.
+        
+    } else if ( data.type === "userSubmitted" ) {                
+        $( "#progress" ).progressbar( "value", 0 );
         $("#createUserDialog").dialog("close");
         if ( data.data === "DUPLICATE_USER" ) {
             popupDialog( "Duplicate users", "A user with the same username or email allready exists in the database." );        
+        } else {        
+            setLoginStatus(true);
         }
+        
+    } else if ( data.type === "siteSaved" ) {        
         $( "#progress" ).progressbar( "value", 0 );
-        setLoginStatus(true);
-    } else if ( data.type === "siteSaved" ) {
-        console.log( "Site saved:" );
-        console.log( data.data );            
         var siteName = data.data.siteName;        
         siteDataList[siteName] = data.data;
         setAddButtonStatus();
         setDeleteButtonStatus();
+        
+    } else if ( data.type === "siteDeleted" ) {        
         $( "#progress" ).progressbar( "value", 0 );
-    } else if ( data.type === "siteDeleted" ) {
-        console.log( "Site deleted:" );
-        console.log( data.data );            
         var siteName = data.data;
         delete siteDataList[siteName];
         setAddButtonStatus();
         setDeleteButtonStatus();
-        $( "#progress" ).progressbar( "value", 0 );
+        
+        
     } else if ( data.type === "badLogin" ) {        
         $( "#progress" ).progressbar( "value", 0 );
         setLoginStatus(false);     
         setAddButtonStatus();
         setDeleteButtonStatus();
+        
     } else if ( data.type === "goodLogin" ) {                        
         setLoginStatus(true);
         setAddButtonStatus();
         setDeleteButtonStatus();    
+        
     } else {        
         $("#progress" ).progressbar( "value", 0 );
         popupDialog( "Unexpected Error", data.message );         
+        
     }    
 };
 
 function setDeleteButtonStatus() 
 {    
-    var siteName = $("#siteName").val();    
-    if ( siteDataList[siteName] !== undefined && currentLoginStatus ) {
+    var data = getAllInputsFromForm();
+    
+    if ( siteDataList[data.siteName] !== undefined && currentLoginStatus ) {
         $("#deleteSite").button("enable");
     } else {
         $("#deleteSite").button("disable");
@@ -333,16 +318,14 @@ function setDeleteButtonStatus()
 
 function setAddButtonStatus() 
 {    
-    var siteName = $("#siteName").val();
-    var siteCounter = parseInt($("#siteCounter").val());
-    var siteType = $("#siteType").val();
-
-    var closestMatch = siteDataList[siteName];
+    var data = getAllInputsFromForm();
+    
+    var closestMatch = siteDataList[data.siteName];
     var matchExists = false;
     if ( closestMatch === undefined ) {
         matchExists = false;
     } else {
-        matchExists = (closestMatch.siteCounter === siteCounter && closestMatch.siteType === siteType);
+        matchExists = (closestMatch.siteCounter === data.siteCounter && closestMatch.siteType === data.siteType);
     }    
     if ( !matchExists && currentLoginStatus ) {
         $("#saveSite").button("enable");
@@ -352,9 +335,7 @@ function setAddButtonStatus()
 }
 
 function updateSiteList( sList ) {    
-    siteDataList.length = 0;     
-
-    console.log( sList );        
+    siteDataList = {};   
 
     //Add the site names to their list.
     keys = Object.keys(sList);
@@ -367,105 +348,91 @@ function updateSiteList( sList ) {
     setAddButtonStatus();
     setDeleteButtonStatus();    
 }
-function getDbPassword() {
-    $( "#progress" ).progressbar( "value", false );
-    //Build a message from the form to send
-    var data = getAllInputsFromForm();        
-    data.command = "getDbPassword";
-    var jsonString = JSON.stringify(data);
-    
+
+//***********************************************
+//Worker communication functions
+function doStartWorker( data, chain ) {
     if ( w === null ) {
-        //If we don't have a worker, we need to compute the masterSeed first.
+        //If we don't have a worker, we need to compute the masterKey first.
         onMainInputChange();
-    } else {
-        //Send a message to start the process.    
-        w.postMessage(jsonString);                          
     }
+    if ( (w === null && chain) || w !== null ) {
+        //Send a message to start the process.    
+        w.postMessage(JSON.stringify(data));                          
+    } 
 }
 
-function requestSiteList( )
+function getDbPassword() 
 {
-    $( "#progress" ).progressbar( "value", false );
-    //Build a message from the form to send
-    var data = getAllInputsFromForm();    
-    data.dbPassword = dbPassword;
-    data.command = "getSiteList";
+    $( "#progress" ).progressbar( "value", false );        
+    var data = getAllInputsFromForm();        
+    data.command = "getDbPassword";    
     
-    var jsonString = JSON.stringify(data);
-    
-    if ( w === null ) {
-        //If we don't have a worker, we need to compute the masterSeed first.
+    //If we don't have a worker, we need to compute the masterKey first.
+    if ( w === null ) {        
         onMainInputChange();
     } else {
-        //Send a message to start the process.    
-        dbWorker.postMessage(jsonString);                          
+        w.postMessage(JSON.stringify(data));                          
     }
 }
 
-function startSiteWorker() {            
-    //Make sure the save and delete buttons are correct.
+function startSiteWorker() {                
+    $( "#progress" ).progressbar( "value", false );    
+    
     setAddButtonStatus();
     setDeleteButtonStatus();    
-    
-    //Build a message from the form to send
+        
     var data = getAllInputsFromForm();    
     data.command = "siteCompute";    
     if ( isNaN(data.siteCounter) ) { 
         document.getElementById("sitePassword").value = "N/A";  
         return;
-    }    
+    }            
     
-    $( "#progress" ).progressbar( "value", false );
-
-    var jsonString = JSON.stringify(data);
-    
-    if ( w === null ) {
-        //If we don't have a worker, we need to compute the masterSeed first.
+    //If we don't have a worker, we need to compute the masterKey first.
+    if ( w === null ) {    
         onMainInputChange();
-    }
-
-    //Send a message to start the process.    
-    w.postMessage(jsonString);                          
+    }    
+    w.postMessage(JSON.stringify(data));                          
+    
 }
 
 
 function onMainInputChange() {
-    $("#sitePassword").val( "" );    
-    $( "#createUser").button("disable");        
-    $( "#loginOK").attr("style", "display: none;");        
+    $( "#progress" ).progressbar( "value", 0 );    
+        
+    //Clear the local cache and login status
+    siteDataList = {};
+    setLoginStatus( false ); //This activates/shows the createUser buton which is therefore hidden on the next line below.    
+        
+    $("#createUser").attr("style", "display: none;");        
+    $("#loginOK").attr("style", "display: none;");            
     $("#saveSite").button("disable");
     $("#deleteSite").button("disable");            
+    $("#sitePassword").val( "" );    
     
-    //Clear the local cache and login status
-    currentLoginStatus = false;
-    siteDataList = {};
             
-    //Terminate the worker if it isn't null
+    //Terminate the worker if it isn't null. Whenever the main input changes, 
+    //any previous computations are obsolete.
     if ( w !== null ) {
         w.terminate();
-    }
+    }        
     
-    $( "#progress" ).progressbar( "value", 0 );    
-    
-    //Start the worker.
-    w = createWorker('mpw_worker_wrapper');    
-    
-    //Add a listener to the worker
+    //Start the worker and add a listener to the worker
+    w = createWorker('mpw_worker_wrapper');            
     w.addEventListener( "message", workerEventHandler, false);
     
     //Build a message from the form to send
     var data = getAllInputsFromForm();    
-    data.command = "mainCompute";    
-    var jsonString = JSON.stringify(data);
+    data.command = "mainCompute";        
                     
     //Send a message to start the process.
-    w.postMessage(jsonString);                      
+    w.postMessage(JSON.stringify(data));                      
 }
 
 function onInputNumberChange() {    
-    var siteCounter = $("#siteCounter");
-    var value = parseInt(siteCounter.val());
-    if ( isNaN(value) ) {
+    var data = getAllInputsFromForm();    
+    if ( isNaN(data.siteCounter) ) {
         siteCounter.addClass("ui-state-error");    
     } else {
         siteCounter.removeClass("ui-state-error");        
@@ -475,13 +442,12 @@ function onInputNumberChange() {
 
 function siteNameListInput( )  
 {
-    var siteName = $("#siteName").val();
-    console.log( siteName );
-    var siteData = siteDataList[siteName];    
+    var data = getAllInputsFromForm();
+    var siteData = siteDataList[data.siteName];    
     if ( siteData !== undefined && siteData !== null ) {
         $("#siteCounter").val(siteData.siteCounter);
         $("#siteType").val(siteData.siteType);        
-        $("#siteType").selectmenu("refresh");    
+        $("#siteType").selectmenu("refresh"); //Make sure the selector box is completely refreshed.
     }
     setAddButtonStatus();
     setDeleteButtonStatus();

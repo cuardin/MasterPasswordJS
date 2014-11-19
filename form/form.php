@@ -101,7 +101,8 @@
         <label for="email">Email</label>
         <input id="email" type="email" class="popBox ui-widget ui-widget-content ui-corner-all"/>
         
-        <p></p>
+        <p></p>        
+        
         <?php    
         echo "<script>\n";
         require_once( dirname(__FILE__).'/../js/utilitiesSecret.php' );
@@ -109,6 +110,8 @@
         $publicKey = getCAPCHAPublicKey();        
         echo "<script type='text/javascript' src='https://www.google.com/recaptcha/api/challenge?k=$publicKey'></script>"
         ?>
+        <p></p>
+        <img id="createUserSpinner" src="ajax-loader.gif" style="display: none;">
 
     </div>
     <div id="infoDialog" style="display: none;">                        
