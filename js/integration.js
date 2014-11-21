@@ -1,4 +1,6 @@
 //Account for recaptcha: mpw.jscript@gmail.com
+//TODO: How to check if a global variable exists?
+//TODO: Check what the problem with creating users is. (And learn how to add log info from php.
 
 ////***************************************
 // Declare all globals.
@@ -19,6 +21,11 @@ $(document).ready(function(){
         setMainDiv("Sorry, your browser does not support Web Workers...");                
         return;
     } 
+    
+    /*if ( Recapcha === undefined ) {
+        setMainDiv("Sorry, recapcha has failed.");                
+        return;
+    }*/
 
     // Make all mainInputChanges start the secret key computation, interrupting old ones.
     setEventHandlerOnClass( "mainInput", "input", onMainInputChange );           

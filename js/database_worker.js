@@ -30,14 +30,9 @@ function DbWorker() {
 
     this.loadSiteList = function ( data, postReturn )
     {            
-        //var password = this.mpw.mpw_compute_site_password( data.masterKey, 'long', this.webStorageSite, this.db.dbGetGlobalSeed() );
-        try {
-            var siteList = this.db.dbGetSiteList( data.userName, data.dbPassword );    
-        } catch ( e ) {
-            //TODO: Fix this!!!!!
-            postReturn( "DB Error detected." );
-            return;
-        }
+                
+        //This line can throw an exception, but we don't handle that.
+        var siteList = this.db.dbGetSiteList( data.userName, data.dbPassword );            
         
         if ( siteList === "badLogin") {
             postReturn( {type: "badLogin"} );
