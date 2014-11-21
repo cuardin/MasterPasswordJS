@@ -65,7 +65,7 @@ function smix(B, Bi, r, N, V, XY, chunkProgress, progressFun) {
     for (i = 0; i < N; i++) {
         arraycopy(XY, Xi, V, i * Yi, Yi);
         blockmix_salsa8(XY, Xi, Yi, r);
-        if ( progressFun !== undefined && i % 1024 === 0 ) {
+        if ( progressFun !== undefined && i % 2048 === 0 ) {
             progressFun( chunkProgress + i/N/4 );
         }
     }
@@ -73,7 +73,7 @@ function smix(B, Bi, r, N, V, XY, chunkProgress, progressFun) {
         var j = integerify(XY, Xi, r) & (N - 1);
         blockxor(V, j * Yi, XY, Xi, Yi);
         blockmix_salsa8(XY, Xi, Yi, r);
-        if ( progressFun !== undefined && i % 1024 === 0 ) {
+        if ( progressFun !== undefined && i % 2048 === 0 ) {
             progressFun( chunkProgress + 1/4 + i/N/4 );
         }
     }

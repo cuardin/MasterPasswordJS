@@ -12,7 +12,7 @@ function Database() {
         var rValue = xmlhttp.responseText;
         //console.log( rValue );
         if ( rValue.substr(0,4) === "FAIL" ) {
-            throw new Error("Error: " + rValue);            
+            throw new Error("DbError: " + rValue);            
         } else {
             return parseInt( rValue );            
         }
@@ -35,7 +35,7 @@ function Database() {
         if ( rValue.substr(0,2) === "OK" ) {
             return "OK";
         } else {
-            throw new Error("Error: " + rValue);            
+            throw new Error("DbError: " + rValue);            
         }
     };
 
@@ -64,7 +64,7 @@ function Database() {
         } else if ( rValue.substr(0,14) === "DUPLICATE_USER") {
             return "DUPLICATE_USER";
         } else {
-            throw new Error("Error: " + rValue);            
+            throw new Error("DbError: " + rValue);            
         }
     };
 
@@ -87,7 +87,7 @@ function Database() {
         if ( rValue.substr(0,2) === "OK" ) {
             return "OK";
         } else {
-            throw new Error("Error: " + rValue);            
+            throw new Error("DbError: " + rValue);            
         }
     };
 
@@ -107,13 +107,13 @@ function Database() {
             if ( rValue === "FAIL: BAD_LOGIN" ) {
                 return "badLogin";            
             } else {
-               throw new Error("Error: " + rValue);   
+               throw new Error("DbError: " + rValue);   
             }
         }
         try {
             rValue = JSON.parse(rValue);        
-        } catch ( e ) {
-            return "badData";
+        } catch ( error ) {
+            throw new Error("DbError: " + error.message);   
             
         }
         return rValue;
@@ -136,7 +136,7 @@ function Database() {
         if ( rValue.substr(0,2) === "OK" ) {
             return "OK";
         } else {
-            throw new Error("Error: " + rValue);            
+            throw new Error("DbError: " + rValue);            
         }
     };
 }

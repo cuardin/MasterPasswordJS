@@ -1,7 +1,9 @@
 
 function setMainDivHTML( html ) {
-    $("mainDiv").html(html);        
-    $("createUserDialog").html(""); //Clear the popup.
+    $("#mainDiv").html(html);        
+    $("#createUserDialog").html(""); //Clear the popup.
+    $("#loaderDiv").attr( "style", "display: none;" );
+    $("#mainDiv").attr( "style", "" );
 }
 
 function setEventHandlerOnClass( cls, event, handler ) {
