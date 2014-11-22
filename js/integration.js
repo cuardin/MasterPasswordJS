@@ -1,6 +1,6 @@
 //Account for recaptcha: mpw.jscript@gmail.com
-//TODO: How to check if a global variable exists?
-//TODO: Check what the problem with creating users is. (And learn how to add log info from php.
+//TODO: Check what the problem with creating users is in Windows.
+//TODO: Find out why the php scripts sometoimes ask for nonexisting parameters.
 
 ////***************************************
 // Declare all globals.
@@ -22,10 +22,11 @@ $(document).ready(function(){
         return;
     } 
     
-    /*if ( Recapcha === undefined ) {
-        setMainDiv("Sorry, recapcha has failed.");                
+    if ( typeof(Recaptcha) === "undefined" ) {
+        console.log("Recapcha wasn't defined. Exiting.")
+        setMainDiv("Sorry, recapcha has failed.");                        
         return;
-    }*/
+    }
 
     // Make all mainInputChanges start the secret key computation, interrupting old ones.
     setEventHandlerOnClass( "mainInput", "input", onMainInputChange );           
