@@ -4,8 +4,10 @@
 // Declare all globals.
 var siteDataList = {};
 var currentLoginStatus = false;
-
+var dbPassword = "";
 var w = null;
+var dbWorker = createWorker('database_worker_wrapper');
+dbWorker.addEventListener( "message", workerEventHandler, false);
 
 //Wrap all initializatio
 $(document).ready(function(){
@@ -45,6 +47,7 @@ $(document).ready(function(){
     $( "#siteName" ).autocomplete({            
         source: function(request,response) { 
             var keys = Object.keys(siteDataList);            
+            keys.sort();
             keys = keys.filter( function(val) { 
                 var r = val.match(request.term); 
                 return r !== null;
@@ -82,7 +85,7 @@ $(document).ready(function(){
     $("#createUserDialog").dialog({
         autoOpen: false,
         modal: true,
-        width: 370,
+        width: 350,
         //TODO: Add a tag to this button so it can be enabled/disabled by the validations.
         buttons: {
             "Cancel": function() {                
@@ -103,7 +106,7 @@ $(document).ready(function(){
         close: function() 
         { 
             Recaptcha.reload(); 
-        }
+        }                
         
     });
 
@@ -132,7 +135,24 @@ $(document).ready(function(){
     $("#masterPassword2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
     
     $("#email").on( "change keyup paste mouseup", updateCreateUserDialogStatus );            
+    
+    //Finally, we swap out the loading code and swap in the real content.
+    $("#loaderDiv").attr( "style", "display: none;" );
+    $("#mainDiv").attr( "style", "" );
 });
+
+function createWorker(tagName) {
+    /*tagName = "#" + tagName;
+    var base_url = window.location.href.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
+    var array = ['var base_url = "' + base_url + '/";' + $(tagName).html()];
+    var blob = new Blob(array, {type: "text/javascript"});
+    var url = window.URL.createObjectURL(blob);    
+    console.log( url );*/
+    
+    var url = "../js/" + tagName + ".js";
+    var worker = new Worker(url);
+    return worker;
+}
 
 function setLoginStatus( status ) {
     //TODO: Have the enclosing createUser button and login ok alternate.
@@ -168,6 +188,7 @@ function deleteSite()
 {       
     //Create a job for the worker to submit the site to storage.
     var data = getAllInputsFromForm();
+    data.dbPassword = dbPassword;
     data.command = "deleteSite";        
         
     var jsonString = JSON.stringify(data);
@@ -177,7 +198,7 @@ function deleteSite()
     }    
     
     //Send a message to start the process.
-    w.postMessage(jsonString);                          
+    dbWorker.postMessage(jsonString);                          
 }
 
 
@@ -185,6 +206,7 @@ function saveSite()
 {       
     //Create a job for the worker to submit the site to storage.
     var data = getAllInputsFromForm();
+    data.dbPassword = dbPassword;
     data.command = "saveSite";                    
     
     var jsonString = JSON.stringify(data);
@@ -193,12 +215,13 @@ function saveSite()
     }
     
     //Send a message to start the process.
-    w.postMessage(jsonString);                          
+    dbWorker.postMessage(jsonString);                          
 }
 
 function submitUser()
 {                
     var data = getAllInputsFromForm();
+    data.dbPassword = dbPassword;
     data.command = "createUser";    
         
     var jsonString = JSON.stringify(data);
@@ -208,7 +231,7 @@ function submitUser()
 
     
     //Send a message to start the process.
-    w.postMessage(jsonString);                      
+    dbWorker.postMessage(jsonString);                      
     
 }
 
@@ -241,14 +264,20 @@ function workerEventHandler(event) {
     var data = JSON.parse(event.data);    
     console.log(data);
 
-    if ( data.type === "masterKey" ) {               
-        updateSiteList( data.siteList );        
-        $( "#progress" ).progressbar( "value", 100 );
-        startSiteWorker();                
+    if ( data.type === "masterKey" ) {                       
+        $( "#progress" ).progressbar( "value", 0 );
+        startSiteWorker();
+        getDbPassword();
+    } else if ( data.type === "dbPassword" ) {        
+        $( "#progress" ).progressbar( "value", 0 );
+        dbPassword = data.data;
+        requestSiteList();                
+    } else if ( data.type === "siteList" ) {
+        $( "#progress" ).progressbar( "value", 0 );
+        updateSiteList( data.siteList );                
     } else if ( data.type === "sitePassword" ) {                   
         $("#sitePassword").val( data.data );          
-        $( "#progress" ).progressbar( "value", 100 );
-
+        $( "#progress" ).progressbar( "value", 0 );
     } else  if ( data.type === "progress" ) {                
         //Do nothing right now.
         //$( "#compute" ).progressbar( "value", data.data );
@@ -261,7 +290,7 @@ function workerEventHandler(event) {
         if ( data.data === "DUPLICATE_USER" ) {
             popupDialog( "Duplicate users", "A user with the same username or email allready exists in the database." );        
         }
-        $( "#progress" ).progressbar( "value", 100 );
+        $( "#progress" ).progressbar( "value", 0 );
         setLoginStatus(true);
     } else if ( data.type === "siteSaved" ) {
         console.log( "Site saved:" );
@@ -270,7 +299,7 @@ function workerEventHandler(event) {
         siteDataList[siteName] = data.data;
         setAddButtonStatus();
         setDeleteButtonStatus();
-        $( "#progress" ).progressbar( "value", 100 );
+        $( "#progress" ).progressbar( "value", 0 );
     } else if ( data.type === "siteDeleted" ) {
         console.log( "Site deleted:" );
         console.log( data.data );            
@@ -278,17 +307,18 @@ function workerEventHandler(event) {
         delete siteDataList[siteName];
         setAddButtonStatus();
         setDeleteButtonStatus();
-        $( "#progress" ).progressbar( "value", 100 );
+        $( "#progress" ).progressbar( "value", 0 );
     } else if ( data.type === "badLogin" ) {        
+        $( "#progress" ).progressbar( "value", 0 );
         setLoginStatus(false);     
         setAddButtonStatus();
         setDeleteButtonStatus();
-    } else if ( data.type === "goodLogin" ) {                
+    } else if ( data.type === "goodLogin" ) {                        
         setLoginStatus(true);
         setAddButtonStatus();
         setDeleteButtonStatus();    
     } else {        
-        $("#progress" ).progressbar( "value", 100 );
+        $("#progress" ).progressbar( "value", 0 );
         popupDialog( "Unexpected Error", data.message );         
     }    
 };
@@ -332,8 +362,45 @@ function updateSiteList( sList ) {
     keys = Object.keys(sList);
     for ( var i = 0; i < keys.length; i++ ) {        
         var siteName = keys[i];        
-        siteDataList[siteName] = sList[siteName]; 
-        
+        siteDataList[siteName] = sList[siteName];         
+    }
+    
+    //Make sure the save and delete buttons are correct.
+    setAddButtonStatus();
+    setDeleteButtonStatus();    
+}
+function getDbPassword() {
+    $( "#progress" ).progressbar( "value", false );
+    //Build a message from the form to send
+    var data = getAllInputsFromForm();        
+    data.command = "getDbPassword";
+    var jsonString = JSON.stringify(data);
+    
+    if ( w === null ) {
+        //If we don't have a worker, we need to compute the masterSeed first.
+        onMainInputChange();
+    } else {
+        //Send a message to start the process.    
+        w.postMessage(jsonString);                          
+    }
+}
+
+function requestSiteList( )
+{
+    $( "#progress" ).progressbar( "value", false );
+    //Build a message from the form to send
+    var data = getAllInputsFromForm();    
+    data.dbPassword = dbPassword;
+    data.command = "getSiteList";
+    
+    var jsonString = JSON.stringify(data);
+    
+    if ( w === null ) {
+        //If we don't have a worker, we need to compute the masterSeed first.
+        onMainInputChange();
+    } else {
+        //Send a message to start the process.    
+        dbWorker.postMessage(jsonString);                          
     }
 }
 
@@ -367,8 +434,12 @@ function startSiteWorker() {
 function onMainInputChange() {
     $("#sitePassword").val( "" );    
     $( "#createUser").button("disable");        
+    $( "#loginOK").attr("style", "display: none;");        
+    $("#saveSite").button("disable");
+    $("#deleteSite").button("disable");            
     
-    //Clear the local cache
+    //Clear the local cache and login status
+    currentLoginStatus = false;
     siteDataList = {};
     
     $( "#progress" ).progressbar( "value", false );    
@@ -379,7 +450,8 @@ function onMainInputChange() {
     }
     
     //Start the worker.
-    w = new Worker("../js/mpw_worker.js");
+    w = createWorker('mpw_worker_wrapper');    
+    
     //Add a listener to the worker
     w.addEventListener( "message", workerEventHandler, false);
     

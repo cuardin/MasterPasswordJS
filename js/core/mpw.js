@@ -6,9 +6,14 @@ function MPW()
     
     this.mpw_compute_secret_key = function( userName, masterPassword, progressFun )
     {       
+        //var util = new Util();        
+        
         var masterKeySalt = this.mpw_core_calculate_master_key_salt( userName );
+        //console.log( "Master key salt: " + util.convertBufferToHex(masterKeySalt) );
+        
         var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                        
-                
+        //console.log( "Master key: " + util.convertBufferToHex(masterKey) );
+        
         return masterKey;
     };
     
@@ -29,7 +34,7 @@ function MPW()
         var masterKey = this.mpw_core_calculate_master_key( masterPassword, masterKeySalt, progressFun );                
         
         //Hack that I need for some reason. No idea why.....
-        masterKey = util.convertBufferFromHex(util.convertBufferToHex(masterKey));          
+        //masterKey = util.convertBufferFromHex(util.convertBufferToHex(masterKey));          
 
         var siteSeed = this.mpw_core_calculate_site_seed( siteName, siteCounter );                        
         
