@@ -1,6 +1,4 @@
 //Account for recaptcha: mpw.jscript@gmail.com
-//TODO: Check what the problem with creating users is in Windows.
-//TODO: Find out why the php scripts sometoimes ask for nonexisting parameters.
 
 ////***************************************
 // Declare all globals.
