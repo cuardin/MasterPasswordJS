@@ -58,7 +58,7 @@ function MPWWorker() {
     
     this.computeDbPassword = function ( data, postReturn )
     {                
-        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, 1 );                        
+        var password = this.mpw.mpw_compute_site_password( data.masterKey, "long", this.webStorageSite, this.getGlobalSeed() );
 
         var returnValue = {};
         returnValue.type = "dbPassword";
@@ -74,6 +74,25 @@ function MPWWorker() {
         returnValue.type = "sitePassword";
         returnValue.data = password;
         postReturn(returnValue);
+    };
+
+    this.getGlobalSeed = function()
+    {
+        try {
+            var xmlhttp = new XMLHttpRequest();        
+            var completeAddress = getRootAddress() + "getSeed.php" +
+                    "?d=" + Math.floor(Math.random()*1000001); //Force IE to reload                    
+            completeAddress = encodeURI(completeAddress);
+
+            xmlhttp.open("GET",completeAddress,false);
+            xmlhttp.send();
+            var rValue = xmlhttp.responseText;
+            return parseInt( rValue );                    
+        } catch ( error ) {
+            //This function should not throw an exception. IF we can't acces the network, the global seed is irrelevant.            
+            console.log( "Error getting global seed from server. Returning -1.");
+            return -1;
+        }
     };
 
 }

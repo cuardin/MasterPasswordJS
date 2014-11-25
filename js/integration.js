@@ -21,7 +21,7 @@ $(document).ready(function(){
     } 
     
     if ( typeof(Recaptcha) === "undefined" ) {
-        console.log("Recapcha wasn't defined. Exiting.")
+        console.log("Recapcha wasn't defined. Exiting.");
         setMainDiv("Sorry, recapcha has failed.");                        
         return;
     }
