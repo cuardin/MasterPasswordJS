@@ -1,23 +1,5 @@
 function Database() {
-    
-    this.dbGetGlobalSeed = function()
-    {
-        var xmlhttp = new XMLHttpRequest();        
-        var completeAddress = getRootAddress() + "getSeed.php" +
-                "?d=" + Math.floor(Math.random()*1000001); //Force IE to reload                    
-        completeAddress = encodeURI(completeAddress);
         
-        xmlhttp.open("GET",completeAddress,false);
-        xmlhttp.send();
-        var rValue = xmlhttp.responseText;
-        //console.log( rValue );
-        if ( rValue.substr(0,4) === "FAIL" ) {
-            throw new Error("DbError: " + rValue);            
-        } else {
-            return parseInt( rValue );            
-        }
-    };
-    
     this.dbEradicateUser = function ( uName, dbPass, userEditKey ) 
     {
         var xmlhttp = new XMLHttpRequest();
