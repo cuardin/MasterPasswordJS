@@ -36,8 +36,8 @@ QUnit.test( "testCreateDuplicateEmail", function( assert ) {
     try {
         var result = db.dbCreateUser( userName02, password, email, getUserCreationKey(), capchaResponse, capchaChallenge, true );
         assert.equal( result, "DUPLICATE_USER" );
-    } catch ( e ) {
-       assert.ok(false, "An exception was unexpectedly thrown.");
+    } catch ( e ) {       
+        assert.ok(false, "An exception was unexpectedly thrown: " + e.message );
     } finally {
         try {
             db.dbEradicateUser( userName02, password, privateKey );
@@ -55,7 +55,7 @@ QUnit.test( "testCreateDuplicateUserName", function( assert ) {
         var result = db.dbCreateUser( userName, password, email02, getUserCreationKey(), capchaResponse, capchaChallenge, true );
         assert.equal( result, "DUPLICATE_USER" );
     } catch ( e ) {
-       assert.ok(false, "An exception was unexpectedly thrown.");
+       assert.ok(false, "An exception was unexpectedly thrown: " + e.message );
     } finally {
         try {
             db.dbEradicateUser( userName, password, privateKey );
