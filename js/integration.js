@@ -60,10 +60,11 @@ $(document).ready(function(){
             response(keys);
         },
         autoFocus: true,        
-        close: siteNameListInput               
+        close: function(event){ console.log(event); siteNameListInput(); }
     });
-    $("#siteName").on( "change keyup paste mouseup", function () { 
-        siteNameListInput(); 
+    $("#siteName").on( "change keyup paste mouseup", function (event) {
+        console.log( event );
+        startSiteWorker(); 
     });
 
     //Save, delete and create user buttons.
@@ -274,9 +275,12 @@ function workerEventHandler(event) {
         $("#createUserDialog").dialog("close");
         if ( data.data === "DUPLICATE_USER" ) {
             popupDialog( "Duplicate users", "A user with the same username or email allready exists in the database." );        
+            setLoginStatus(false);
         } else {        
-            setLoginStatus(true);
+            setLoginStatus(true);            
         }
+        setAddButtonStatus();
+        setDeleteButtonStatus();
         
     } else if ( data.type === "siteSaved" ) {        
         $( "#progress" ).progressbar( "value", 0 );
@@ -439,9 +443,9 @@ function onMainInputChange() {
 function onInputNumberChange() {    
     var data = getAllInputsFromForm();    
     if ( isNaN(data.siteCounter) ) {
-        siteCounter.addClass("ui-state-error");    
+        $("#siteCounter").addClass("ui-state-error");    
     } else {
-        siteCounter.removeClass("ui-state-error");        
+        $("#siteCounter").removeClass("ui-state-error");        
     }    
     startSiteWorker();
 }

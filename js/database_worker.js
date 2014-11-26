@@ -59,7 +59,8 @@ function DbWorker() {
         returnValue.type = "userSubmitted";
         returnValue.data = rValue;
 
-        postReturn(returnValue);
+        postReturn(returnValue);        
+        
     };
 
     this.saveSite = function ( data, postReturn )
@@ -103,9 +104,9 @@ function DbWorker() {
         keys = Object.keys(siteList);
         for ( var i = 0; i < keys.length; i++ ) {        
             var siteName = keys[i];
-            var siteString = siteList[siteName];
+            var siteString = decodeURIComponent(siteList[siteName]);
             siteString = siteString.replace(/\\/g, '');    
-            site[siteName] = JSON.parse(siteString);        
+            site[decodeURIComponent(siteName)] = JSON.parse(siteString);        
         }
         return site;
     };

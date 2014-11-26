@@ -3,11 +3,11 @@ function Database() {
     this.dbEradicateUser = function ( uName, dbPass, userEditKey ) 
     {
         var xmlhttp = new XMLHttpRequest();
-        var arguments = "username=" + uName + "&password=" + dbPass + 
-                "&userEditKey=" + userEditKey +
+        var arguments = "username=" + encodeURIComponent(uName) + 
+                "&password=" + encodeURIComponent(dbPass) + 
+                "&userEditKey=" + encodeURIComponent(userEditKey) +
                 "?d=" + Math.floor(Math.random()*1000001); //Force IE to reload                    
-        var completeAddress = getRootAddress() + "eradicateUser.php?" + arguments;    
-        completeAddress = encodeURI(completeAddress);
+        var completeAddress = getRootAddress() + "eradicateUser.php?" + arguments;            
         //console.log( completeAddress );
         
         xmlhttp.open("GET",completeAddress,false);
@@ -25,17 +25,17 @@ function Database() {
         response, challenge, isTest ) 
     {
         var xmlhttp = new XMLHttpRequest();
-        var arguments = "username=" + uName + "&email=" + email +             
-            "&userEditKey=" + userCreationKey +  //For the unit tests as an alternative to capcha.
-            "&password=" + password + 
-            "&recapcha_response_field=" + response +
-            "&recapcha_challenge_field=" + challenge +
+        var arguments = "username=" + encodeURIComponent(uName) + 
+            "&email=" + encodeURIComponent(email) +             
+            "&userEditKey=" + encodeURIComponent(userCreationKey) +  //For the unit tests as an alternative to capcha.
+            "&password=" + encodeURIComponent(password) + 
+            "&recapcha_response_field=" + encodeURIComponent(response) +
+            "&recapcha_challenge_field=" + encodeURIComponent(challenge) +
             "&d=" + Math.floor(Math.random()*1000001); //Force IE to reload
         if ( isTest ) {
             arguments = arguments + "&test=true";
         }
-        var completeAddress = getRootAddress() + "createUser.php?" + arguments;    
-        completeAddress = encodeURI(completeAddress);        
+        var completeAddress = getRootAddress() + "createUser.php?" + arguments;            
         //console.log( completeAddress );
         
         xmlhttp.open("GET",completeAddress,false);
@@ -53,13 +53,12 @@ function Database() {
     this.dbSaveSite = function ( uName, dbPass, key, value )
     {
         var xmlhttp = new XMLHttpRequest();
-        var arguments = "username=" + uName + 
-                "&password=" + dbPass +
-                "&fileName=" + key + 
-                "&fileContents=" + value +
+        var arguments = "username=" + encodeURIComponent(uName) + 
+                "&password=" + encodeURIComponent(dbPass) +
+                "&fileName=" + encodeURIComponent(key) + 
+                "&fileContents=" + encodeURIComponent(value) +
                 "&d=" + Math.floor(Math.random()*1000001); //Force IE to reload
-        var completeAddress = getRootAddress() + "uploadFile.php?" + arguments;    
-        completeAddress = encodeURI(completeAddress);
+        var completeAddress = getRootAddress() + "uploadFile.php?" + arguments;            
         //console.log( completeAddress );
         
         xmlhttp.open("GET",completeAddress,false);
@@ -76,10 +75,10 @@ function Database() {
     this.dbGetSiteList = function ( uName, dbPass ) 
     {
         var xmlhttp = new XMLHttpRequest();
-        var arguments = "username=" + uName + "&password=" + dbPass +
+        var arguments = "username=" + encodeURIComponent(uName) + 
+                "&password=" + encodeURIComponent(dbPass) +
                 "&d=" + Math.floor(Math.random()*1000001); //Force IE to reload        
-        var completeAddress = getRootAddress() + "listFiles.php?" + arguments; 
-        completeAddress = encodeURI(completeAddress);
+        var completeAddress = getRootAddress() + "listFiles.php?" + arguments;         
         //console.log( completeAddress );
         
         xmlhttp.open("GET",completeAddress,false);
@@ -104,11 +103,11 @@ function Database() {
     this.dbDeleteSite = function ( uName, dbPass, siteName ) 
     {
         var xmlhttp = new XMLHttpRequest();
-        var arguments = "username=" + uName + "&password=" + dbPass + 
-                "&fileName=" + siteName +
+        var arguments = "username=" + encodeURIComponent(uName) + 
+                "&password=" + encodeURIComponent(dbPass) + 
+                "&fileName=" + encodeURIComponent(siteName) +
                 "&d=" + Math.floor(Math.random()*1000001); //Force IE to reload
-        var completeAddress = getRootAddress() + "deleteFile.php?" + arguments;    
-        completeAddress = encodeURI(completeAddress);
+        var completeAddress = getRootAddress() + "deleteFile.php?" + arguments;            
         //console.log( completeAddress );
         
         xmlhttp.open("GET",completeAddress,false);
