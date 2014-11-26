@@ -29,8 +29,8 @@ function Database() {
             "&email=" + encodeURIComponent(email) +             
             "&userEditKey=" + encodeURIComponent(userCreationKey) +  //For the unit tests as an alternative to capcha.
             "&password=" + encodeURIComponent(password) + 
-            "&recapcha_response_field=" + encodeURIComponent(response) +
-            "&recapcha_challenge_field=" + encodeURIComponent(challenge) +
+            "&recaptcha_response_field=" + encodeURIComponent(response) +
+            "&recaptcha_challenge_field=" + encodeURIComponent(challenge) +
             "&d=" + Math.floor(Math.random()*1000001); //Force IE to reload
         if ( isTest ) {
             arguments = arguments + "&test=true";
