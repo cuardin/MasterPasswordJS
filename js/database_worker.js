@@ -8,6 +8,10 @@ function DbWorker() {
         try {       
             if ( data.command === "getSiteList" ) {
                 this.loadSiteList( data, postReturn );
+            } else if ( data.command === "resetPassword" ) {
+                this.resetPassword( data, postReturn );
+            } else if ( data.command === "setNewPassword" ) {
+                this.setNewPassword( data, postReturn );
             } else if ( data.command === "createUser" ) {
                 this.createUser( data, postReturn );                        
             } else if ( data.command === "saveSite" ) {
@@ -26,6 +30,27 @@ function DbWorker() {
 
             postReturn(returnValue);
         }
+    };
+    
+    this.setNewPassword = function( data, postReturn ) 
+    {
+        var rValue = this.db.dbSetNewPassword ( data.userName, data.dbPassword, data.verificationKey );
+        postReturn( {type: "newPasswordSet", message: rValue} );
+    };
+
+    this.resetPassword = function( data, postReturn, antiSpamKey )
+    {                
+
+        //Now use the password to create a user.        
+        var rValue = this.db.dbRequestPasswordReset( data.email, 
+            data.capchaChallenge, data.capchaResponse, antiSpamKey, false);            
+
+        var returnValue = {};
+        returnValue.type = "passwordReset";
+        returnValue.data = rValue;
+
+        postReturn(returnValue);        
+        
     };
 
     this.loadSiteList = function ( data, postReturn )

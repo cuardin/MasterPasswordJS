@@ -88,7 +88,7 @@
             </div>             
         </form>
         <small class="validate">
-            [<a href="http://www.gnu.org/copyleft/gpl.html">GPLv3</a>] [<a href="../test/mpwTest.html">Validate algorithm</a>]
+            [<a href="passwordReset.php">Reset Password</a>] [<a href="http://www.gnu.org/copyleft/gpl.html">GPLv3</a>] [<a href="../test/mpwTest.html">Validate algorithm</a>]
         </small>
     </div>
     <div id="createUserDialog" title="Create new user" style="display: none;">                
