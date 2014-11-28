@@ -3,10 +3,14 @@
     if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
         $redirect = "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         header("Location: $redirect");        
-    }   
-    echo "<!--";
-    require_once( dirname(__FILE__).'/../js/utilitiesSecret.php' );
-    echo "-->";
+    }       
+    require_once( dirname(__FILE__).'/../../php_scripts/core/utilitiesSecret.php' );    
+    require_once( dirname(__FILE__).'/../../php_scripts/core/utilities.php' );    
+    init();
+    $mysql = connectDatabase();
+    $username = getParameter($mysql, "username");
+    $verificationKey = getParameter($mysql, "verificationKey" );
+    
 ?>
 
 <!doctype html>
@@ -31,14 +35,14 @@
                 <label for="userName">Username</label>
                 <input type="text" id="userName" 
                        class="mainInput box ui-widget ui-widget-content ui-corner-all"
-                       value="user02åäö">
+                       value="<?php echo $username ?>">
             </p>
             
             <p>
                 <label for="verificationKey">Reset Key</label>
                 <input type="text" id="verificationKey" 
                        class="mainInput box ui-widget ui-widget-content ui-corner-all"
-                       value="34239048230984">
+                       value="<?php echo $verificationKey ?>">
             </p>
             
             <p>
