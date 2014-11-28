@@ -38,41 +38,7 @@
                 ?> 
             </p>
             <input type="button" value="Submit" id="submitReset">                        
-        
-        <h1>Set new password</h1>
-        <form>
-            <p>
-                <label for="userName">Username</label>
-                <input type="text" id="userName" 
-                       class="mainInput box ui-widget ui-widget-content ui-corner-all"
-                       value="user02åäö">
-            </p>
-            
-            <p>
-                <label for="verificationKey">Reset Key</label>
-                <input type="text" id="verificationKey" 
-                       class="mainInput box ui-widget ui-widget-content ui-corner-all"
-                       value="34239048230984">
-            </p>
-            
-            <p>
-                <label for="masterPassword">New master password</label>
-                <input type="password" id="masterPassword" 
-                       class="mainInput box ui-widget ui-widget-content ui-corner-all"
-                       value="NewPass01">
-            </p>
-            
-            <p>
-                <label for="masterPassword1">New master password again</label>
-                <input type="password" id="masterPassword2" 
-                       class="mainInput box ui-widget ui-widget-content ui-corner-all"
-                       value="NewPass01">
-            </p>
-            
-            <button id="submitNewPass" type="button">Submit</button>
-            
-        </form>
-
+        </form>        
     </div>
     <div id="infoDialog" style="display: none;">                        
     </div>
@@ -92,16 +58,25 @@
                 setMainDiv("Sorry, your browser does not support Web Workers...");                
                 return;
             } 
-            /*
+            
             if ( typeof(Recaptcha) === "undefined" ) {
                 console.log("Recapcha wasn't defined. Exiting.");
                 setMainDiv("Sorry, recapcha has failed.");                        
                 return;
-            }*/
+            }
             
-            $( "#submitReset").button();
+            //Create the info dialog popup. Used mostly for error messages.
+            $("#infoDialog").dialog({
+                autoOpen: false,
+                modal: true,        
+                buttons: {
+                    "OK": function() {                
+                        $(this).dialog("close");           
+                    }            
+                }
+            });       
             
-            $( "#submitNewPass").button();
+            $( "#submitReset").button();                        
             
             //Finally, we swap out the loading code and swap in the real content.
             $("#loaderDiv").attr( "style", "display: none;" );
@@ -110,49 +85,39 @@
         
         $("#submitReset").click( submitReset );    
         function submitReset() {
-           var data = {};
+            //First replace the form with the loader icon.
+            $("#loaderDiv").attr( "style", "" );
+            $("#mainDiv").attr( "style", "display: none;" );
+            
+            var data = {};
             data.command = "resetPassword";    
             data.email = $('#email').val();
             data.capchaChallenge = $('#recaptcha_challenge_field').val();
-            data.capchaResponse = $('#recaptcha_response_field').val();            
+            data.capchaResponse = $('#recaptcha_response_field').val();                                    
             dbWorker.postMessage(JSON.stringify(data)); 
+            
+            //Now make sure the captcha is reloaded
+            Recaptcha.reload(); 
         }
-        
-        $("#submitNewPass").click( submitNewPass );
-        
-        function submitNewPass() {
-            if ( w !== null ) {
-                w.terminate();
-            } 
-            w = new Worker( '../js/mpw_worker_wrapper.js' );
-            w.addEventListener( "message", passWorkerEventHandler, false );                                    
-
-            var data = {};
-            data.command = "mainCompute";
-            data.masterPassword = $('#masterPassword').val();
-            data.userName = $('#userName').val();
-            w.postMessage(JSON.stringify(data));
-        }
-        
+                
         function passWorkerEventHandler(event) {
             var data = JSON.parse(event.data);    
             console.log(data);
-            
-            if ( data.type === "masterKey" ) {                       
-                //TODO: Add a progress bar for this.
-                var data = {};
-                data.command = "getDbPassword";    
-                w.postMessage(JSON.stringify(data));
-            } else if ( data.type === "dbPassword" ) {                        
-                var dbPassword = data.data;
-                var data = {};
-                data.command = "setNewPassword";    
-                data.userName = $('#userName').val();
-                data.dbPassword = dbPassword;
-                data.verificationKey = $('#verificationKey').val();
-                dbWorker.postMessage(JSON.stringify(data));            
-            } else if ( data.type === "passwordReset" ) {                        
-                //Do something
+                        
+            if ( data.type === "passwordReset" ) {                         
+                $("#infoDialog").dialog("option", "title", "OK");
+                $("#infoDialog").html( "<p> Pasword request successful. Check your inbox.</p>" );
+                $("#infoDialog").dialog("open");
+                
+                $("#loaderDiv").attr( "style", "display: none;" );
+                $("#mainDiv").attr( "style", "" );
+            } else {
+                $("#infoDialog").dialog("option", "title", "Error");
+                $("#infoDialog").html( "<p>" +  data.message + "</p>" );
+                $("#infoDialog").dialog("open");                
+                
+                $("#loaderDiv").attr( "style", "display: none;" );
+                $("#mainDiv").attr( "style", "" );
             }
         }
         
