@@ -1,4 +1,6 @@
 //Account for recaptcha: mpw.jscript@gmail.com
+//TODO: Add JS-check that passwords match in setNewPassword.php
+//TODO: Find out why utf8-thing is wierd in Windows with setNewPassword.php
 
 ////***************************************
 // Declare all globals.

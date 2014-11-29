@@ -8,8 +8,13 @@
     require_once( dirname(__FILE__).'/../../php_scripts/core/utilities.php' );    
     init();
     $mysql = connectDatabase();
-    $username = getParameter($mysql, "username");
-    $verificationKey = getParameter($mysql, "verificationKey" );
+    try {
+        $username = getParameter($mysql, "username");    
+        $verificationKey = getParameter($mysql, "verificationKey" );
+    } catch ( Exception $e ) {
+        $username = "";
+        $verificationKey = "";
+    }
     
 ?>
 
@@ -124,6 +129,12 @@
             data.masterPassword = $('#masterPassword').val();
             data.userName = $('#userName').val();
             w.postMessage(JSON.stringify(data));
+            
+            //Lock the UI untill we are done
+            $("#userName").prop("disabled",true);
+            $("#verificationKey").prop("disabled",true);
+            $("#masterPassword").prop("disabled",true);
+            $("#masterPassword2").prop("disabled",true);
         }
         
         function passWorkerEventHandler(event) {
@@ -150,10 +161,22 @@
                 $("#infoDialog").dialog("option", "title", "OK");
                 $("#infoDialog").html( "<p>New password set.</p>" );
                 $("#infoDialog").dialog("open");                                                
+                
+                //Unlock the UI now that we are done
+                $("#userName").attr("disabled",false);
+                $("#verificationKey").attr("disabled",false);
+                $("#masterPassword").attr("disabled",false);
+                $("#masterPassword2").attr("disabled",false);
             } else {
                 $("#infoDialog").dialog("option", "title", "Error");
                 $("#infoDialog").html( "<p>" +  data.message + "</p>" );
                 $("#infoDialog").dialog("open");                                                
+                
+                //Unlock the UI now that we are done
+                $("#userName").attr("disabled",false);
+                $("#verificationKey").attr("disabled",false);
+                $("#masterPassword").attr("disabled",false);
+                $("#masterPassword2").attr("disabled",false);
             }
         }
         
