@@ -1,5 +1,5 @@
 function Database() {
-        
+
     this.dbEradicateUser = function ( uName, dbPass, userEditKey ) 
     {
         var xmlhttp = new XMLHttpRequest();
@@ -16,6 +16,52 @@ function Database() {
         //console.log( rValue );
         if ( rValue.substr(0,2) === "OK" ) {
             return "OK";
+        } else {
+            throw new Error("DbError: " + rValue);            
+        }
+    };
+
+    this.dbRequestPasswordReset = function ( email, challenge, response, userEditKey, isTest ) 
+    {
+        var xmlhttp = new XMLHttpRequest();
+        var arguments = "email=" + encodeURIComponent(email) +                 
+                "&recaptcha_response_field=" + encodeURIComponent(response) +
+                "&recaptcha_challenge_field=" + encodeURIComponent(challenge) +
+                "&userEditKey=" + encodeURIComponent(userEditKey) +
+                "&d=" + Math.floor(Math.random()*1000001); //Force IE to reload                    
+        if ( isTest ) {
+            arguments = arguments + "&test=true";
+        }
+        var completeAddress = getRootAddress() + "resetPassword.php?" + arguments;            
+        //console.log( completeAddress );
+        
+        xmlhttp.open("GET",completeAddress,false);
+        xmlhttp.send();
+        var rValue = xmlhttp.responseText;
+        //console.log( rValue );
+        if ( rValue.substr(0,2) === "OK" ) {
+            return rValue;
+        } else {
+            throw new Error("DbError: " + rValue);            
+        }
+    };
+
+    this.dbSetNewPassword = function ( username, newPassword, verificationKey ) 
+    {
+        var xmlhttp = new XMLHttpRequest();
+        var arguments = "username=" + encodeURIComponent(username) +                 
+                "&newPassword=" + encodeURIComponent(newPassword) +                 
+                "&verificationKey=" + encodeURIComponent(verificationKey) +                 
+                "&d=" + Math.floor(Math.random()*1000001); //Force IE to reload                            
+        var completeAddress = getRootAddress() + "setNewPassword.php?" + arguments;            
+        //console.log( completeAddress );
+        
+        xmlhttp.open("GET",completeAddress,false);
+        xmlhttp.send();
+        var rValue = xmlhttp.responseText;
+        //console.log( rValue );
+        if ( rValue.substr(0,2) === "OK" ) {
+            return rValue;
         } else {
             throw new Error("DbError: " + rValue);            
         }

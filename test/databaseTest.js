@@ -64,6 +64,36 @@ QUnit.test( "testCreateDuplicateUserName", function( assert ) {
     
 });
 
+QUnit.test( "testRequestPasswordReset", function( assert ) {    
+    //Arrange        
+    
+    //Act    
+    var result = db.dbRequestPasswordReset( email, capchaChallenge, capchaResponse, getUserCreationKey(), true);
+    
+    //Assert
+    assert.equal( result.substr(0,2), "OK" );                
+    
+});
+
+QUnit.test( "testSetNewPasswordBadVerificationKey", function( assert ) {    
+    //We would like to do one with the right key as well, but that is 
+    //fundamentally impossible without creating a massive security hole.
+    
+    //Arrange
+    
+    //Act   
+    try { 
+        db.dbSetNewPassword( userName, "newPassword", "verificationKey" );
+        assert.ok(false, "An exception should have been thrown" );
+    } catch ( e ) {
+        assert.equal( e.message.substr(9), "BAD_VERIFICATION_KEY" );                
+    }
+    
+    //Assert
+    
+    
+});
+
 QUnit.test( "testUploadAndGetFileListExistingUser", function( assert ) {    
     
     //Arrange
