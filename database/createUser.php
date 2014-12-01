@@ -18,16 +18,14 @@ try {
     $email = getParameter("email");
     $password = getParameter("password");        
     
-    $mailer = new Mailer();
-    try {
-        $isTest = getParameter("test");
-        if ( !strcmp($isTest, 'true') ) {
-            $mailer = new MailerStub();
-        }
-    } catch ( Exception $e ) {
         
-    }   
-        
+    $isTest = !strcmp( getParameter("test", true), 'true');    
+    if ( $isTest ) {
+        $mailer = new MailerStub();
+    } else {
+        $mailer = new Mailer();
+    }
+    
     $rValue = checkUserEditKeyOrRECAPTCHA($mysql);
     
     if ( !$rValue ) {
@@ -35,7 +33,7 @@ try {
         return;
     }
     
-    $message = insertUser($mysql, $username, $password, $email);    
+    $message = insertUser($mysql, $username, $password, $email, $isTest);    
     echo $message;
     
 

@@ -1,6 +1,6 @@
 <?php
 
-function insertUser($mysql, $username, $password, $email) {    
+function insertUser($mysql, $username, $password, $email, $isTest=false) {    
     //TODO: This entire function has to be an atomic operation.
     
     //First check if there is room for one more user
@@ -18,9 +18,8 @@ function insertUser($mysql, $username, $password, $email) {
         return "DUPLICATE_USER";
     }
     
-    $passwordCrypt = crypt($password);
-    $seed = "1";
-    $query = "INSERT INTO masterpassword_users (username, password, seed, email)" .
+    $passwordCrypt = crypt($password);    
+    $query = "INSERT INTO masterpassword_users (username, password, email, isTestUser)" .
             "VALUES (?, ?, ?, ?)";
 
     try {
@@ -28,7 +27,7 @@ function insertUser($mysql, $username, $password, $email) {
         if (!$stmt) {
             throw new Exception('Error preparing sql statement');
         }
-        if (!$stmt->bind_param('ssis', $username, $passwordCrypt, $seed, $email)) {
+        if (!$stmt->bind_param('sssi', $username, $passwordCrypt, $email, $isTest)) {
             throw new Exception('Error binding parameters');
         }
         if (!$stmt->execute()) {
