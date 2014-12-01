@@ -8,10 +8,10 @@ init();
 try {
     $mysql = connectDatabase();
 
-    $username = getParameter($mysql, "username");
-    $password = getParameter($mysql, "password");
-    $fileName = getParameter($mysql,"fileName");
-    $fileContents = getParameter($mysql, "fileContents");    
+    $username = getParameter("username");
+    $password = getParameter("password");
+    $fileName = getParameter("fileName");
+    $fileContents = getParameter("fileContents");    
 
     //Check that credentials are good.
     if (authenticateUser($mysql, $username, $password)) {        

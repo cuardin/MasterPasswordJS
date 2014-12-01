@@ -84,19 +84,19 @@ class UtilitiesTest extends UnitTestCase {
     public function testGetParameterSimpleGET ()
     {
         $_GET["a"] = "b";
-        $this->assertEqual( "b", getParameter($this->mysql,"a") );
+        $this->assertEqual( "b", getParameter("a") );
     }
     
     public function testGetParameterSimplePOST ()
     {
         $_POST["a"] = "b";
-        $this->assertEqual( "b", getParameter($this->mysql,"a") );
+        $this->assertEqual( "b", getParameter("a") );
     }
     
     public function testGetParameterMisingParameter ()
     {        
         try {
-            getParameter($this->mysql,"c");
+            getParameter("c");
             $this->fail();
         } catch ( Exception $e ) {            
             $this->pass();

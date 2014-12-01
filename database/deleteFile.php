@@ -8,9 +8,9 @@ init();
 try {
     $mysql = connectDatabase();
 
-    $username = getParameter($mysql, "username");
-    $password = getParameter($mysql, "password");
-    $filename = getParameter($mysql, "fileName");
+    $username = getParameter("username");
+    $password = getParameter("password");
+    $filename = getParameter("fileName");
 
     if ( authenticateUser($mysql, $username, $password)) {        
         if ( deleteFile($mysql, $username, $filename)) {

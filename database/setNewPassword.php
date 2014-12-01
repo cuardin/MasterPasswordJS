@@ -9,9 +9,9 @@ try {
     //error_log( $_SERVER['QUERY_STRING'] );
     
     $mysql = connectDatabase();
-    $username = getParameter($mysql,"username");        
-    $verificationKey = getParameter($mysql,"verificationKey");        
-    $newPassword = getParameter($mysql,"newPassword");        
+    $username = getParameter("username");        
+    $verificationKey = getParameter("verificationKey");        
+    $newPassword = getParameter("newPassword");        
                         
     $rValue = validateUserWithKey($mysql, $username, $verificationKey, $newPassword );
             

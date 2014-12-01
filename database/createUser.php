@@ -14,13 +14,13 @@ try {
     //error_log( $_SERVER['QUERY_STRING']);
     
     //Escape all the user input to be SQL safe.
-    $username = getParameter($mysql, "username");
-    $email = getParameter($mysql, "email");
-    $password = getParameter($mysql, "password");        
+    $username = getParameter("username");
+    $email = getParameter("email");
+    $password = getParameter("password");        
     
     $mailer = new Mailer();
     try {
-        $isTest = getParameter($mysql, "test");
+        $isTest = getParameter("test");
         if ( !strcmp($isTest, 'true') ) {
             $mailer = new MailerStub();
         }

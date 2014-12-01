@@ -8,8 +8,8 @@ header('Content-Type: application/json');
 try {    
     $mysql = connectDatabase();
 
-    $username = getParameter($mysql, "username");
-    $password = getParameter($mysql, "password");
+    $username = getParameter("username");
+    $password = getParameter("password");
 
     //Check that credentials are good.
     if (authenticateUser($mysql, $username, $password)) {

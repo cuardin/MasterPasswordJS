@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname(__FILE__).'/utilitiesSecret.php' );
+require_once( dirname(__FILE__).'/utilitiesCore.php' );
 
 function init() {
     header('Content-Type: text/html; charset=utf-8');
@@ -105,7 +105,7 @@ function getDateString() {
 }
 
 
-function getParameter($mysql, $paramName) {
+function getParameter($paramName) {
     //echo $paramName . ":";
     if ( array_key_exists($paramName, $_GET) ) {
         $rawValue = $_GET[$paramName];
@@ -116,14 +116,14 @@ function getParameter($mysql, $paramName) {
     }
     
     $rawValue = urldecode($rawValue);
-    return $rawValue; //$mysql->real_escape_string($rawValue);
+    return $rawValue;
 }
 
 function checkUserEditKeyOrRECAPTCHA($mysql) {
     //Check if we have a recaptcha a user creation key
     $isHuman = false;        
     try {             
-        $privateKeyProvided = getParameter($mysql, "userEditKey");                                        
+        $privateKeyProvided = getParameter("userEditKey");                                        
         if (!strcmp($privateKeyProvided, getUserEditKey())) {           
             $isHuman = true;            
         } else {                        
@@ -134,8 +134,8 @@ function checkUserEditKeyOrRECAPTCHA($mysql) {
     }            
     
     if ( !$isHuman ) {
-        $challenge = getParameter($mysql, "recaptcha_challenge_field");
-        $response = getParameter($mysql, "recaptcha_response_field");        
+        $challenge = getParameter("recaptcha_challenge_field");
+        $response = getParameter("recaptcha_response_field");        
         
         $privateCAPTHCAkey = getCAPCHAPrivateKey();                
         

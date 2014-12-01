@@ -12,7 +12,7 @@ try {
     //error_log( $_SERVER['QUERY_STRING'] );
     
     $mysql = connectDatabase();
-    $email = getParameter($mysql,"email");    
+    $email = getParameter("email");    
     //echo "Email: " . $email . "<br/>";
     //echo "User name: " . getUserNameFromEmail($mysql, $email) . "<br/>";
     

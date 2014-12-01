@@ -6,8 +6,8 @@ init();
 
 try {
     $mysql = connectDatabase();
-    $username = getParameter($mysql,"username");
-    $password = getParameter($mysql,"password");    
+    $username = getParameter("username");
+    $password = getParameter("password");    
     authenticateUser($mysql, $username, $password);    
     
     echo "OK";

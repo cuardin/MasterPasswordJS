@@ -10,7 +10,7 @@ try {
     $mysql = connectDatabase();
 
     //Escape all the user input to be SQL safe.    
-    echo getParameter($mysql, "username");
+    echo getParameter("username");
     
 } catch ( Exception $e ) {
     echo "<h1>FAIL</h1>";
