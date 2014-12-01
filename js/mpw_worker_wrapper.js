@@ -16,7 +16,7 @@ importScripts(base_url + '../js/core/util.js' );
 importScripts(base_url + '../js/core/mpw.js' );
 importScripts(base_url + '../js/database.js' );            
 importScripts(base_url + '../js/mpw_worker.js' );    
-importScripts(base_url + '../js/utilitiesSecret.php' );    
+importScripts(base_url + '../database/core/utilitiesCore.php?javascript=true' );    
 
 self.addEventListener('message', handleMessage);
 

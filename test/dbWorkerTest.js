@@ -1,6 +1,3 @@
-//TODO: Make all tests pass with mocked call to getGlobalSiteSeed();
-//TODO: Set the database object to an empty object to make sure all database calls are mocked.
-
 var data = {};
 
 var dbWorker = {};
