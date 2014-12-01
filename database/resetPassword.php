@@ -12,7 +12,8 @@ try {
     //error_log( $_SERVER['QUERY_STRING'] );
     
     $mysql = connectDatabase();
-    $email = getParameter("email");    
+    $email = getParameter("email");            
+    
     //echo "Email: " . $email . "<br/>";
     //echo "User name: " . getUserNameFromEmail($mysql, $email) . "<br/>";
     
@@ -27,13 +28,15 @@ try {
         
     } */  
     
-    if ( !checkUserEditKeyOrRECAPTCHA($mysql) ) {                
+    $username = getUserNameFromEmail($mysql, $email);
+    $isTest = getOneValueFromUserList($mysql, "isTestUser", $username);
+    if ( !checkUserEditKeyOrRECAPTCHA($isTest) ) {                
         echo "INVALID_CAPTCHA";
         return;
     }
     
     $verificationKey = rand_string(32);    
-    $username = getUserNameFromEmail($mysql, $email);
+    
     resetPassword($mysql, $username, $verificationKey );    
     
     sendPasswordResetEmail($email,$mailer,$username,$verificationKey);

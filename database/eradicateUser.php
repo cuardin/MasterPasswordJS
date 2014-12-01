@@ -15,16 +15,7 @@ try {
     $authOK = false;
     if ( !authenticateUser($mysql, $username, $password)) {                
         throw new Exception ( "Authentication failed." );
-    } else {
-        $authOK = true;
-    }
-    
-    if ( !$authOK ) {
-        $privateKey = getParameter("userEditKey");
-        if ( strcmp( $privateKey, getUserEditKey() )) {
-            throw new Exception ( "Extended authentication failed." );
-        } 
-    }
+    }        
         
     deleteAllFilesBelongingToUser($mysql, $username );            
     deleteUser( $mysql, $username );

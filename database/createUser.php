@@ -19,14 +19,22 @@ try {
     $password = getParameter("password");        
     
         
-    $isTest = !strcmp( getParameter("test", true), 'true');    
+    $testParam = getParameter("test",true);    
+    if ( !strcmp( $testParam, "true") ) {
+        $isTest = 1;
+    }  else {
+        $isTest = 0;
+    }            
+    
+    error_log( $isTest );
+    
     if ( $isTest ) {
         $mailer = new MailerStub();
     } else {
         $mailer = new Mailer();
     }
     
-    $rValue = checkUserEditKeyOrRECAPTCHA($mysql);
+    $rValue = checkUserEditKeyOrRECAPTCHA($isTest);
     
     if ( !$rValue ) {
         echo "INVALID_CAPCHA";

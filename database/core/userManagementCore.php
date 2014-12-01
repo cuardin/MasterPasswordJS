@@ -1,6 +1,6 @@
 <?php
 
-function insertUser($mysql, $username, $password, $email, $isTest=false) {    
+function insertUser($mysql, $username, $password, $email, $isTest=0) {    
     //TODO: This entire function has to be an atomic operation.
     
     //First check if there is room for one more user

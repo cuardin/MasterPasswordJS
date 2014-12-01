@@ -33,18 +33,22 @@ class UserManagementTest extends WebTestCase {
         deleteUser( $this->mysql, $this->username2 );
     }
     
-    function testCreateUserSimple() {        
+    function testCreateTestUserSimple() {        
         $this->get( getBaseURL() . "/createUser.php?" .
                 "username=$this->username&password=$this->password&" .                
                 "email=$this->email&userCreationKey=$this->userEditKey&" .
                 "test=true&userEditKey=" . getUserEditKey() );        
         $this->assertText("OK");                 
-    }
+        
+        //Check that the testUser flag is not set
+        $this->assertEqual(1, 
+                getOneValueFromUserList($this->mysql, "isTestUser", $this->username));
+    }        
     
     function testCreateDuplicateUser() {        
         //Arrange
         $message = insertUser($this->mysql, $this->username, 
-                $this->password,  $this->email);
+                $this->password,  $this->email, 1);
         $this->assertEqual($message, "OK");        
         
         //Act: Same username different email
@@ -103,17 +107,17 @@ class UserManagementTest extends WebTestCase {
     }
     
     function testEradicateUserSimple() {                
-        insertUser($this->mysql, $this->username, $this->password,
-               $this->email);                
+        insertUser($this->mysql, "$this->username", $this->password,
+               "$this->email", 1);                
         
         $this->get( getBaseURL() . "eradicateUser.php?" .
                 "username=$this->username&password=$this->password");                
-        $this->assertText( 'OK');                 
+        $this->assertText( 'OK');
     }
 
     function testEradicateUserBadPassword() {                
         insertUser($this->mysql, $this->username, $this->password,
-               $this->email);                
+               $this->email, 1);                
         
         $this->get( getBaseURL() . "eradicateUser.php?" .
                 "username=$this->username&password=badPassword&" .
@@ -123,7 +127,7 @@ class UserManagementTest extends WebTestCase {
 
     function testEradicateUserBadPrivateKey() {                
         insertUser($this->mysql, $this->username, $this->password,
-               $this->email);                
+               $this->email, 1);                
         
         $this->get( getBaseURL() . "eradicateUser.php?" .
                 "username=$this->username&password=badPassword&" .
@@ -134,7 +138,7 @@ class UserManagementTest extends WebTestCase {
     function testResetPasswordAndSetNewPass()
     {        
         insertUser($this->mysql, $this->username, $this->password,
-               $this->email);   
+               $this->email, 1 );   
         
         $this->get( getBaseURL() . "resetPassword.php?" .
                 "email=$this->email&" .
@@ -160,7 +164,7 @@ class UserManagementTest extends WebTestCase {
     function testResetPasswordbadEditKey()
     {        
         insertUser($this->mysql, $this->username, $this->password,
-               $this->email);   
+               $this->email, 1);   
         
         $this->get( getBaseURL() . "resetPassword.php?" .
                 "email=$this->email&" .
@@ -177,7 +181,7 @@ class UserManagementTest extends WebTestCase {
     function testSetNewPassBadKey()
     {        
         insertUser($this->mysql, $this->username, $this->password,
-               $this->email);   
+               $this->email, 1);   
         resetPassword( $this->mysql, $this->username, "newKey" );                                        
         
         //And set a new password

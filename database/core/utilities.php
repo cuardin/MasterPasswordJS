@@ -105,8 +105,7 @@ function getDateString() {
 }
 
 
-function getParameter($paramName, $optional=false ) {    
-    $rawValue = "";
+function getParameter($paramName, $optional=false ) {        
     if ( array_key_exists($paramName, $_GET) ) {
         $rawValue = $_GET[$paramName];
     } else if ( array_key_exists($paramName, $_POST)) {        
@@ -114,19 +113,21 @@ function getParameter($paramName, $optional=false ) {
     } else if ( !$optional ) {
         throw new Exception ( "Parameter requested was not provided: " . $paramName);
     } else {        
-        //Do nothing.
+        return null;
     }
+    //error_log("$paramName::$optional::$rawValue" );
     
     $rawValue = urldecode($rawValue);
+    
     return $rawValue;
 }
 
-function checkUserEditKeyOrRECAPTCHA($mysql) {
+function checkUserEditKeyOrRECAPTCHA($isTest) {
     //Check if we have a recaptcha a user creation key
     $isHuman = false;        
     try {             
-        $privateKeyProvided = getParameter("userEditKey");                                        
-        if (!strcmp($privateKeyProvided, getUserEditKey())) {           
+        $privateKeyProvided = getParameter("userEditKey");        
+        if (!strcmp($privateKeyProvided, getUserEditKey()) && $isTest ) {           
             $isHuman = true;            
         } else {                        
             //error_log( "$privateKeyProvided::" . getUserEditKey() );
