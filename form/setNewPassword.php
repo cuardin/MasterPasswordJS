@@ -9,8 +9,8 @@
     init();
     $mysql = connectDatabase();
     try {
-        $username = getParameter($mysql, "username");    
-        $verificationKey = getParameter($mysql, "verificationKey" );
+        $username = getParameter( "username");    
+        $verificationKey = getParameter( "verificationKey" );
     } catch ( Exception $e ) {
         $username = "";
         $verificationKey = "";

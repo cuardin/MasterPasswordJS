@@ -1,5 +1,6 @@
 <?php
 
+require_once( dirname(__FILE__).'/utilities.php' );
 require_once( dirname(__FILE__).'/utilitiesSecret.php' );
 
 function getSQLUsername()
@@ -47,4 +48,14 @@ function getMaxNumberOfFiles() {
 }
 
 //If we are asked about javascript code, generate that code
-//$makeJS = getParameter("javascript");
+try {
+    $makeJS = getParameter("javascript");
+    error_log ( "\$makeJS=$makeJS" );
+    if ( !strcmp($makeJS,"true") ) {        
+        echo "function getUserCreationKey() { return '" . getUserEditKey() . "';}\n";
+        echo "function getRootAddress() { return '" . getBaseURL() . "';}\n";        
+    }
+} catch ( Exception $e ) {
+    error_log ( "And error: " . $e->getMessage() );
+    //Do nothing.
+}
