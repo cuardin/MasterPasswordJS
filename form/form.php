@@ -105,7 +105,7 @@
         
         <?php    
         echo "<script>\n";
-        require_once( dirname(__FILE__).'/../js/utilitiesSecret.php' );
+        require_once( dirname(__FILE__).'/../database/core/utilitiesCore.php' );
         echo "</script>\n";
         $publicKey = getCAPCHAPublicKey();        
         echo "<script type='text/javascript' src='https://www.google.com/recaptcha/api/challenge?k=$publicKey'></script>"

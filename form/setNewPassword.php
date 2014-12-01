@@ -4,8 +4,8 @@
         $redirect = "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         header("Location: $redirect");        
     }       
-    require_once( dirname(__FILE__).'/../../php_scripts/core/utilitiesSecret.php' );    
-    require_once( dirname(__FILE__).'/../../php_scripts/core/utilities.php' );    
+    require_once( dirname(__FILE__).'/../database/core/utilitiesSecret.php' );    
+    require_once( dirname(__FILE__).'/../database/core/utilities.php' );    
     init();
     $mysql = connectDatabase();
     try {

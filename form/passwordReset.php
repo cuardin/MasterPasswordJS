@@ -5,7 +5,7 @@
         header("Location: $redirect");        
     }   
     echo "<!--";
-    require_once( dirname(__FILE__).'/../js/utilitiesSecret.php' );
+    require_once( dirname(__FILE__).'/../database/core/utilitiesCore.php' );
     echo "-->";
 ?>
 
