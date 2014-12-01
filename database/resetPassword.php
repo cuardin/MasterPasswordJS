@@ -55,7 +55,7 @@ function sendPasswordResetEmail($email,$mailer,$username,$verificationKey)
     $usernameCode = urlencode($username);
     
     $url = getBaseURL() . "../java_script/form/setNewPassword.php?verificationKey=$verificationKey&username=$usernameCode"; 
-    error_log( $url );
+    //error_log( $url );
     
     $message = '<html>'            
             . '<body>'

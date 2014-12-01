@@ -49,8 +49,8 @@ function getMaxNumberOfFiles() {
 
 //If we are asked about javascript code, generate that code
 try {
-    $makeJS = getParameter("javascript");
-    error_log ( "\$makeJS=$makeJS" );
+    $makeJS = getParameter("javascript",true);
+    //error_log ( "\$makeJS=$makeJS" );
     if ( !strcmp($makeJS,"true") ) {        
         echo "function getUserCreationKey() { return '" . getUserEditKey() . "';}\n";
         echo "function getRootAddress() { return '" . getBaseURL() . "';}\n";        

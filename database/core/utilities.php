@@ -105,14 +105,16 @@ function getDateString() {
 }
 
 
-function getParameter($paramName) {
-    //echo $paramName . ":";
+function getParameter($paramName, $optional=false ) {    
+    $rawValue = "";
     if ( array_key_exists($paramName, $_GET) ) {
         $rawValue = $_GET[$paramName];
     } else if ( array_key_exists($paramName, $_POST)) {        
         $rawValue = $_POST[$paramName];
-    } else {
+    } else if ( !$optional ) {
         throw new Exception ( "Parameter requested was not provided: " . $paramName);
+    } else {        
+        //Do nothing.
     }
     
     $rawValue = urldecode($rawValue);
