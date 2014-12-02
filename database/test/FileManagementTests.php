@@ -214,29 +214,7 @@ class FileManagementTests extends WebTestCase {
                 getOneValueFromFileList($this->mysql, "fileContents", 
                         $this->username, $this->fileName));       
     } 
-        
-
-    public function testFileExistsSimple() {        
-        //Create an additional file
-        $fileID = insertFile($this->mysql, $this->username, 
-                $this->fileName, $this->fileContents);        
-        $this->assertTrue( $fileID > 0 );                       
-       
-        $this->get(getBaseURL() . "fileExists.php?" .
-                "username=$this->username&password=$this->password&" .
-                "fileName=$this->fileName");        
-        $this->assertText("OK: true"); 
-
-    }
-    
-    public function testFileNotExists() {                       
-        $this->get(getBaseURL() . "fileExists.php?" .
-                "username=$this->username&password=$this->password&" .
-                "fileName=anotherFileName");        
-        $this->assertText("OK: false"); 
-
-    }
-    
+           
     public function testDeleteAllFilesBelongingToUser() {
         //Createa an additional file
         insertFile($this->mysql, $this->username, 
