@@ -46,10 +46,6 @@ a:visited {
     margin: 0px 0px 20px 0px;    
 }
 
-#userName2, #masterPassword2, #email {
-    width: 315px;
-}
-
 #recaptcha_response_field {
     height:             1em;
     margin:             0 0;
