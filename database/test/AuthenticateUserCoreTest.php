@@ -33,7 +33,7 @@ class authenticateUserCoreTest extends UnitTestCase {
         $this->assertTrue( authenticateUser($this->mysql, $this->username, 
                 $this->password) );
     }   
-       
+    
     public function testAuthenticateUserWrongUsername() {
         //clearValidationData($this->mysql, $this->username, $this->password );
         try {
@@ -44,7 +44,7 @@ class authenticateUserCoreTest extends UnitTestCase {
             $this->assertEqual( "BAD_LOGIN", $e->getMessage() );
         }        
     }
-
+    
     public function testAuthenticateUserWrongPassword() {
         //clearValidationData($this->mysql, $this->username, $this->password );
         try {
@@ -54,6 +54,7 @@ class authenticateUserCoreTest extends UnitTestCase {
         } catch ( Exception $e ) {
             $this->assertEqual( "BAD_LOGIN", $e->getMessage() );
         }        
-    }   
+    }      
+      
 }
 

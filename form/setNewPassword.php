@@ -6,8 +6,7 @@
     }       
     require_once( dirname(__FILE__).'/../database/core/utilitiesSecret.php' );    
     require_once( dirname(__FILE__).'/../database/core/utilities.php' );    
-    init();
-    $mysql = connectDatabase();
+    init();    
     try {
         $username = getParameter( "username");    
         $verificationKey = getParameter( "verificationKey" );
@@ -24,7 +23,8 @@
     <meta charset="utf-8">
     <title>MasterPassword: Password Reset</title>
     <link href="jquery-ui.css" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">    	            
+    <link href="style.css" rel="stylesheet">    	                
+    <link href="styleSetNewPasswordSpecific.css" rel="stylesheet">    	                
     <meta name="apple-itunes-app" content="app-id=510296984" />
 </head>
 <body onbeforeunload="">    
@@ -65,10 +65,8 @@
             </p>
             
             <p>
-                <div id="progress" class="box"></div>
-                <span style="float: right;">
-                <button id="submitNewPass" type="button">Submit</button>
-                </span>
+                <div id="progress" class="box"></div>                                
+                <button id="submitNewPass" type="button">Submit</button>                
             </p>
         </form>
 
@@ -108,6 +106,9 @@
                 value: 0
             });
             
+            $("#masterPassword").on( "change keyup paste mouseup", updateSubmitButtonStatus );        
+            $("#masterPassword2").on( "change keyup paste mouseup", updateSubmitButtonStatus );        
+            
             $( "#submitNewPass").button();
             
             //Finally, we swap out the loading code and swap in the real content.
@@ -135,6 +136,7 @@
             $("#verificationKey").prop("disabled",true);
             $("#masterPassword").prop("disabled",true);
             $("#masterPassword2").prop("disabled",true);
+            $("#submitNewPass").button('disable');
         }
         
         function passWorkerEventHandler(event) {
@@ -167,6 +169,7 @@
                 $("#verificationKey").attr("disabled",false);
                 $("#masterPassword").attr("disabled",false);
                 $("#masterPassword2").attr("disabled",false);
+                $("#submitNewPass").button('enable');
             } else {
                 $("#infoDialog").dialog("option", "title", "Error");
                 $("#infoDialog").html( "<p>" +  data.message + "</p>" );
@@ -177,8 +180,34 @@
                 $("#verificationKey").attr("disabled",false);
                 $("#masterPassword").attr("disabled",false);
                 $("#masterPassword2").attr("disabled",false);
+                $("#submitNewPass").button('enable');
             }
         }
+        
+        function updateSubmitButtonStatus()
+        {            
+            validateTwoFieldsSame( "#masterPassword", "#masterPassword2" );                            
+            var passBad = $("#masterPassword2").hasClass("ui-state-error");
+
+            if ( !passBad ) {
+                $("#submitNewPass").button('enable');
+            } else {
+                $("#submitNewPass").button('disable');
+            }
+
+        }
+
+        function validateTwoFieldsSame( field01, field02 ) 
+        {    
+            var field01Val = $(field01).val();
+            var field02Val = $(field02).val();
+            if ( field01Val !== field02Val ) {
+                $(field02).addClass("ui-state-error");
+            } else {
+                $(field02).removeClass("ui-state-error");
+            }
+        }
+
         
     </script>        
 </body>
