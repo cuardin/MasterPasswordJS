@@ -80,12 +80,31 @@
     <div id="infoDialog" style="display: none;">                        
     </div>
     
-    <!-- //For off-line mode, fill in these tags with the worker wrapper code.
-    <script id="mpw_worker_wrapper" type="text/js-worker">       
-    </script>
     
-    <script id="database_worker_wrapper" type="text/js-worker">     
-    </script>-->
+    <script id="mpw_worker_wrapper" type="text/js-worker">       
+        //Need this to covnert UTF characters.
+        importScripts(base_url + '../js/core/encoding-indexes.js' );
+        importScripts(base_url + '../js/core/encoding.js' );
+
+        //Use the auditable scrypt version.
+        importScripts(base_url + '../js/core/scrypt.js' );
+
+        importScripts(base_url + '../js/core/util.js' );
+        importScripts(base_url + '../js/core/mpw.js' );
+        importScripts(base_url + '../js/database.js' );            
+        importScripts(base_url + '../js/mpw_worker.js' );    
+
+        self.addEventListener('message', handleMessage);
+
+        var worker = new MPWWorker();
+
+        function handleMessage( event ) 
+        {            
+            worker.handleMessage(event, function (rValue) {
+                postMessage( JSON.stringify(rValue));    
+            });
+        }
+    </script>        
     
     <script src="external/jquery/jquery.js"></script>
     <script src="jquery-ui.js"></script>
