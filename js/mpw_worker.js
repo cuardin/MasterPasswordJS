@@ -90,8 +90,8 @@ function MPWWorker() {
             return parseInt( rValue );                    
         } catch ( error ) {
             //This function should not throw an exception. IF we can't acces the network, the global seed is irrelevant.            
-            console.log( "Error getting global seed from server. Returning -1.");
-            return -1;
+            console.log( "Error getting global seed from server. Returning 1.");
+            return 1;
         }
     };
 

@@ -36,7 +36,11 @@
             </div> 
             
             <div class="entry"> 
-                <div id="progress" class="box"></div>                                                                
+                <div id="progress" class="box"></div>                                
+                <div id="loginStatus">
+                <button id="createUser" type="button" title="Create a user so you can store sites online." style="display: none;">Create User</button>
+                <div id="loginOK" style="display: none;"><img src="Ok-icon.png" width="32px" title="You are logged in. Although no passwords are sent to any server, you can now save sites with their settings to the central server to be accessed from anywhere."></div>
+                </div>
             </div> 
             
             <div class="entry"> 
@@ -70,19 +74,47 @@
                 <input type="text"  id="sitePassword" 
                        class="box output ui-widget ui-widget-content ui-corner-all" 
                        readonly value="Expect: JacmYipw8,Nuji"
-                       title="This is the password you can use for this site."/>                                                
+                       title="This is the password you can use for this site."/>                
+                <button id="saveSite" type="button" title="Save this site. Requires a validated account.">+</button>
+                <button id="deleteSite" type="button" title="Delete this site. Requires a validated account.">-</button>
+                
             </div>             
         </form>
         <small class="validate">
             [<a href="passwordReset.php">Reset Password</a>] [<a href="http://www.gnu.org/copyleft/gpl.html">GPLv3</a>] [<a href="../test/mpwTest.html">Validate algorithm</a>]
         </small>
-    </div>    
+    </div>
+    <div id="createUserDialog" title="Create new user" style="display: none;">                
+        <label for="userName2">User Name again</label>
+        <input id="userName2" type="text" class="popBox ui-widget ui-widget-content ui-corner-all"/>
+        
+        <label for="masterPassword2">Master Password again</label>
+        <input id="masterPassword2" type="password" class="popBox ui-widget ui-widget-content ui-corner-all"/>
+        
+        <label for="email">Email</label>
+        <input id="email" type="email" class="popBox ui-widget ui-widget-content ui-corner-all"/>
+        
+        <p></p>                                
+        <script type='text/javascript' src='https://www.google.com/recaptcha/api/challenge?k=6Ldtm_wSAAAAAOZah22pQIq9tc-WZlDlpsIZZ2Zt'></script>        
+        <p></p>
+        <img id="createUserSpinner" src="ajax-loader.gif" style="display: none;">
+
+    </div>
     <div id="infoDialog" style="display: none;">                        
-    </div>        
+    </div>
+    
+    <!-- //For off-line mode, fill in these tags with the worker wrapper code.
+    <script id="mpw_worker_wrapper" type="text/js-worker">       
+    </script>
+    
+    <script id="database_worker_wrapper" type="text/js-worker">     
+    </script>-->
+    
     <script src="external/jquery/jquery.js"></script>
     <script src="jquery-ui.js"></script>
     <script src="../js/domWrapper.js"></script>
-    <script src="../js/integration_nodb.js"></script>    
+    <script src="../js/integration_db.js"></script>    
+    <script src="../js/integration.js"></script>    
     <script src="../js/mpw_worker.js"></script> <!-- Maybe this helps with the reload -->
 </body>
 </html>

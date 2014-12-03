@@ -1,15 +1,8 @@
 //Account for recaptcha: mpw.jscript@gmail.com
-//TODO: Add JS-check that passwords match in setNewPassword.php
-//TODO: Find out why utf8-thing is wierd in Windows with setNewPassword.php
 
 ////***************************************
 // Declare all globals.
-var siteDataList = {};
-var currentLoginStatus = false;
-var dbPassword = "";
 var w = null;
-var dbWorker = createWorker('database_worker_wrapper');
-dbWorker.addEventListener( "message", workerEventHandler, false);
 var toSendMainComputeEvent = false;
 var toSendSiteComputeEvent = false;
 
@@ -18,17 +11,10 @@ var toSendSiteComputeEvent = false;
 $(document).ready(function(){            
     
     //Check if we should even be here.
-    if(!window.Worker) { 
-        //TODO: Check that this works.
-        setMainDiv("Sorry, your browser does not support Web Workers...");                
+    if(!window.Worker) {         
+        setMainDivHTML("Sorry, your browser does not support Web Workers...");                
         return;
-    } 
-    
-    if ( typeof(Recaptcha) === "undefined" ) {
-        console.log("Recapcha wasn't defined. Exiting.");
-        setMainDiv("Sorry, recapcha has failed.");                        
-        return;
-    }
+    }     
 
     // Make all mainInputChanges start the secret key computation, interrupting old ones.
     setEventHandlerOnClass( "mainInput", "input", onMainInputChange );           
@@ -55,80 +41,14 @@ $(document).ready(function(){
 
     //Create the site name autocomplete.
     $( "#siteName" ).autocomplete({            
-        source: function(request,response) { 
-            var keys = Object.keys(siteDataList);            
-            keys.sort();
-            keys = keys.filter( function(val) { 
-                var r = val.match(request.term); 
-                return r !== null;
-            } );
-            response(keys);
-        },
+        source: idb.getAutocompleteResult,
         autoFocus: true,        
         close: function(event){ console.log(event); siteNameListInput(); }
     });
     $("#siteName").on( "change keyup paste mouseup", function (event) {        
         startSiteWorker(); 
     });
-
-    //Save, delete and create user buttons.
-    $( "#saveSite").button( {
-        disabled: true,
-        label: "+"     
-    });
-    $("#saveSite").click( saveSite );
-
-    $( "#deleteSite").button( {
-        disabled: true,
-        label: "-"       
-    });
-    $("#deleteSite").click( deleteSite );
     
-    $( "#createUser").button( {
-        disabled: true,
-        label: "Create User"       
-    });
-    $("#createUser").click( function( ) {
-        $("#createUserDialog").dialog("open");
-    });           
-    
-    //Create the create new user popup
-    $("#createUserDialog").dialog({
-        autoOpen: false,
-        modal: true,
-        width: 350,        
-        buttons: {
-            "Cancel": function() {                
-                $(this).dialog("close");                           
-            }, 
-            "Submit": function() {
-                //SubmitUser starts a worker in the background that submits the user and then closes the dialog.                
-                $("#createUserSpinner").attr( "style", "" );
-                submitUser();                
-                Recaptcha.reload();
-            }
-        },
-        open: function()
-        {            
-            $("#userName2").val( "" );
-            $("#masterPassword2").val( "" );
-            $("#email").val( "" );
-            $("#createUserSpinner").attr( "style", "display: none;" );
-            Recaptcha.reload(); 
-            updateCreateUserDialogStatus();            
-        },
-        close: function() 
-        { 
-            //We used to have the recapcha reload here. If it works to have it above, then delete this stub.
-        }                
-        
-    });
-        
-    //Add validation checks to create user dialog
-    $("#userName2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
-    $("#masterPassword2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );        
-    $("#email").on( "change keyup paste mouseup", updateCreateUserDialogStatus );            
-
     //Create the info dialog popup. Used mostly for error messages.
     $("#infoDialog").dialog({
         autoOpen: false,
@@ -138,8 +58,10 @@ $(document).ready(function(){
                 $(this).dialog("close");           
             }            
         }
-    });       
-
+    });
+          
+    idb.initDOMElements();
+    
     //Finally, we swap out the loading code and swap in the real content.
     $("#loaderDiv").attr( "style", "display: none;" );
     $("#mainDiv").attr( "style", "" );
@@ -158,95 +80,6 @@ function createWorker(tagName) {
     return worker;
 }
 
-function setLoginStatus( status ) {    
-    currentLoginStatus = status;
-    if ( status === true ) {        
-        $("#createUser").attr( "style", "display: none;" );
-        $("#loginOK").attr( "style", "" );        
-    } else {
-        $( "#createUser").button("enable");        
-        $("#createUser").attr( "style", "" );
-        $("#loginOK").attr( "style", "display: none;" );
-    }
-}
-
-function updateCreateUserDialogStatus()
-{
-    validateTwoFieldsSame( "#userName", "#userName2" );    
-    validateTwoFieldsSame( "#masterPassword", "#masterPassword2" );    
-    validateEmail( "#email" );          
-    
-    var uNameBad = $("#userName2").hasClass("ui-state-error");
-    var passBad = $("#masterPassword2").hasClass("ui-state-error");
-    var emailBad = $("#email").hasClass("ui-state-error");    
-    
-    if ( !uNameBad && !passBad && !emailBad ) {
-        $(".ui-dialog-buttonpane button:contains('Submit')").button('enable');
-    } else {
-        $(".ui-dialog-buttonpane button:contains('Submit')").button('disable');
-    }
-    
-}
-
-function requestSiteList( )
-{
-    $( "#progress" ).progressbar( "value", false );    
-    var data = getAllInputsFromForm();    
-    data.dbPassword = dbPassword;
-    data.command = "getSiteList";    
-    dbWorker.postMessage(JSON.stringify(data));
-}
-
-function deleteSite()
-{           
-    $( "#progress" ).progressbar( "value", false );    
-    var data = getAllInputsFromForm();
-    data.dbPassword = dbPassword;
-    data.command = "deleteSite";                        
-    dbWorker.postMessage(JSON.stringify(data));                          
-}
-
-
-function saveSite()
-{           
-    $( "#progress" ).progressbar( "value", false );    
-    var data = getAllInputsFromForm();
-    data.dbPassword = dbPassword;
-    data.command = "saveSite";                                    
-    dbWorker.postMessage(JSON.stringify(data));                          
-}
-
-function submitUser()
-{                
-    $( "#progress" ).progressbar( "value", false );        
-    var data = getAllInputsFromForm();
-    data.dbPassword = dbPassword;
-    data.command = "createUser";                    
-    dbWorker.postMessage(JSON.stringify(data));                      
-    
-}
-
-function validateTwoFieldsSame( field01, field02 ) 
-{    
-    var field01Val = $(field01).val();
-    var field02Val = $(field02).val();
-    if ( field01Val !== field02Val ) {
-        $(field02).addClass("ui-state-error");
-    } else {
-        $(field02).removeClass("ui-state-error");
-    }
-}
-
-function validateEmail(field) { 
-    var email = $(field).val();
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if ( !re.test(email) ) {
-        $(field).addClass("ui-state-error");    
-    } else {
-        $(field).removeClass("ui-state-error");    
-    }
-}
-
 //********************************************
 //Add event handlers to the worker object
 function workerEventHandler(event) {    
@@ -256,16 +89,12 @@ function workerEventHandler(event) {
     if ( data.type === "masterKey" ) {                       
         $( "#progress" ).progressbar( "value", 0 );
         startSiteWorker(true);
-        getDbPassword();
+        idb.getDbPassword();
         
     } else if ( data.type === "dbPassword" ) {        
         $( "#progress" ).progressbar( "value", 0 );
-        dbPassword = data.data;
-        requestSiteList();                
-        
-    } else if ( data.type === "siteList" ) {
-        $( "#progress" ).progressbar( "value", 0 );
-        updateSiteList( data.siteList );                
+        idb.setDbPassword(data.data);
+        idb.requestSiteList();                
         
     } else if ( data.type === "sitePassword" ) {                   
         $( "#progress" ).progressbar( "value", 0 );
@@ -274,44 +103,6 @@ function workerEventHandler(event) {
     } else  if ( data.type === "progress" ) {                        
         $( "#progress" ).progressbar( "value", data.data );
         
-    } else if ( data.type === "userSubmitted" ) {                
-        $( "#progress" ).progressbar( "value", 0 );
-        $("#createUserDialog").dialog("close");
-        if ( data.data === "DUPLICATE_USER" ) {
-            popupDialog( "Duplicate users", "A user with the same username or email allready exists in the database." );        
-            setLoginStatus(false);
-        } else {        
-            setLoginStatus(true);            
-        }
-        setAddButtonStatus();
-        setDeleteButtonStatus();
-        
-    } else if ( data.type === "siteSaved" ) {        
-        $( "#progress" ).progressbar( "value", 0 );
-        var siteName = data.data.siteName;        
-        siteDataList[siteName] = data.data;
-        setAddButtonStatus();
-        setDeleteButtonStatus();
-        
-    } else if ( data.type === "siteDeleted" ) {        
-        $( "#progress" ).progressbar( "value", 0 );
-        var siteName = data.data;
-        delete siteDataList[siteName];
-        setAddButtonStatus();
-        setDeleteButtonStatus();
-        
-        
-    } else if ( data.type === "badLogin" ) {        
-        $( "#progress" ).progressbar( "value", 0 );
-        setLoginStatus(false);     
-        setAddButtonStatus();
-        setDeleteButtonStatus();
-        
-    } else if ( data.type === "goodLogin" ) {                        
-        setLoginStatus(true);
-        setAddButtonStatus();
-        setDeleteButtonStatus();    
-        
     } else {        
         $("#progress" ).progressbar( "value", 0 );
         popupDialog( "Unexpected Error", data.message );         
@@ -319,71 +110,12 @@ function workerEventHandler(event) {
     }    
 };
 
-function setDeleteButtonStatus() 
-{    
-    var data = getAllInputsFromForm();
-    
-    if ( siteDataList[data.siteName] !== undefined && currentLoginStatus ) {
-        $("#deleteSite").button("enable");
-    } else {
-        $("#deleteSite").button("disable");
-    }    
-}
-
-function setAddButtonStatus() 
-{    
-    var data = getAllInputsFromForm();
-    
-    var closestMatch = siteDataList[data.siteName];
-    var matchExists = false;
-    if ( closestMatch === undefined ) {
-        matchExists = false;
-    } else {
-        matchExists = (closestMatch.siteCounter === data.siteCounter && closestMatch.siteType === data.siteType);
-    }    
-    if ( !matchExists && currentLoginStatus ) {
-        $("#saveSite").button("enable");
-    } else {
-        $("#saveSite").button("disable");        
-    }    
-}
-
-function updateSiteList( sList ) {    
-    siteDataList = {};   
-
-    //Add the site names to their list.
-    keys = Object.keys(sList);
-    for ( var i = 0; i < keys.length; i++ ) {        
-        var siteName = keys[i];        
-        siteDataList[siteName] = sList[siteName];         
-    }
-    
-    //Make sure the save and delete buttons are correct.
-    setAddButtonStatus();
-    setDeleteButtonStatus();    
-}
-
 //***********************************************
 //Worker communication functions
-function getDbPassword() 
-{
-    $( "#progress" ).progressbar( "value", false );        
-    var data = getAllInputsFromForm();        
-    data.command = "getDbPassword";    
-    
-    //If we don't have a worker, we need to compute the masterKey first.
-    if ( w === null ) {        
-        onMainInputChange();
-    } else {
-        w.postMessage(JSON.stringify(data));                          
-    }
-}
-
 function startSiteWorker(now) {                
     $( "#progress" ).progressbar( "value", false );    
     
-    setAddButtonStatus();
-    setDeleteButtonStatus();    
+    idb.setAddAndDeleteButtonStatus();    
     
     if ( toSendSiteComputeEvent ) {
         console.log( "Site Compute event skipped" );
@@ -423,10 +155,8 @@ function startSiteWorker(now) {
 
 function onMainInputChange( now ) {
     $( "#progress" ).progressbar( "value", 0 );    
-        
-    //Clear the local cache and login status
-    siteDataList = {};
-    setLoginStatus( false ); //This activates/shows the createUser buton which is therefore hidden on the next line below.    
+           
+    idb.setLoginStatus( false ); //This activates/shows the createUser buton which is therefore hidden on the next line below.    
         
     $("#createUser").attr("style", "display: none;");        
     $("#loginOK").attr("style", "display: none;");            
@@ -485,14 +215,6 @@ function onInputNumberChange() {
 
 function siteNameListInput( )  
 {
-    var data = getAllInputsFromForm();
-    var siteData = siteDataList[data.siteName];    
-    if ( siteData !== undefined && siteData !== null ) {
-        $("#siteCounter").val(siteData.siteCounter);
-        $("#siteType").val(siteData.siteType);        
-        $("#siteType").selectmenu("refresh"); //Make sure the selector box is completely refreshed.
-    }
-    setAddButtonStatus();
-    setDeleteButtonStatus();
+    idb.siteNameListInput();
     startSiteWorker();
 }
