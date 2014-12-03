@@ -5,6 +5,7 @@
 var w = null;
 var toSendMainComputeEvent = false;
 var toSendSiteComputeEvent = false;
+var idb = new IntegrationDB();
 
 //************************************************
 //Wrap all initialization
@@ -59,7 +60,7 @@ $(document).ready(function(){
             }            
         }
     });
-          
+                         
     idb.initDOMElements();
     
     //Finally, we swap out the loading code and swap in the real content.
@@ -157,11 +158,8 @@ function onMainInputChange( now ) {
     $( "#progress" ).progressbar( "value", 0 );    
            
     idb.setLoginStatus( false ); //This activates/shows the createUser buton which is therefore hidden on the next line below.    
-        
-    $("#createUser").attr("style", "display: none;");        
-    $("#loginOK").attr("style", "display: none;");            
-    $("#saveSite").button("disable");
-    $("#deleteSite").button("disable");            
+    idb.setLoginAndStoreButtonsDisabled();    
+    
     $("#sitePassword").val( "" );        
                     
     

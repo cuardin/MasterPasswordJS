@@ -2,7 +2,6 @@
 var siteDataList = {};
 var dbPassword = "";
 var currentLoginStatus = false;
-var idb = new IntegrationDB();
 dbWorker = new Worker('../js/database_worker_wrapper.js');    
 dbWorker.addEventListener( "message", workerEventHandler, false);
 
@@ -293,6 +292,14 @@ function IntegrationDB()
     this.setDbPassword = function(data)
     {
         dbPassword = data;
+    };
+    
+    this.setLoginAndStoreButtonsDisabled = function()
+    {
+        $("#createUser").attr("style", "display: none;");        
+        $("#loginOK").attr("style", "display: none;");            
+        $("#saveSite").button("disable");
+        $("#deleteSite").button("disable");            
     };
 
 }
