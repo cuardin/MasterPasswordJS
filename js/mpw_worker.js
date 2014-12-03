@@ -10,7 +10,7 @@ function MPWWorker() {
         var returnValue = {};
         returnValue.type = "progress";
         returnValue.data = 100*i;
-        postMessage( JSON.stringify(returnValue) );    
+        postMessage( JSON.stringify(returnValue) );
     };
 
     this.handleMessage = function(event, postReturn) {    
