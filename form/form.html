@@ -1,11 +1,3 @@
-<?php
-    //Redirect if we get called on http.    
-    if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
-        $redirect = "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-        header("Location: $redirect");        
-    }   
-?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -102,15 +94,8 @@
         <label for="email">Email</label>
         <input id="email" type="email" class="popBox ui-widget ui-widget-content ui-corner-all"/>
         
-        <p></p>        
-        
-        <?php    
-        echo "<script>\n";
-        require_once( dirname(__FILE__).'/../database/core/utilitiesCore.php' );
-        echo "</script>\n";
-        $publicKey = getCAPCHAPublicKey();        
-        echo "<script type='text/javascript' src='https://www.google.com/recaptcha/api/challenge?k=$publicKey'></script>"
-        ?>
+        <p></p>                                
+        <script type='text/javascript' src='https://www.google.com/recaptcha/api/challenge?k=6Ldtm_wSAAAAAOZah22pQIq9tc-WZlDlpsIZZ2Zt'></script>        
         <p></p>
         <img id="createUserSpinner" src="ajax-loader.gif" style="display: none;">
 
@@ -128,6 +113,7 @@
     <script src="external/jquery/jquery.js"></script>
     <script src="jquery-ui.js"></script>
     <script src="../js/domWrapper.js"></script>
+    <script src="../js/integration_db.js"></script>    
     <script src="../js/integration.js"></script>    
     <script src="../js/mpw_worker.js"></script> <!-- Maybe this helps with the reload -->
 </body>
