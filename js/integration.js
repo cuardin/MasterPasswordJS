@@ -69,14 +69,17 @@ $(document).ready(function(){
 });
 
 function createWorker(tagName) {
-    /*tagName = "#" + tagName;
+    //For offline-more
+    tagName = "#" + tagName;
     var base_url = window.location.href.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
     var array = ['var base_url = "' + base_url + '/";' + $(tagName).html()];
     var blob = new Blob(array, {type: "text/javascript"});
     var url = window.URL.createObjectURL(blob);    
-    console.log( url );*/
+    console.log( url );
     
-    var url = "../js/" + tagName + ".js";
+    //For on-line mode
+    //var url = "../js/" + tagName + ".js";
+    
     var worker = new Worker(url);
     return worker;
 }
