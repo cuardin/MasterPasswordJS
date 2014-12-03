@@ -10,6 +10,8 @@ var dbPassword = "";
 var w = null;
 var dbWorker = createWorker('database_worker_wrapper');
 dbWorker.addEventListener( "message", workerEventHandler, false);
+var toSendMainComputeEvent = false;
+var toSendSiteComputeEvent = false;
 
 //************************************************
 //Wrap all initialization
@@ -47,7 +49,8 @@ $(document).ready(function(){
 
     //Create the site type menu
     $( "#siteType" ).selectmenu({    
-        select: startSiteWorker
+        //We do not need to wait since these events do not come too often.
+        select: function(){ startSiteWorker(true); }
     });
 
     //Create the site name autocomplete.
@@ -64,8 +67,7 @@ $(document).ready(function(){
         autoFocus: true,        
         close: function(event){ console.log(event); siteNameListInput(); }
     });
-    $("#siteName").on( "change keyup paste mouseup", function (event) {
-        console.log( event );
+    $("#siteName").on( "change keyup paste mouseup", function (event) {        
         startSiteWorker(); 
     });
 
@@ -253,7 +255,7 @@ function workerEventHandler(event) {
 
     if ( data.type === "masterKey" ) {                       
         $( "#progress" ).progressbar( "value", 0 );
-        startSiteWorker();
+        startSiteWorker(true);
         getDbPassword();
         
     } else if ( data.type === "dbPassword" ) {        
@@ -363,17 +365,6 @@ function updateSiteList( sList ) {
 
 //***********************************************
 //Worker communication functions
-function doStartWorker( data, chain ) {
-    if ( w === null ) {
-        //If we don't have a worker, we need to compute the masterKey first.
-        onMainInputChange();
-    }
-    if ( (w === null && chain) || w !== null ) {
-        //Send a message to start the process.    
-        w.postMessage(JSON.stringify(data));                          
-    } 
-}
-
 function getDbPassword() 
 {
     $( "#progress" ).progressbar( "value", false );        
@@ -388,29 +379,49 @@ function getDbPassword()
     }
 }
 
-function startSiteWorker() {                
+function startSiteWorker(now) {                
     $( "#progress" ).progressbar( "value", false );    
     
     setAddButtonStatus();
     setDeleteButtonStatus();    
-        
-    var data = getAllInputsFromForm();    
-    data.command = "siteCompute";    
-    if ( isNaN(data.siteCounter) ) { 
-        document.getElementById("sitePassword").value = "N/A";  
-        return;
-    }            
     
-    //If we don't have a worker, we need to compute the masterKey first.
-    if ( w === null ) {    
-        onMainInputChange();
-    }    
-    w.postMessage(JSON.stringify(data));                          
+    if ( toSendSiteComputeEvent ) {
+        console.log( "Site Compute event skipped" );
+    }
+    if ( now ) {
+        doStartSiteWorker();
+    } else {
+        toSendSiteComputeEvent = true;
+        setTimeout( function() {
+            if ( !toSendSiteComputeEvent ) {            
+                return;
+            } else {
+                toSendSiteComputeEvent = false;
+            }
+            doStartSiteWorker();
+        }, 100 );    
+    }
     
+    //A subfunction to do the actual submit.
+    function doStartSiteWorker() 
+    {
+        var data = getAllInputsFromForm();    
+        data.command = "siteCompute";    
+        if ( isNaN(data.siteCounter) ) { 
+            document.getElementById("sitePassword").value = "N/A";  
+            return;
+        }            
+
+        //If we don't have a worker, we need to compute the masterKey first.
+        if ( w === null ) {    
+            onMainInputChange(true);
+        }    
+        w.postMessage(JSON.stringify(data));                          
+    }
 }
 
 
-function onMainInputChange() {
+function onMainInputChange( now ) {
     $( "#progress" ).progressbar( "value", 0 );    
         
     //Clear the local cache and login status
@@ -421,26 +432,46 @@ function onMainInputChange() {
     $("#loginOK").attr("style", "display: none;");            
     $("#saveSite").button("disable");
     $("#deleteSite").button("disable");            
-    $("#sitePassword").val( "" );    
-    
-            
-    //Terminate the worker if it isn't null. Whenever the main input changes, 
-    //any previous computations are obsolete.
-    if ( w !== null ) {
-        w.terminate();
-    }        
-    
-    //Start the worker and add a listener to the worker
-    w = createWorker('mpw_worker_wrapper');            
-    w.addEventListener( "message", workerEventHandler, false);
-    
-    //Build a message from the form to send
-    var data = getAllInputsFromForm();    
-    data.command = "mainCompute";        
+    $("#sitePassword").val( "" );        
                     
-    //Send a message to start the process.
-    w.postMessage(JSON.stringify(data));                      
+    
+    if ( now ) {
+        //If we have been flagged to perform the action immediately.
+        doOnMainInputChange();
+    } else {
+        //Otherwise, we use a setTimout to schedule it a bit later and avoid recomputing things many times.        
+        toSendMainComputeEvent = true;
+
+        setTimeout( function() {
+            if ( !toSendMainComputeEvent ) {            
+                return;
+            } else {
+                toSendMainComputeEvent = false;
+            }
+            doOnMainInputChange();
+        }, 300 );  //Wait 300ms before taking action.      
+    }
+    
+    function doOnMainInputChange() {
+        //Build a message from the form to send
+        var data = getAllInputsFromForm();    
+        data.command = "mainCompute";        
+
+        //Terminate the worker if it isn't null. Whenever the main input changes, 
+        //any previous computations are obsolete.
+        if ( w !== null ) {
+            w.terminate();
+        }        
+
+        //Start the worker and add a listener to the worker
+        w = createWorker('mpw_worker_wrapper');            
+        w.addEventListener( "message", workerEventHandler, false);
+
+        w.postMessage(JSON.stringify(data));
+    }
 }
+
+
 
 function onInputNumberChange() {    
     var data = getAllInputsFromForm();    
