@@ -39,13 +39,7 @@ $(document).ready(function(){
         //We do not need to wait since these events do not come too often.
         select: function(){ startSiteWorker(true); }
     });
-
-    //Create the site name autocomplete.
-    $( "#siteName" ).autocomplete({            
-        source: idb.getAutocompleteResult,
-        autoFocus: true,        
-        close: function(event){ console.log(event); siteNameListInput(); }
-    });
+    
     $("#siteName").on( "change keyup paste mouseup", function (event) {        
         startSiteWorker(); 
     });
@@ -75,10 +69,7 @@ function createWorker(tagName) {
     var array = ['var base_url = "' + base_url + '/";' + $(tagName).html()];
     var blob = new Blob(array, {type: "text/javascript"});
     var url = window.URL.createObjectURL(blob);    
-    console.log( url );
-    
-    //For on-line mode
-    //var url = "../js/" + tagName + ".js";
+    console.log( url );        
     
     var worker = new Worker(url);
     return worker;
