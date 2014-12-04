@@ -52,6 +52,13 @@ function IntegrationDB()
             throw new Exception ( "Recapthca did not load properly" );
         }
         
+        //Create the site name autocomplete.
+        $( "#siteName" ).autocomplete({            
+            source: getAutocompleteResult,
+            autoFocus: true,        
+            close: function(event){ console.log(event); siteNameListInput(); }
+        });
+        
         //Save, delete and create user buttons.
         $( "#saveSite").button( {
             disabled: true,
@@ -99,7 +106,7 @@ function IntegrationDB()
                 updateCreateUserDialogStatus();            
             }           
         });
-
+                    
         //Add validation checks to create user dialog
         $("#userName2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );    
         $("#masterPassword2").on( "change keyup paste mouseup", updateCreateUserDialogStatus );        
@@ -170,6 +177,16 @@ function IntegrationDB()
                 $(field).removeClass("ui-state-error");    
             }
         }
+        
+        function getAutocompleteResult (request,response) { 
+            var keys = Object.keys(siteDataList);            
+            keys.sort();
+            keys = keys.filter( function(val) { 
+                var r = val.match(request.term); 
+                return r !== null;
+            } );
+            response(keys);
+        };
     };
     
     this.setLoginStatus = function( status ) {    
@@ -243,17 +260,7 @@ function IntegrationDB()
         //Make sure the save and delete buttons are correct.
         this.setAddAndDeleteButtonStatus();        
     };
-    
-    this.getAutocompleteResult = function(request,response) { 
-        var keys = Object.keys(siteDataList);            
-        keys.sort();
-        keys = keys.filter( function(val) { 
-            var r = val.match(request.term); 
-            return r !== null;
-        } );
-        response(keys);
-    };
-    
+        
     this.addSitenameToList = function ( data ) {
         var siteName = data.siteName;        
         siteDataList[siteName] = data;
