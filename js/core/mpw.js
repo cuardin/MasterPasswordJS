@@ -27,7 +27,7 @@ function MPW()
             
     this.mpw_core = function ( userName, masterPassword, siteTypeString, siteName, siteCounter, progressFun )
     {        
-        var util = new Util();
+        var util = new Util()
         
         var masterKeySalt = this.mpw_core_calculate_master_key_salt(  userName );        
         
@@ -73,8 +73,10 @@ function MPW()
         if ( !(masterKeySalt instanceof Uint8Array) || typeof(masterPassword) !== "string" ) {
             throw new Error("Bad input data (mpw_core_calculate_master_key): " + typeof(masterKeySalt) + " masterPassword: " + typeof(masterPassword) );
         }
+        var encoder = new TextEncoder("utf-8");
+        var masterPasswordRaw = Array.apply([], encoder.encode(masterPassword) );
         
-        var secretKey = scrypt_crypt(masterPassword, masterKeySalt, progressFun );            
+        var secretKey = scrypt_crypt(masterPasswordRaw, masterKeySalt, progressFun );            
         
         return secretKey;                
     };
@@ -175,6 +177,14 @@ function MPW()
         ],
         pin: [
         "nnnn"
+        ],
+        name: [
+        "cvccvcvcv"
+        ],
+        phrase: [
+        "cvcc cvc cvccvcv cvc", 
+        "cvc cvccvcvcv cvcv", 
+        "cv cvccv cvc cvcvccv"
         ]
     };
 
@@ -187,6 +197,7 @@ function MPW()
         a: "AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz",
         n: "0123456789",
         o: "@&%?,=[]_:-+*$#!'^~;()/.",
-        x: "AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz0123456789!@#$%^&*()"
+        x: "AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz0123456789!@#$%^&*()",
+        ' ': ' '
     };
 }
