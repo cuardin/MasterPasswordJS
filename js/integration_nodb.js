@@ -7,5 +7,6 @@ function IntegrationDB()
     this.requestSiteList = function() {};
     this.setAddAndDeleteButtonStatus = function() {};
     this.setLoginStatus = function() {};
-    this.siteNameListInput = function() {};    
+    this.siteNameListInput = function() {}; 
+    this.setLoginAndStoreButtonsDisabled = function() {};
 }

@@ -18,7 +18,7 @@ $(document).ready(function(){
     }     
 
     // Make all mainInputChanges start the secret key computation, interrupting old ones.
-    setEventHandlerOnClass( "mainInput", "input", onMainInputChange );           
+    setEventHandlerOnClass( "mainInput", "input", function(){onMainInputChange(false);} );           
 
     //Create the progress bar
     $( "#progress" ).progressbar({
@@ -69,7 +69,7 @@ function createWorker(tagName) {
     var array = ['var base_url = "' + base_url + '/";' + $(tagName).html()];
     var blob = new Blob(array, {type: "text/javascript"});
     var url = window.URL.createObjectURL(blob);    
-    console.log( url );        
+    //console.log( url );        
     
     var worker = new Worker(url);
     return worker;
@@ -171,7 +171,8 @@ function onMainInputChange( now ) {
                 toSendMainComputeEvent = false;
             }
             doOnMainInputChange();
-        }, 300 );  //Wait 300ms before taking action.      
+            console.log( "Event fired" );
+        }, 1000 );  //Wait 1000ms before taking action.      
     }
     
     function doOnMainInputChange() {

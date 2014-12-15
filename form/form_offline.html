@@ -82,27 +82,37 @@
     
     
     <script id="mpw_worker_wrapper" type="text/js-worker">       
-        //Need this to covnert UTF characters.
-        importScripts(base_url + '../js/core/encoding-indexes.js' );
-        importScripts(base_url + '../js/core/encoding.js' );
+        try {
+            //Need this to covnert UTF characters.
+            importScripts(base_url + '../js/core/encoding-indexes.js' );
+            importScripts(base_url + '../js/core/encoding.js' );
 
-        //Use the auditable scrypt version.
-        importScripts(base_url + '../js/core/scrypt.js' );
+            //Use the auditable scrypt version.
+            importScripts(base_url + '../js/core/scrypt.js' );
 
-        importScripts(base_url + '../js/core/util.js' );
-        importScripts(base_url + '../js/core/mpw.js' );
-        importScripts(base_url + '../js/database.js' );            
-        importScripts(base_url + '../js/mpw_worker.js' );    
+            importScripts(base_url + '../js/core/util.js' );
+            importScripts(base_url + '../js/core/mpw.js' );
+            importScripts(base_url + '../js/database.js' );            
+            importScripts(base_url + '../js/mpw_worker.js' );    
 
-        self.addEventListener('message', handleMessage);
+            self.addEventListener('message', handleMessage);
 
-        var worker = new MPWWorker();
+            var worker = new MPWWorker();
 
-        function handleMessage( event ) 
-        {            
-            worker.handleMessage(event, function (rValue) {
-                postMessage( JSON.stringify(rValue));    
-            });
+            function handleMessage( event ) 
+            {            
+                worker.handleMessage(event, function (rValue) {
+                    postMessage( JSON.stringify(rValue));    
+                });
+            }
+        } catch ( error ) {
+            var returnValue = {};
+            returnValue.type = "error";        
+            returnValue.message = "Worker Error: " + error.message;
+            returnValue.fileName = error.fileName;
+            returnValue.lineNumber = error.lineNumber;
+
+            postMessage( JSON.stringify(returnValue) );    
         }
     </script>        
     
