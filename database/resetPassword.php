@@ -21,7 +21,7 @@ try {
     /*try {
         $isTest = getParameter($mysql, "test");
         if ( !strcmp($isTest, 'true') ) {
-            error_log( "Using stub mailer." );
+            //error_log( "Using stub mailer." );
             $mailer = new MailerStub();
         }
     } catch ( Exception $e ) {

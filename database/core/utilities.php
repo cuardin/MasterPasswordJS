@@ -56,9 +56,9 @@ function authenticateUser($mysql, $username, $password) {
     //Hash the password, using the salt stored
     $passwordCrypt = crypt($password, $passwordStored);                         
     
-    error_log ( "$password" );
-    error_log ( "$passwordStored" );
-    error_log ( "$passwordCrypt" );
+    //error_log ( "$password" );
+    //error_log ( "$passwordStored" );
+    //error_log ( "$passwordCrypt" );
     
     //Now check the fetched password against the stored
     if (!password_verify($passwordStored, $passwordCrypt)) {                

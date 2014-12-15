@@ -26,7 +26,7 @@ try {
         $isTest = 0;
     }            
     
-    error_log( $isTest );
+    //error_log( $isTest );
     
     if ( $isTest ) {
         $mailer = new MailerStub();
