@@ -4,3 +4,4 @@ server/core/utilitiesSecret.php
 /MasterPasswordJS/nbproject/private/
 /test/networkSecrets.js
 /js/utilitiesSecret.php
+database/core/utilitiesSecret.php
